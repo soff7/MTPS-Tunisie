@@ -1,0 +1,360 @@
+/* ContactForm.css - Version améliorée avec design UI moderne */
+
+:root {
+  --primary-blue: #35c8fa;
+  --secondary-gray: #808080;
+  --dark-bg: #212121;
+  --card-bg: #2a2a2a;
+  --light-text: #f5f5f5;
+  --hover-blue: #22a6d3;
+  --error-color: #ff4444;
+  --success-color: #2ecc71;
+  --section-bg: #191919;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --input-bg: rgba(42, 42, 42, 0.7);
+  --shadow-color: rgba(0, 0, 0, 0.3);
+}
+
+.contact-form {
+  max-width: 650px;
+  margin: 0 auto;
+  padding: 3rem;
+  background-color: var(--section-bg);
+  border-radius: 12px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  color: var(--light-text);
+  border: 1px solid var(--border-color);
+}
+
+.contact-form::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, var(--primary-blue), transparent);
+  z-index: 1;
+}
+
+.contact-form h2 {
+  font-size: 2rem;
+  color: var(--light-text);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 600;
+  position: relative;
+}
+
+.contact-form h2::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background-color: var(--primary-blue);
+  border-radius: 3px;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--secondary-gray);
+  transition: color 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--light-text);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+/* Style spécifique au menu déroulant */
+.form-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 3rem;
+  cursor: pointer;
+}
+
+.form-group select option {
+  background-color: var(--card-bg);
+  color: var(--light-text);
+  padding: 1rem;
+}
+
+.form-group select option:first-child {
+  color: var(--secondary-gray);
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(53, 200, 250, 0.2);
+}
+
+.form-group:focus-within label {
+  color: var(--primary-blue);
+}
+
+.form-group input.error,
+.form-group textarea.error,
+.form-group select.error {
+  border-color: var(--error-color);
+  box-shadow: 0 0 0 3px rgba(255, 68, 68, 0.1);
+}
+
+.error-message {
+  color: var(--error-color);
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  display: block;
+  font-weight: 500;
+  animation: fadeIn 0.3s ease;
+}
+
+.alert {
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  animation: slideDown 0.4s ease;
+  box-shadow: 0 4px 10px var(--shadow-color);
+}
+
+.alert::before {
+  margin-right: 0.75rem;
+  font-size: 1.2rem;
+}
+
+.alert-success {
+  background-color: rgba(46, 204, 113, 0.1);
+  color: var(--success-color);
+  border-left: 4px solid var(--success-color);
+}
+
+.alert-success::before {
+  content: '✓';
+}
+
+.alert-error {
+  background-color: rgba(255, 68, 68, 0.1);
+  color: var(--error-color);
+  border-left: 4px solid var(--error-color);
+}
+
+.alert-error::before {
+  content: '!';
+}
+
+.btn-primary {
+  background-color: var(--primary-blue);
+  color: white;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(53, 200, 250, 0.3);
+  position: relative;
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: all 0.5s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--hover-blue);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(53, 200, 250, 0.4);
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-primary:active {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(53, 200, 250, 0.3);
+}
+
+.btn-primary:disabled {
+  background-color: var(--secondary-gray);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Animation pour l'apparition du champ "Autre sujet" */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Appliquer l'animation au champ conditionnel */
+.form-group:has(#otherSubject) {
+  animation: fadeInDown 0.3s ease;
+}
+
+/* Loading indicator */
+.btn-primary.loading {
+  position: relative;
+  color: transparent;
+}
+
+.btn-primary.loading::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+  top: calc(50% - 10px);
+  left: calc(50% - 10px);
+}
+
+/* Form layout */
+@media (min-width: 768px) {
+  .form-row {
+    display: flex;
+    gap: 1.5rem;
+  }
+  
+  .form-row .form-group {
+    flex: 1;
+  }
+}
+
+/* Form field focus effect */
+.form-group input:focus + .focus-border,
+.form-group textarea:focus + .focus-border,
+.form-group select:focus + .focus-border {
+  width: 100%;
+  transition: 0.4s;
+}
+
+.focus-border {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--primary-blue);
+  transition: 0.4s;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .contact-form {
+    padding: 2rem;
+    margin: 0 1rem;
+  }
+  
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    padding: 0.8rem;
+  }
+  
+  .btn-primary {
+    padding: 0.8rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-form {
+    padding: 1.5rem;
+  }
+  
+  .contact-form h2 {
+    font-size: 1.75rem;
+  }
+  
+  .form-group label {
+    font-size: 0.9rem;
+  }
+  
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    font-size: 0.95rem;
+  }
+}

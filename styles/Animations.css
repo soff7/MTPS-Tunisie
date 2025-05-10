@@ -1,0 +1,134 @@
+/* Animations.css - Fichier corrigé pour les animations des pages d'authentification */
+
+/* Animation des particules */
+.particles-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+  }
+  
+  .particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background-color: rgba(53, 200, 250, 0.15);
+    border-radius: 50%;
+    animation: float 15s ease-in-out infinite;
+  }
+  
+  .particle-large {
+    width: 12px;
+    height: 12px;
+    opacity: 0.06;
+  }
+  
+  .particle-medium {
+    width: 8px;
+    height: 8px;
+    opacity: 0.08;
+  }
+  
+  .particle-small {
+    width: 4px;
+    height: 4px;
+    opacity: 0.1;
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0) translateX(0);
+    }
+    25% {
+      transform: translateY(-30px) translateX(10px);
+    }
+    50% {
+      transform: translateY(-15px) translateX(15px);
+    }
+    75% {
+      transform: translateY(-30px) translateX(-10px);
+    }
+  }
+  
+  /* Animation pour le titre */
+  .title-animation {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .title-animation::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+    animation: lineDrawIn 1s ease-out 0.3s forwards;
+  }
+  
+  @keyframes lineDrawIn {
+    from {
+      width: 0;
+    }
+    to {
+      width: 100%;
+    }
+  }
+  
+  /* Effet de focus sur les champs */
+  .form-group input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(53, 200, 250, 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  /* Animation pour les messages d'erreur */
+  .error-message {
+    animation: shakeError 0.6s cubic-bezier(.36,.07,.19,.97) both;
+  }
+  
+  @keyframes shakeError {
+    10%, 90% {
+      transform: translate3d(-1px, 0, 0);
+    }
+    20%, 80% {
+      transform: translate3d(2px, 0, 0);
+    }
+    30%, 50%, 70% {
+      transform: translate3d(-3px, 0, 0);
+    }
+    40%, 60% {
+      transform: translate3d(3px, 0, 0);
+    }
+  }
+  
+  /* Animation de chargement pour les boutons */
+  .btn-loading {
+    position: relative;
+    color: transparent !important;
+  }
+  
+  .btn-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid rgba(0, 0, 0, 0.3);
+    border-top-color: #000;
+    border-radius: 50%;
+    animation: btnLoading 0.8s linear infinite;
+  }
+  
+  @keyframes btnLoading {
+    to {
+      transform: rotate(360deg);
+    }
+  }

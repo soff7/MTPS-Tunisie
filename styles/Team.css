@@ -1,0 +1,272 @@
+/* Ajouts à Team.css pour les nouvelles sections */
+
+/* Style de la page générale */
+.team-page {
+  background-color: var(--dark-bg);
+  color: var(--light-text);
+}
+
+/* Hero Section */
+.team-hero {
+  padding: 8rem 0 6rem;
+  background-color: var(--gradient-dark);
+  position: relative;
+  overflow: hidden;
+}
+
+.team-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 75% 40%, rgba(53, 200, 250, 0.1) 0%, transparent 60%),
+    linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, var(--gradient-dark) 100%);
+  z-index: 0;
+}
+
+.team-hero .container {
+  position: relative;
+  z-index: 1;
+}
+
+.team-hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.section-subtitle {
+  font-size: 1.25rem;
+  color: var(--secondary-gray);
+  margin-bottom: 3rem;
+  line-height: 1.6;
+}
+
+.team-stats {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+}
+
+.team-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.team-stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  line-height: 1.2;
+}
+
+.team-stat-text {
+  font-size: 0.875rem;
+  color: var(--secondary-gray);
+  margin-top: 0.5rem;
+}
+
+/* Team Section - ajustements pour le nouveau composant */
+.team-section {
+  padding: 6rem 0;
+  position: relative;
+}
+
+.team-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 25% 50%, rgba(53, 200, 250, 0.05) 0%, transparent 60%);
+  z-index: 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+.section-icon {
+  font-size: 2rem;
+  color: var(--primary-blue);
+  margin-right: 1rem;
+  background-color: var(--accent-color);
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Expertise section dans les cartes */
+.expertise-section {
+  margin-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1rem;
+}
+
+.expertise-section h4 {
+  font-size: 0.9rem;
+  color: var(--primary-blue);
+  margin-bottom: 0.75rem;
+}
+
+.expertise-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.expertise-list li {
+  font-size: 0.8rem;
+  background-color: var(--accent-color);
+  color: var(--primary-blue);
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  display: inline-block;
+}
+
+/* Vision d'équipe Section */
+.team-vision {
+  padding: 6rem 0;
+  background-color: var(--gradient-dark);
+  position: relative;
+}
+
+.team-vision::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 75% 40%, rgba(53, 200, 250, 0.08) 0%, transparent 60%);
+  z-index: 0;
+}
+
+.vision-content {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.vision-content h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--light-text);
+  margin-bottom: 1.5rem;
+  position: relative;
+  display: inline-block;
+}
+
+.vision-content h2::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background-color: var(--primary-blue);
+  bottom: -5px;
+  left: 0;
+  opacity: 0.2;
+}
+
+.vision-content > p {
+  font-size: 1.125rem;
+  color: var(--secondary-gray);
+  line-height: 1.7;
+  margin-bottom: 3rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.vision-values {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.vision-value-item {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  padding: 2rem;
+  transition: transform 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.vision-value-item:hover {
+  transform: translateY(-8px);
+}
+
+.vision-value-item h3 {
+  font-size: 1.25rem;
+  color: var(--primary-blue);
+  margin-bottom: 1rem;
+}
+
+.vision-value-item p {
+  font-size: 0.95rem;
+  color: var(--secondary-gray);
+  line-height: 1.7;
+}
+
+/* Media Queries */
+@media (max-width: 992px) {
+  .vision-values {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .team-hero {
+    padding: 6rem 0 4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .team-stats {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .section-icon {
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+  
+  .vision-values {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .vision-content h2 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-subtitle {
+    font-size: 1rem;
+  }
+  
+  .team-stat-number {
+    font-size: 2rem;
+  }
+}
