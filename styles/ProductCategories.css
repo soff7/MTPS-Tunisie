@@ -1,0 +1,359 @@
+/* ProductCategories.css - Aligné avec l'image de référence */
+
+/* Variables de couleurs */
+:root {
+  --primary-color: #6bc9ff;      /* Bleu clair vif */
+  --secondary-color: #9a9a9a;    /* Gris clair pour texte secondaire */
+  --dark-bg: #1a1a1a;            /* Fond sombre */
+  --darker-bg: #1c1c1c;          /* Fond plus sombre pour les cartes */
+  --light-text: #ffffff;         /* Texte blanc pur */  
+  --hover-color: #47eaff;        /* Bleu turquoise pour survols */
+  --gradient-dark: #121212;      /* Noir plus profond pour gradient */
+  --accent-color: rgba(107, 201, 255, 0.12);  /* Bleu avec transparence */
+  --glow-color: rgba(71, 234, 255, 0.6);      /* Couleur pour les effets lumineux */
+  --card-bg: #222222;            /* Fond des cartes - plus sombre comme dans l'image */
+}
+
+/* Animations globales */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -100% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Section principale */
+.product-categories {
+  position: relative;
+  padding: 6rem 0;
+  background-color: var(--dark-bg);
+  overflow: hidden;
+  color: var(--light-text);
+  margin-top: 0;
+}
+
+
+/* Overlay avec effets de radial gradient - comme dans l'image */
+.categories-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 70% 30%, rgba(107, 201, 255, 0.08) 0%, transparent 70%),
+    linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, var(--section-bg) 100%);
+  z-index: 0;
+}
+
+/* Autres effets visuels */
+.categories-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 30%, var(--primary-color) 0.1px, transparent 1px),
+    radial-gradient(circle at 80% 20%, var(--hover-color) 0.1px, transparent 1px),
+    radial-gradient(circle at 40% 70%, var(--primary-color) 0.1px, transparent 1px),
+    radial-gradient(circle at 60% 50%, var(--hover-color) 0.1px, transparent 1px);
+  background-size: 180px 180px;
+  z-index: 0;
+  opacity: 0.2;
+  animation: float 15s infinite ease-in-out;
+}
+
+.categories-shape-1 {
+  position: absolute;
+  top: 10%;
+  right: -5%;
+  width: 25%;
+  height: 50%;
+  background: radial-gradient(ellipse, var(--primary-color) 0%, transparent 70%);
+  opacity: 0.06;
+  filter: blur(80px);
+  animation: pulse 8s infinite ease-in-out;
+  z-index: 0;
+}
+
+.categories-shape-2 {
+  position: absolute;
+  bottom: 0;
+  left: -10%;
+  width: 40%;
+  height: 60%;
+  background: radial-gradient(ellipse, var(--hover-color) 0%, transparent 70%);
+  opacity: 0.05;
+  filter: blur(100px);
+  animation: pulse 12s infinite ease-in-out;
+  animation-delay: 3s;
+  z-index: 0;
+}
+
+/* Conteneur principal */
+.categories-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* En-tête de section - style correspondant à l'image */
+.section-header {
+  text-align: center;
+  margin-bottom: 5rem;
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+/* Titre de section - style correspondant à l'image */
+.section-title {
+  font-size: 2.75rem;
+  line-height: 1.2;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--light-text);
+  text-align: center;
+}
+
+/* Mot "Catégories" en bleu */
+.highlight {
+  color: var(--primary-color);
+  position: relative;
+}
+
+/* Mot "Produits" - standard en blanc */
+.product-word {
+  color: var(--light-text);
+}
+
+/* Ligne bleue sous le titre - comme dans l'image */
+.title-underline {
+  width: 120px;
+  height: 4px;
+  background: var(--primary-color);
+  margin: 1.5rem auto 2rem;
+  border-radius: 2px;
+  opacity: 0.8;
+}
+
+/* Description de section */
+.section-description {
+  max-width: 800px;
+  margin: 0 auto;
+  color: var(--secondary-color);
+  font-size: 1.125rem;
+  line-height: 1.7;
+  text-align: center;
+  opacity: 0.9;
+}
+
+/* Grille de catégories - espacement comme dans l'image */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+/* Carte de catégorie - style correspondant à l'image */
+.category-card {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeInUp 0.8s ease forwards;
+  opacity: 0;
+}
+
+.category-card:nth-child(1) {
+  animation-delay: 0.3s;
+}
+
+.category-card:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.category-card:nth-child(3) {
+  animation-delay: 0.7s;
+}
+
+/* Icône dans un cercle avec glow - comme dans l'image */
+.category-icon-container {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(107, 201, 255, 0.1);
+  border-radius: 50%;
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 2rem;
+  position: relative;
+  box-shadow: 0 0 20px rgba(107, 201, 255, 0.3);
+}
+
+/* Effet de glow autour de l'icône */
+.category-icon-container::after {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(107, 201, 255, 0.4) 0%, transparent 70%);
+  z-index: -1;
+  opacity: 0.5;
+}
+
+.category-icon {
+  filter: drop-shadow(0 0 5px rgba(107, 201, 255, 0.5));
+}
+
+/* Titre de catégorie - style correspondant à l'image */
+.category-title {
+  font-size: 1.75rem;
+  color: var(--light-text);
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+/* Description de catégorie - style correspondant à l'image */
+.category-description {
+  color: var(--secondary-color);
+  line-height: 1.7;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  opacity: 0.8;
+  flex-grow: 1;
+}
+
+/* Bouton "Voir produits" - style correspondant à l'image */
+.category-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  background-color: transparent;
+  color: var(--primary-color);
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  border: 1px solid var(--primary-color);
+  transition: all 0.3s ease;
+  margin-top: auto;
+}
+
+.category-button:hover {
+  background-color: rgba(107, 201, 255, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(107, 201, 255, 0.2);
+}
+
+/* Séparateur de section */
+.section-divider {
+  height: 3px;
+  background-color: var(--gradient-dark);
+  width: 100%;
+  position: relative;
+  display: block;
+  overflow: hidden;
+  z-index: 5;
+}
+
+.section-divider::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+  opacity: 0.8;
+  animation: shimmer 3s infinite linear;
+  background-size: 200% 100%;
+}
+
+/* Media queries */
+@media (max-width: 1200px) {
+  .section-title {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .product-categories {
+    padding: 5rem 0;
+  }
+  
+  .categories-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  
+  .category-card {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .product-categories {
+    padding: 4rem 0;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  .section-description {
+    font-size: 1rem;
+  }
+  
+  .categories-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .categories-grid {
+    grid-template-columns: 1fr;
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .section-title {
+    font-size: 1.75rem;
+  }
+  
+  .category-card {
+    padding: 2rem 1.5rem;
+  }
+}

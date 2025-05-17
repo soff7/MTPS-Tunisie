@@ -1,0 +1,7 @@
+.products-container {
+  font-family: 'Roboto', sans-serif;
+  color: #e6e6e6;
+  max-width: 100%;
+  overflow-x: hidden;
+  background-color: #121212;
+}
