@@ -18,14 +18,12 @@ const SignUp = () => {
   
   const navigate = useNavigate();
 
-  // Gestionnaire de changement optimisé
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     if (error) setError('');
   }, [error]);
 
-  // Validation du formulaire
   const validateForm = () => {
     const { name, email, password, confirmPassword } = formData;
     
@@ -73,7 +71,6 @@ const SignUp = () => {
     return true;
   };
 
-  // Soumission du formulaire
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -90,12 +87,23 @@ const SignUp = () => {
         password 
       });
       
-      const { role } = response.data;
-      navigate(role === 'user' ? '/contact' : '/dashboard');
+      if (response.data.success) {
+        // Stocker le token et les infos utilisateur
+        localStorage.setItem('token', response.data.token);
+        if (response.data.refreshToken) {
+          localStorage.setItem('refreshToken', response.data.refreshToken);
+        }
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        localStorage.setItem('userRole', response.data.user.role);
+        
+        // Redirection vers la page contact (l'inscription crée toujours un rôle "user")
+        navigate('/contact');
+      } else {
+        throw new Error(response.data.message || 'Erreur lors de la création du compte');
+      }
     } catch (error) {
       console.error('Erreur d\'inscription:', error);
       
-      // Message d'erreur amélioré
       setError(
         error.response?.data?.message || 
         error.message || 
@@ -106,7 +114,6 @@ const SignUp = () => {
     }
   };
 
-  // Vérification si les mots de passe correspondent
   const passwordsMatch = formData.password && 
                          formData.confirmPassword && 
                          formData.password === formData.confirmPassword;
@@ -115,7 +122,6 @@ const SignUp = () => {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-         
           <h1>Créer un compte</h1>
         </div>
 

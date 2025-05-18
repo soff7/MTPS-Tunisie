@@ -1,5 +1,3 @@
-/* Modification des couleurs de la navbar pour une intégration parfaite */
-
 /* Variables de couleurs révisées pour fusion parfaite */
 :root {
   --primary-blue: #35c8fa;    /* Bleu clair du logo */
@@ -9,6 +7,8 @@
   --light-text: #f5f5f5;      /* Texte clair */
   --hover-blue: #22a6d3;      /* Bleu plus foncé pour les survols */
   --navbar-opacity: 0.7;      /* Opacité subtile */
+  --danger-red: #f44336;      /* Rouge pour bouton déconnexion */
+  --danger-red-hover: #d32f2f; /* Rouge plus foncé pour survol déconnexion */
 }
 
 /* Style de base - parfaite intégration avec le fond de page */
@@ -72,8 +72,6 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
-  
-  
 }
 
 /* Sur les pages d'auth, centrer le logo */
@@ -97,7 +95,6 @@
 .logo-img {
   height: 40px;
   margin-right: 5px;
-  
 }
 
 .logo-text {
@@ -198,6 +195,32 @@
   box-shadow: 0 4px 8px rgba(53, 200, 250, 0.3);
 }
 
+/* Style pour le bouton de déconnexion desktop */
+.logout-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--danger-red);
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: var(--danger-red-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.logout-icon {
+  font-size: 16px;
+}
+
 /* CTA Button */
 .cta-button {
   background-color: var(--primary-blue);
@@ -239,16 +262,103 @@
   margin-top: 20px;
 }
 
-/* Mobile auth buttons container */
+/* Container pour les boutons d'authentification en mobile */
 .mobile-auth-buttons {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-top: 2rem;
+  gap: 10px;
+  width: 100%;
+  margin-top: 20px;
   padding-top: 1.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Masquer les boutons d'authentification mobile en version desktop */
+@media (min-width: 993px) {
+  .mobile-auth-buttons {
+    display: none !important;
+  }
+}
+
+/* Bouton de connexion pour mobile */
+.mobile-login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--primary-blue);
+  color: white !important;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  width: 100%;
+  max-width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.mobile-login-btn:hover {
+  background-color: var(--hover-blue);
+}
+
+.login-icon {
+  font-size: 16px;
+}
+
+/* Bouton d'inscription pour mobile */
+.mobile-signup-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 2px solid var(--primary-blue);
+  border-radius: 4px;
+  background-color: transparent;
+  color: var(--primary-blue) !important;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  width: 100%;
+  max-width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.mobile-signup-btn:hover {
+  background-color: rgba(53, 200, 250, 0.1);
+}
+
+/* Bouton de déconnexion pour mobile */
+.mobile-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--danger-red);
+  color: white !important;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  max-width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.mobile-logout-btn:hover {
+  background-color: var(--danger-red-hover);
+}
+
+/* Style pour les boutons mobiles génériques */
 .mobile-btn {
   width: 100%;
   padding: 12px 20px;
@@ -291,6 +401,12 @@
 
 .mobile-btn.cta-button:hover {
   background-color: var(--hover-blue);
+}
+
+/* Masquer complètement les éléments inutilisés */
+.desktop-text-disconnect,
+.nav-decoration-only {
+  display: none !important;
 }
 
 /* Mobile menu toggle */
@@ -403,6 +519,21 @@
   
   .logo-sub {
     font-size: 0.65rem;
+  }
+  
+  /* Afficher les boutons d'authentification mobile en version mobile */
+  .mobile-auth-buttons {
+    display: flex;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-auth-buttons {
+    margin-bottom: 20px;
+  }
+  
+  .nav-links {
+    padding-bottom: 20px;
   }
 }
 

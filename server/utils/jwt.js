@@ -3,9 +3,9 @@ const keys = require('../config/keys');
 
 const generateAccessToken = (user) => {
   return jwt.sign(
-    { id: user.id, email: user.email },
+    { id: user.id, email: user.email, role: user.role },
     keys.secretOrKey,
-    { expiresIn: '15m' } // Access token valid for 15 minutes
+    { expiresIn: '1h' }
   );
 };
 
@@ -13,7 +13,7 @@ const generateRefreshToken = (user) => {
   return jwt.sign(
     { id: user.id, email: user.email },
     keys.secretOrKey,
-    { expiresIn: '7d' } // Refresh token valid for 7 days
+    { expiresIn: '7d' }
   );
 };
 

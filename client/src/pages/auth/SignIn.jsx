@@ -1,19 +1,14 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { authService } from '../../utils/api';
 import './Auth.css';
 
 const SignIn = () => {
-  // Utilisation de l'état groupé pour des données liées
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   
-  // État séparé pour les paramètres d'interface utilisateur
   const [showPassword, setShowPassword] = useState(false);
-  
-  // État séparé pour les états du formulaire
   const [formState, setFormState] = useState({
     error: '',
     isLoading: false
@@ -21,15 +16,13 @@ const SignIn = () => {
   
   const navigate = useNavigate();
 
-  // Gestionnaire de changement optimisé
-  const handleChange = useCallback((e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     setFormState(prev => ({ ...prev, error: '' }));
-  }, []);
+  };
 
-  // Validation du formulaire améliorée
-  const validateForm = useCallback(() => {
+  const validateForm = () => {
     const { email, password } = formData;
     
     if (!email) 
@@ -43,9 +36,8 @@ const SignIn = () => {
       return { valid: false, message: 'Le mot de passe est requis' };
     
     return { valid: true, message: '' };
-  }, [formData]);
+  };
 
-  // Gestionnaire de soumission amélioré avec structure try/catch/finally
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -58,35 +50,69 @@ const SignIn = () => {
     setFormState({ isLoading: true, error: '' });
 
     try {
-      const { email, password } = formData;
-      const response = await authService.login({ email, password });
-      const { role } = response.data;
+      console.log('Tentative de connexion avec:', formData.email);
       
-      // Navigation plus claire
-      navigate(role === 'user' ? '/contact' : '/dashboard');
+      // Utiliser fetch directement pour déboguer
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      
+      console.log('Statut de la réponse:', response.status);
+      
+      // Même si le statut n'est pas 200, essayons de lire le corps
+      const textResponse = await response.text();
+      console.log('Réponse texte brute:', textResponse);
+      
+      let data;
+      try {
+        data = JSON.parse(textResponse);
+        console.log('Réponse JSON analysée:', data);
+      } catch (e) {
+        console.error('Échec du parsing JSON:', e);
+        throw new Error('Réponse du serveur invalide');
+      }
+      
+      if (!response.ok) {
+        throw new Error(data.message || `Erreur ${response.status}`);
+      }
+      
+      if (data.success) {
+        // Stocker le token et les infos utilisateur
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('userRole', data.user.role);
+        
+        console.log('Authentification réussie, redirection...');
+        
+        // Redirection basée sur le rôle
+        if (data.user.role === 'admin' || data.user.role === 'superadmin') {
+          navigate('/admin');
+        } else {
+          navigate('/contact');
+        }
+      } else {
+        throw new Error(data.message || 'Erreur de connexion');
+      }
     } catch (error) {
-      console.error('Erreur de connexion:', error);
+      console.error('Erreur complète:', error);
       
-      // Message d'erreur amélioré avec fallbacks
-      const errorMessage = 
-        error.response?.data?.message || 
-        error.message || 
-        'Erreur de connexion. Veuillez vérifier vos identifiants.';
-      
-      setFormState(prev => ({ ...prev, error: errorMessage }));
+      setFormState(prev => ({ 
+        ...prev, 
+        error: error.message || 'Erreur de connexion au serveur' 
+      }));
     } finally {
       setFormState(prev => ({ ...prev, isLoading: false }));
     }
   };
 
-  // Validation du bouton de connexion
-  const isFormValid = formData.email && formData.password;
-
   return (
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          
           <h1>Connexion</h1>
         </div>
 
@@ -123,7 +149,6 @@ const SignIn = () => {
                 placeholder="••••••••"
                 disabled={formState.isLoading}
                 required
-                autoComplete="current-password"
               />
               <button
                 type="button"
@@ -140,7 +165,7 @@ const SignIn = () => {
           <button
             type="submit"
             className="auth-button"
-            disabled={formState.isLoading || !isFormValid}
+            disabled={formState.isLoading}
           >
             {formState.isLoading ? (
               <>
@@ -160,9 +185,6 @@ const SignIn = () => {
               Créer un compte
             </Link>
           </p>
-          <Link to="/forgot-password" className="auth-link">
-            Mot de passe oublié ?
-          </Link>
         </div>
       </div>
     </div>

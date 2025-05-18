@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { FaPowerOff, FaSignInAlt } from 'react-icons/fa';
 import '../styles/Navbar.css';
 
 const Navbar = () => {
@@ -55,32 +56,20 @@ const Navbar = () => {
     }
   };
   
-  // Fonction modifiée pour gérer la connexion/déconnexion
-  const handleAuthAction = (e) => {
+  // Fonction modifiée pour gérer la déconnexion
+  const handleLogout = (e) => {
     e.preventDefault();
     
-    if (isAuthenticated) {
-      // Déconnexion
-      localStorage.removeItem('token');
-      localStorage.removeItem('userRole');
-      localStorage.removeItem('user');
-      
-      // Rediriger vers la page d'accueil
-      navigate('/');
-    } else {
-      // Rediriger vers la page de connexion
-      navigate('/signin');
-    }
+    // Déconnexion
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    localStorage.removeItem('userRole');
+    
+    // Rediriger vers la page d'accueil
+    navigate('/');
   };
-  
-  // Fonction pour naviguer vers le dashboard
-  const handleDashboardClick = (e) => {
-    e.preventDefault();
-    if (isAdmin) {
-      window.location.href = 'http://localhost:8080/dashboard';
-    }
-  };
-  
+
   return (
     <header>
       <nav className={`navbar ${scrolled ? 'scrolled' : ''} ${isAuthPage ? 'auth-page' : ''}`}>
@@ -139,37 +128,36 @@ const Navbar = () => {
                   Contact
                 </Link>
                 
-                {/* Boutons conditionnels pour mobile */}
-                {isAuthenticated && (
-                  <>
-                    {isAdmin && (
-                      <button 
-                        className="nav-link mobile-nav-btn"
-                        onClick={handleDashboardClick}
-                      >
-                        Dashboard
-                      </button>
-                    )}
+                {/* Boutons d'authentification pour mobile UNIQUEMENT */}
+                <div className="mobile-auth-buttons">
+                  {isAuthenticated ? (
+                    // Bouton déconnexion pour mobile (visible uniquement quand connecté et en mobile)
                     <button 
-                      className="nav-link mobile-nav-btn"
-                      onClick={handleAuthAction}
+                      className="mobile-logout-btn"
+                      onClick={handleLogout}
                     >
-                      Déconnexion
+                      <FaPowerOff className="logout-icon" /> Déconnexion
                     </button>
-                  </>
-                )}
-                
-                {!isAuthenticated && (
-                  <>
-                    <Link 
-                      to="/signup" 
-                      className="cta-button mobile-cta"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Inscription
-                    </Link>
-                  </>
-                )}
+                  ) : (
+                    // Boutons connexion/inscription pour mobile (visibles uniquement quand non connecté)
+                    <>
+                      <Link 
+                        to="/signin" 
+                        className="mobile-login-btn"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <FaSignInAlt className="login-icon" /> Connexion
+                      </Link>
+                      <Link 
+                        to="/signup" 
+                        className="mobile-signup-btn"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Inscription
+                      </Link>
+                    </>
+                  )}
+                </div>
               </div>
               
               <button 
@@ -187,18 +175,19 @@ const Navbar = () => {
                 {isAuthenticated ? (
                   <>
                     {isAdmin && (
-                      <button 
+                      <Link 
+                        to="/admin" 
                         className="btn-dashboard"
-                        onClick={handleDashboardClick}
                       >
                         Dashboard
-                      </button>
+                      </Link>
                     )}
+                    {/* Seul bouton de déconnexion - rouge avec icône */}
                     <button 
-                      className="cta-button"
-                      onClick={handleAuthAction}
+                      className="logout-button"
+                      onClick={handleLogout}
                     >
-                      Déconnexion
+                      <FaPowerOff className="logout-icon" /> Déconnexion
                     </button>
                   </>
                 ) : (

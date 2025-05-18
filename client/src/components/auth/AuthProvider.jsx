@@ -1,5 +1,5 @@
-// mtps-luminous-control/src/components/auth/AuthProvider.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import api, { authService } from '../../utils/api';
 
 const AuthContext = createContext(undefined);
 
@@ -26,27 +26,17 @@ export const AuthProvider = ({ children }) => {
       
       if (token && userStr) {
         // Vérifier si le token est valide en faisant une requête à l'API
-        const response = await fetch('http://localhost:5000/api/auth/user', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
+        const response = await authService.getCurrentUser();
+        if (response.data) {
+          setUser(response.data);
         } else {
           // Token invalide, supprimer les données d'authentification
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          localStorage.removeItem('refreshToken');
+          logout();
         }
       }
     } catch (error) {
       console.error('Error checking auth status:', error);
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      localStorage.removeItem('refreshToken');
+      logout();
     } finally {
       setIsLoading(false);
     }
@@ -55,30 +45,18 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-      });
+      const response = await authService.login({ email, password });
       
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Erreur de connexion');
-      }
-      
-      if (data.success && data.token) {
-        localStorage.setItem('token', data.token);
-        if (data.refreshToken) {
-          localStorage.setItem('refreshToken', data.refreshToken);
-        }
-        localStorage.setItem('user', JSON.stringify(data.user));
-        setUser(data.user);
-        return data;
+      if (response.data.success) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('refreshToken', response.data.refreshToken);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        localStorage.setItem('userRole', response.data.user.role);
+        
+        setUser(response.data.user);
+        return response.data;
       } else {
-        throw new Error(data.message || 'Erreur de connexion');
+        throw new Error(response.data.message || 'Erreur de connexion');
       }
     } catch (error) {
       throw error;
@@ -90,30 +68,18 @@ export const AuthProvider = ({ children }) => {
   const signup = async (name, email, password) => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ name, email, password })
-      });
+      const response = await authService.register({ name, email, password });
       
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Erreur d\'inscription');
-      }
-      
-      if (data.success && data.token) {
-        localStorage.setItem('token', data.token);
-        if (data.refreshToken) {
-          localStorage.setItem('refreshToken', data.refreshToken);
-        }
-        localStorage.setItem('user', JSON.stringify(data.user));
-        setUser(data.user);
-        return data;
+      if (response.data.success) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('refreshToken', response.data.refreshToken);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        localStorage.setItem('userRole', response.data.user.role);
+        
+        setUser(response.data.user);
+        return response.data;
       } else {
-        throw new Error(data.message || 'Erreur d\'inscription');
+        throw new Error(response.data.message || 'Erreur d\'inscription');
       }
     } catch (error) {
       throw error;
@@ -126,8 +92,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
+    localStorage.removeItem('userRole');
     setUser(null);
-    window.location.href = '/signin';
   };
 
   const value = {

@@ -1,9 +1,6 @@
-// server/controllers/authController.js
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
-// Replace the above code with the following to use the new jwt utils
-
-const { generateAccessToken, generateRefreshToken } = require('../utils/jwt');
+const { generateAccessToken, generateRefreshToken, verifyToken } = require('../utils/jwt');
 
 // Inscription utilisateur
 exports.signup = async (req, res) => {

@@ -15,9 +15,10 @@ const PORT = process.env.PORT || 5000;
 
 // Configuration CORS
 app.use(cors({
-  origin: '*', // En développement, autorise toutes les origines
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: 'http://localhost:3000', // Spécifiez exactement l'origine de votre frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token'],
+  credentials: true // Important pour les cookies/authentification
 }));
 
 // Parse JSON request body
@@ -27,11 +28,6 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 // Middleware de débogage pour les requêtes
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
-  if (req.url.includes('/api/contacts') && req.method === 'POST') {
-    console.log('=== DÉBOGAGE FORMULAIRE CONTACT ===');
-    console.log('Corps de la requête:', JSON.stringify(req.body, null, 2));
-    console.log('================================');
-  }
   next();
 });
 
@@ -39,45 +35,17 @@ app.use((req, res, next) => {
 mongoose.connect(MONGO_URI)
   .then(() => {
     console.log('MongoDB connecté');
-    // Afficher le nom de la base de données
     console.log('Base de données connectée:', mongoose.connection.db.databaseName);
-    
-    // Liste des collections
-    mongoose.connection.db.listCollections().toArray((err, collections) => {
-      if (err) {
-        console.error('Erreur lors de la liste des collections:', err);
-      } else {
-        console.log('Collections disponibles:', collections.map(c => c.name));
-      }
-    });
   })
   .catch(err => {
     console.error('Erreur MongoDB:', err.message);
   });
-  const statsRoutes = require('./routes/stats');
 
-const authRoutes = require('./routes/auth');
-
-// Routes API sans la route auth pour le moment
+// Routes API
+app.use('/api/auth', require('./routes/auth'));
 app.use('/api/products', require('./routes/products'));
 app.use('/api/contacts', require('./routes/contact'));
-
-app.use('/api/stats', statsRoutes);
-
-// Register auth routes
-app.use('/api/auth', authRoutes);
-
-// Route simplifiée pour tester l'OAuth Google
-// app.get('/api/auth/google', (req, res) => {
-//   res.send('Route Google OAuth (en cours d\'implémentation). ID Client: 830113887425-qr543sq31mgihjpkkc9gjhkc01papker.apps.googleusercontent.com');
-// });
-
-// Route de test directe
-app.post('/test-contact', (req, res) => {
-  console.log('Route test-contact appelée');
-  console.log('Body reçu:', req.body);
-  res.status(200).json({ message: 'Test réussi', data: req.body });
-});
+app.use('/api/stats', require('./routes/stats'));
 
 // Route principale
 app.get('/', (req, res) => {
@@ -86,8 +54,7 @@ app.get('/', (req, res) => {
 
 // Gestion des erreurs 404
 app.use((req, res) => {
-  console.log(`Route non trouvée: ${req.method} ${req.url}`);
-  res.status(404).send(`Cannot ${req.method} ${req.url}`);
+  res.status(404).json({ success: false, message: 'Route non trouvée' });
 });
 
 // Démarrage du serveur

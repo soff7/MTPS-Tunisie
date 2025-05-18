@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
@@ -21,22 +20,11 @@ function App() {
     // Logique d'initialisation si nécessaire
   }, []);
 
-  // Vérifier si l'utilisateur est connecté (à l'intérieur d'un useEffect dans une application réelle)
+  // Vérifier si l'utilisateur est connecté
   const isAuthenticated = localStorage.getItem('token');
   
-  // Redirection vers le dashboard si connecté en tant qu'admin
+  // Récupérer le rôle de l'utilisateur
   const userRole = localStorage.getItem('userRole');
-  
-  // Redirection conditionnelle basée sur l'authentification et le rôle
-  const handleAuthRedirect = () => {
-    if (isAuthenticated) {
-      if (userRole === 'admin' || userRole === 'superadmin') {
-        return <Navigate to="/dashboard" replace />;
-      }
-      return <Navigate to="/contact" replace />;
-    }
-    return <SignIn />;
-  };
   
   return (
     <Router>
@@ -55,7 +43,7 @@ function App() {
             <Route path="/signin" element={
               isAuthenticated ? (
                 userRole === 'admin' || userRole === 'superadmin' 
-                  ? <Navigate to="/dashboard" replace /> 
+                  ? <Navigate to="/admin" replace /> 
                   : <Navigate to="/contact" replace />
               ) : <SignIn />
             } />
@@ -63,14 +51,14 @@ function App() {
             <Route path="/signup" element={
               isAuthenticated ? (
                 userRole === 'admin' || userRole === 'superadmin' 
-                  ? <Navigate to="/dashboard" replace /> 
+                  ? <Navigate to="/admin" replace /> 
                   : <Navigate to="/contact" replace />
               ) : <SignUp />
             } />
             
             <Route path="/login" element={<Navigate to="/signin" replace />} />
             
-            {/* Route de redirection vers le dashboard si connecté */}
+            {/* Route de redirection vers le dashboard si connecté en tant qu'admin */}
             <Route 
               path="/dashboard" 
               element={

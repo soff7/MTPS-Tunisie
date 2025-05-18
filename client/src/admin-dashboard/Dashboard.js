@@ -1,66 +1,73 @@
 import * as React from 'react';
-import { alpha } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography'; // Ajout de l'import manquant
+import Typography from '@mui/material/Typography';
 import AppNavbar from './components/AppNavbar';
 import Header from './components/Header';
 import MainGrid from './components/MainGrid';
 import SideMenu from './components/SideMenu';
-import AppTheme from '../shared-theme/AppTheme';
-import {
-  chartsCustomizations,
-  dataGridCustomizations,
-  datePickersCustomizations,
-  treeViewCustomizations,
-} from './theme/customizations';
 
-const xThemeComponents = {
-  ...chartsCustomizations,
-  ...dataGridCustomizations,
-  ...datePickersCustomizations,
-  ...treeViewCustomizations,
-};
+// Import des composants de date
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 export default function Dashboard(props) {
-  // Déplacer l'appel à useAuth à l'intérieur du composant fonctionnel
-  const { user, logout } = React.useState({ name: 'Admin' }); // Remplace useAuth() temporairement
+  // État pour stocker les informations de l'utilisateur
+  const [user, setUser] = React.useState(null);
+  
+  React.useEffect(() => {
+    // Récupérer les informations utilisateur du localStorage
+    try {
+      const userData = localStorage.getItem('user');
+      if (userData) {
+        setUser(JSON.parse(userData));
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération des données utilisateur:', error);
+    }
+  }, []);
+
+  // Fonction de déconnexion
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    localStorage.removeItem('userRole');
+    window.location.href = '/signin';
+  };
   
   return (
-    <AppTheme {...props} themeComponents={xThemeComponents}>
-      <CssBaseline enableColorScheme />
-      <Box sx={{ display: 'flex' }}>
-        <SideMenu />
-        <AppNavbar />
-        {/* Main content */}
-        <Box
-          component="main"
-          sx={(theme) => ({
-            flexGrow: 1,
-            backgroundColor: theme.vars
-              ? `rgba(${theme.vars.palette.background.defaultChannel} / 1)`
-              : alpha(theme.palette.background.default, 1),
-            overflow: 'auto',
-          })}
-        >
-          <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
-            Dashboard - {user?.name || 'Admin'}
-          </Typography>
-          <Stack
-            spacing={2}
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <div className="dashboard-container">
+        <CssBaseline />
+        <Box sx={{ display: 'flex' }}>
+          <SideMenu user={user} onLogout={handleLogout} />
+          <AppNavbar />
+          
+          <Box
+            component="main"
             sx={{
-              alignItems: 'center',
-              mx: 3,
-              pb: 5,
-              mt: { xs: 8, md: 0 },
+              flexGrow: 1,
+              backgroundColor: 'background.default',
+              overflow: 'auto',
+              p: 3
             }}
           >
-            <Header />
-            <MainGrid />
-          </Stack>
+            <Typography variant="h4" gutterBottom>
+              Dashboard
+            </Typography>
+            <Typography variant="subtitle1" gutterBottom>
+              Bienvenue, {user?.name || 'Admin'}
+            </Typography>
+            
+            <Stack spacing={3} mt={4}>
+              <Header />
+              <MainGrid />
+            </Stack>
+          </Box>
         </Box>
-      </Box>
-    </AppTheme>
+      </div>
+    </LocalizationProvider>
   );
 }

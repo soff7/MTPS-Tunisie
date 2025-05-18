@@ -6,6 +6,8 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import LogoutIcon from '@mui/icons-material/Logout';
 import SelectContent from './SelectContent';
 import MenuContent from './MenuContent';
 import CardAlert from './CardAlert';
@@ -24,7 +26,7 @@ const Drawer = styled(MuiDrawer)({
   },
 });
 
-export default function SideMenu() {
+export default function SideMenu({ user, onLogout }) {
   return (
     <Drawer
       variant="permanent"
@@ -68,19 +70,28 @@ export default function SideMenu() {
       >
         <Avatar
           sizes="small"
-          alt="Riley Carter"
+          alt={user?.name || "Admin"}
           src="/static/images/avatar/7.jpg"
           sx={{ width: 36, height: 36 }}
         />
         <Box sx={{ mr: 'auto' }}>
           <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: '16px' }}>
-            Riley Carter
+            {user?.name || "Admin"}
           </Typography>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            riley@email.com
+            {user?.email || "admin@mtps.tn"}
           </Typography>
         </Box>
-        <OptionsMenu />
+        <Button
+          variant="outlined"
+          color="error"
+          size="small"
+          startIcon={<LogoutIcon />}
+          onClick={onLogout}
+          sx={{ minWidth: 0, px: 1 }}
+        >
+          Sortir
+        </Button>
       </Stack>
     </Drawer>
   );

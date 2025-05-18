@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-// Importez vos modèles
 const User = require('../models/User');
 const Contact = require('../models/Contact');
 const Product = require('../models/Product');
@@ -13,7 +12,7 @@ router.get('/', auth, async (req, res) => {
   try {
     // Vérification des droits d'administrateur
     const user = await User.findById(req.user.id);
-    if (!user || (user.role !== 'admin' && user.role !== 'superadmin' && user.role !== 'manager')) {
+    if (!user || (user.role !== 'admin' && user.role !== 'superadmin')) {
       return res.status(403).json({ success: false, message: 'Accès refusé' });
     }
 
