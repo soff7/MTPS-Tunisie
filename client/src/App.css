@@ -1,0 +1,344 @@
+.App {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+}
+
+/* Section avec gradients pour les arrière-plans techniques */
+.gradient-section {
+  background: var(--gradient-primary);
+  color: white;
+  padding: 5rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.gradient-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 200%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: rotate(30deg);
+  z-index: 1;
+}
+
+.gradient-section .container {
+  position: relative;
+  z-index: 2;
+}
+
+.gradient-overlay {
+  position: relative;
+}
+
+.gradient-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.3));
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.gradient-overlay > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Arrière-plan technique pour sections industrielles */
+.tech-bg {
+  background-color: var(--color-background);
+  background-image:
+    radial-gradient(circle at 25px 25px, var(--color-primary-light) 2%, transparent 0%),
+    radial-gradient(circle at 75px 75px, var(--color-primary-light) 2%, transparent 0%);
+  background-size: 100px 100px;
+  position: relative;
+}
+
+/* Arrière-plan avec patterns pour les sections professionnelles */
+.pattern-bg {
+  background-color: var(--color-white);
+  background-image: 
+    linear-gradient(var(--color-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position: center center;
+  opacity: 0.5;
+}
+
+/* Sections courbes */
+.wave-section {
+  position: relative;
+  padding-bottom: 6rem;
+}
+
+.wave-section::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 150px;
+  background: url('/images/wave.svg') bottom center/cover no-repeat;
+}
+
+/* Logo animé */
+.App-logo {
+  height: 60px;
+  transition: var(--transition);
+}
+
+.App-logo:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 5px rgba(41, 185, 232, 0.5));
+}
+
+/* Cartes spécialisées */
+.feature-card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: var(--transition);
+  height: 100%;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.feature-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: var(--color-primary-light);
+  border-radius: 50%;
+  margin-bottom: 1.5rem;
+  color: var(--color-primary-dark);
+  font-size: 1.5rem;
+}
+
+.feature-card:hover .feature-icon {
+  background: var(--color-primary);
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Sections avec overlay */
+.image-section {
+  position: relative;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: white;
+  padding: 6rem 0;
+}
+
+.image-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3));
+}
+
+.image-section .container {
+  position: relative;
+  z-index: 2;
+}
+
+/* Étapes numérotées */
+.step-container {
+  display: flex;
+  gap: 3rem;
+  margin: 4rem 0;
+  position: relative;
+}
+
+.step-container::before {
+  content: '';
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  width: calc(100% - 48px);
+  height: 2px;
+  background: var(--color-primary-light);
+  z-index: 0;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background: var(--gradient-primary);
+  color: white;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-primary);
+}
+
+.step-title {
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  margin-bottom: 0.5rem;
+}
+
+/* Animation de chargement */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(41, 185, 232, 0.2);
+  border-radius: 50%;
+  border-top-color: var(--color-primary);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Utilitaires */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.text-primary { color: var(--color-primary); }
+.text-secondary { color: var(--color-secondary); }
+.text-accent { color: var(--color-orange); }
+.text-muted { color: var(--color-text-light); }
+
+.bg-primary { background-color: var(--color-primary); }
+.bg-secondary { background-color: var(--color-secondary); }
+.bg-accent { background-color: var(--color-orange); }
+.bg-light { background-color: var(--color-background); }
+.bg-white { background-color: var(--color-white); }
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+.mt-5 { margin-top: 3rem; }
+
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+.mb-5 { margin-bottom: 3rem; }
+
+.mx-auto { margin-left: auto; margin-right: auto; }
+
+.p-1 { padding: 0.5rem; }
+.p-2 { padding: 1rem; }
+.p-3 { padding: 1.5rem; }
+.p-4 { padding: 2rem; }
+.p-5 { padding: 3rem; }
+
+.py-1 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-2 { padding-top: 1rem; padding-bottom: 1rem; }
+.py-3 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+.py-4 { padding-top: 2rem; padding-bottom: 2rem; }
+.py-5 { padding-top: 3rem; padding-bottom: 3rem; }
+
+.px-1 { padding-left: 0.5rem; padding-right: 0.5rem; }
+.px-2 { padding-left: 1rem; padding-right: 1rem; }
+.px-3 { padding-left: 1.5rem; padding-right: 1.5rem; }
+.px-4 { padding-left: 2rem; padding-right: 2rem; }
+.px-5 { padding-left: 3rem; padding-right: 3rem; }
+
+.d-flex { display: flex; }
+.flex-column { flex-direction: column; }
+.flex-row { flex-direction: row; }
+.align-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.flex-wrap { flex-wrap: wrap; }
+.gap-1 { gap: 0.5rem; }
+.gap-2 { gap: 1rem; }
+.gap-3 { gap: 1.5rem; }
+.gap-4 { gap: 2rem; }
+
+.w-100 { width: 100%; }
+.h-100 { height: 100%; }
+
+.rounded { border-radius: var(--radius-md); }
+.shadow { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+
+/* Responsive */
+@media (max-width: 992px) {
+  .step-container {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .step-container::before {
+    display: none;
+  }
+  
+  .image-section {
+    background-attachment: scroll;
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 4rem 0;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  .feature-icon {
+    width: 56px;
+    height: 56px;
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .gradient-section,
+  .image-section {
+    padding: 3rem 0;
+  }
+  
+  .wave-section::after {
+    height: 100px;
+  }
+}

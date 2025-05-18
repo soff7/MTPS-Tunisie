@@ -1,0 +1,432 @@
+/* Modification des couleurs de la navbar pour une intégration parfaite */
+
+/* Variables de couleurs révisées pour fusion parfaite */
+:root {
+  --primary-blue: #35c8fa;    /* Bleu clair du logo */
+  --secondary-gray: #808080;  /* Gris du logo */
+  --dark-bg: #0a0a0a;         /* Fond très sombre pour parfaite transition */
+  --page-bg: #0a0a0a;         /* Couleur exacte du fond de page */
+  --light-text: #f5f5f5;      /* Texte clair */
+  --hover-blue: #22a6d3;      /* Bleu plus foncé pour les survols */
+  --navbar-opacity: 0.7;      /* Opacité subtile */
+}
+
+/* Style de base - parfaite intégration avec le fond de page */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  /* Fond qui se fond parfaitement avec la page */
+  background: rgba(10, 10, 10, var(--navbar-opacity));
+  /* Ombre très subtile pour séparation minimaliste */
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+  /* Fine bordure inférieure pour délimitation subtile */
+  border-bottom: 1px solid rgba(20, 20, 20, 0.5);
+  transition: all 0.3s ease;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  /* Léger flou pour effet moderne */
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.navbar.scrolled {
+  padding: 10px 0;
+  background-color: rgba(10, 10, 10, 0.85); 
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Styles spéciaux pour les pages d'authentification */
+.navbar.auth-page {
+  background: rgba(10, 10, 10, var(--navbar-opacity));
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(20, 20, 20, 0.5);
+  transition: all 0.3s ease;
+  position: fixed;
+  top: 0;
+}
+
+.navbar.auth-page .nav-links {
+  display: none;
+}
+
+.navbar.auth-page .logo-text {
+  display: none;
+}
+
+.navbar.auth-page .desktop-buttons {
+  display: none;
+}
+
+.navbar.auth-page .mobile-menu-toggle {
+  display: none;
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  
+  
+}
+
+/* Sur les pages d'auth, centrer le logo */
+.navbar.auth-page .navbar-container {
+  justify-content: center;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+  bottom: -10px;
+}
+
+.logo:hover {
+  transform: scale(1.02);
+}
+
+.logo-img {
+  height: 40px;
+  margin-right: 5px;
+  
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-main {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+}
+
+.logo-sub {
+  font-size: 0.75rem;
+  color: var(--secondary-gray);
+}
+
+/* Navigation links */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: var(--light-text);
+  font-weight: 500;
+  padding: 5px 0;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: var(--primary-blue);
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--primary-blue);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after, 
+.nav-link.active::after {
+  width: 100%;
+}
+
+.nav-link.active {
+  color: var(--primary-blue);
+  font-weight: 600;
+}
+
+/* Boutons d'authentification */
+.desktop-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-signin {
+  color: var(--primary-blue);
+  padding: 10px 16px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+  border: 1px solid var(--primary-blue);
+  background: transparent;
+}
+
+.btn-signin:hover {
+  background-color: rgba(53, 200, 250, 0.1);
+  transform: translateY(-2px);
+}
+
+.btn-dashboard {
+  background-color: rgba(53, 200, 250, 0.1);
+  color: var(--primary-blue);
+  padding: 10px 16px;
+  border-radius: 5px;
+  border: 1px solid var(--primary-blue);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-dashboard:hover {
+  background-color: var(--primary-blue);
+  color: var(--dark-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(53, 200, 250, 0.3);
+}
+
+/* CTA Button */
+.cta-button {
+  background-color: var(--primary-blue);
+  color: var(--dark-bg);
+  padding: 10px 16px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+}
+
+.cta-button:hover {
+  background-color: var(--hover-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(53, 200, 250, 0.3);
+}
+
+/* Mobile buttons */
+.mobile-nav-btn {
+  background: none;
+  border: none;
+  color: var(--light-text);
+  font-weight: 500;
+  padding: 5px 0;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.mobile-nav-btn:hover {
+  color: var(--primary-blue);
+}
+
+/* Mobile CTA */
+.mobile-cta {
+  display: none;
+  margin-top: 20px;
+}
+
+/* Mobile auth buttons container */
+.mobile-auth-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-btn {
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.mobile-btn.btn-signin {
+  background: transparent;
+  color: var(--primary-blue);
+  border: 1px solid var(--primary-blue);
+  text-decoration: none;
+}
+
+.mobile-btn.btn-signin:hover {
+  background-color: rgba(53, 200, 250, 0.1);
+}
+
+.mobile-btn.btn-dashboard {
+  background-color: rgba(53, 200, 250, 0.1);
+  color: var(--primary-blue);
+  border: 1px solid var(--primary-blue);
+  cursor: pointer;
+}
+
+.mobile-btn.btn-dashboard:hover {
+  background-color: var(--primary-blue);
+  color: var(--dark-bg);
+}
+
+.mobile-btn.cta-button {
+  background-color: var(--primary-blue);
+  color: var(--dark-bg);
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.mobile-btn.cta-button:hover {
+  background-color: var(--hover-blue);
+}
+
+/* Mobile menu toggle */
+.mobile-menu-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  z-index: 1001;
+}
+
+.menu-icon {
+  position: relative;
+  display: block;
+  width: 25px;
+  height: 2px;
+  background-color: var(--primary-blue);
+  transition: all 0.3s ease;
+}
+
+.menu-icon::before,
+.menu-icon::after {
+  content: '';
+  position: absolute;
+  width: 25px;
+  height: 2px;
+  background-color: var(--primary-blue);
+  transition: all 0.3s ease;
+}
+
+.menu-icon::before {
+  transform: translateY(-8px);
+}
+
+.menu-icon::after {
+  transform: translateY(8px);
+}
+
+/* Animation du menu hamburger */
+.menu-icon.open {
+  background-color: transparent;
+}
+
+.menu-icon.open::before {
+  transform: rotate(45deg);
+}
+
+.menu-icon.open::after {
+  transform: rotate(-45deg);
+}
+
+/* Overlay pour mobile menu */
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+  display: none;
+}
+
+/* Media queries pour responsive design */
+@media (max-width: 992px) {
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    height: 100vh;
+    width: 250px;
+    flex-direction: column;
+    background-color: var(--dark-bg);
+    padding: 80px 20px 30px;
+    transition: right 0.3s ease;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+    justify-content: flex-start;
+    gap: 30px;
+    z-index: 1000;
+  }
+  
+  .nav-links.active {
+    right: 0;
+  }
+  
+  .mobile-menu-toggle {
+    display: block;
+  }
+  
+  .desktop-buttons {
+    display: none;
+  }
+  
+  .mobile-cta {
+    display: block;
+  }
+  
+  .menu-overlay {
+    display: block;
+  }
+  
+  .logo-img {
+    height: 35px;
+  }
+  
+  .logo-main {
+    font-size: 1.3rem;
+  }
+  
+  .logo-sub {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-container {
+    padding: 0 15px;
+  }
+  
+  .logo-text {
+    display: none;
+  }
+  
+  .logo-img {
+    height: 30px;
+    margin-right: 0;
+  }
+  
+  .nav-links {
+    width: 220px;
+  }
+  
+  /* Styles mobiles pour les pages d'auth */
+  .navbar.auth-page .logo-img {
+    height: 30px;
+    margin-right: 0;
+  }
+}

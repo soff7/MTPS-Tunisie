@@ -1,0 +1,40 @@
+/* Import des polices */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700&family=Open+Sans:wght@400;600&display=swap');
+
+/* Reset de base */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--dark-color);
+  line-height: 1.7;
+}
+
+/* Styles pour les sélections de texte */
+::selection {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Scrollbar personnalisée */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--light-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-color);
+}

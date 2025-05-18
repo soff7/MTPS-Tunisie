@@ -1,0 +1,382 @@
+/* Values.css - Mise à jour avec le background de Services */
+
+:root {
+  --primary-blue: #35c8fa;
+  --secondary-gray: #808080;
+  --dark-bg: #212121;
+  --light-text: #f5f5f5;
+  --hover-blue: #22a6d3;
+  --gradient-dark: #151515;
+  --accent-color: rgba(53, 200, 250, 0.1);
+  --card-bg: #2a2a2a;
+  --section-bg: #191919;
+}
+
+.values-section {
+  padding: 6rem 0;
+  background-color: var(--section-bg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Application du même style de fond que Services */
+.values-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 70% 30%, rgba(53, 200, 250, 0.08) 0%, transparent 70%),
+    linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, var(--section-bg) 100%);
+  z-index: 0;
+}
+
+/* Hero Banner - Modification du style pour correspondre à Services */
+.values-hero {
+  padding: 8rem 0 4rem;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  /* Suppression du gradient de fond car maintenant il est dans values-section::before */
+}
+
+/* Suppression du pseudo-élément de values-hero car redondant avec values-section::before */
+.values-hero::before {
+  content: none;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.values-intro {
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.values-badge {
+  display: inline-block;
+  background-color: var(--accent-color);
+  color: var(--primary-blue);
+  padding: 0.5rem 1.25rem;
+  border-radius: 2rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border: 1px solid var(--primary-blue);
+  margin-bottom: 1.5rem;
+}
+
+.values-title {
+  font-size: 2.5rem;
+  color: var(--light-text);
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.highlighted {
+  color: var(--primary-blue);
+  position: relative;
+}
+
+.highlighted::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: var(--hover-blue);
+  opacity: 0.3;
+  z-index: -1;
+}
+
+.values-subtitle {
+  color: var(--secondary-gray);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Values Grid */
+.values-content {
+  padding: 6rem 0;
+  background-color: transparent; /* Changé de var(--section-bg) à transparent */
+}
+
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2.5rem;
+}
+
+.value-card {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.value-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+  border-color: rgba(53, 200, 250, 0.2);
+}
+
+.value-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, var(--primary-blue), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.value-card:hover::before {
+  opacity: 1;
+}
+
+.value-icon-container {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  background-color: var(--accent-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  color: var(--primary-blue);
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.value-card:hover .value-icon-container {
+  background-color: var(--primary-blue);
+  transform: rotate(15deg);
+}
+
+.value-stat {
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+  background: var(--section-bg);
+  padding: 0.5rem 0.8rem;
+  border-radius: 50px;
+  border: 1px solid var(--primary-blue);
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-number {
+  color: var(--primary-blue);
+  font-weight: 700;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.stat-label {
+  color: var(--secondary-gray);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 0.2rem;
+}
+
+.value-icon {
+  font-size: 28px;
+  color: var(--primary-blue);
+  transition: all 0.3s ease;
+}
+
+.value-card:hover .value-icon {
+  color: var(--dark-bg);
+}
+
+.value-card h3 {
+  font-size: 1.5rem;
+  color: var(--light-text);
+  margin-bottom: 1rem;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.value-card:hover h3 {
+  color: var(--primary-blue);
+}
+
+.value-card p {
+  color: var(--secondary-gray);
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+/* CTA Section */
+.values-cta {
+  padding: 4rem 0;
+  text-align: center;
+  background: transparent; /* Changé de linear-gradient à transparent */
+}
+
+.values-cta h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: var(--light-text);
+}
+
+.cta-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  background-color: var(--primary-blue);
+  color: var(--dark-bg);
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: var(--hover-blue);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.arrow-icon {
+  font-size: 0.875rem;
+  transition: transform 0.3s ease;
+}
+
+.cta-button:hover .arrow-icon {
+  transform: translateX(5px);
+}
+
+/* Animations pour les icônes React */
+.fa-handshake,
+.fa-lightbulb,
+.fa-leaf,
+.fa-medal,
+.fa-chart-line {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  line-height: 60px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.value-card {
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+}
+
+.value-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.value-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.value-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.value-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.value-card:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+/* Style pour React-Router Link */
+a.cta-button {
+  color: var(--dark-bg);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .values-hero {
+    padding: 6rem 0 3rem;
+  }
+  
+  .values-title {
+    font-size: 2.25rem;
+  }
+  
+  .values-grid {
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .values-hero {
+    padding: 5rem 0 2.5rem;
+  }
+  
+  .values-title {
+    font-size: 2rem;
+  }
+  
+  .values-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .value-card {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .values-badge {
+    padding: 0.4rem 1rem;
+    font-size: 0.75rem;
+  }
+  
+  .values-title {
+    font-size: 1.75rem;
+  }
+  
+  .values-subtitle {
+    font-size: 1rem;
+  }
+  
+  .values-cta h2 {
+    font-size: 1.5rem;
+  }
+}

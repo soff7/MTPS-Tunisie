@@ -1,0 +1,579 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Variables CSS avec couleurs et thèmes modernes */
+:root {
+  /* Palette de couleurs principale */
+  --primary-color: #35c8fa;
+  --primary-dark: #22a6d3;
+  --primary-light: rgba(53, 200, 250, 0.1);
+  --primary-lighter: rgba(53, 200, 250, 0.05);
+  
+  /* Palette sombre */
+  --dark-bg: #121212;
+  --darker-bg: #0a0a0a;
+  --card-bg: #1e1e1e;
+  
+  /* Text et couleurs fonctionnelles */
+  --text-light: #ffffff;
+  --text-secondary: #a0a0a0;
+  --error-color: #ff4444;
+  --success-color: #4ade80;
+  --warning-color: #fbbf24;
+  
+  /* Bordures et focus */
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-focus: rgba(53, 200, 250, 0.3);
+  --shadow-color: rgba(0, 0, 0, 0.25);
+  
+  /* Paramètres système */
+  --transition-fast: 0.15s ease;
+  --transition-medium: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  --border-radius-sm: 6px;
+  --border-radius-md: 10px;
+  --border-radius-lg: 16px;
+  
+  /* Espacements standardisés */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-xxl: 2.5rem;
+}
+
+/* Reset & Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Conteneur principal */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(53, 200, 250, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 85% 85%, rgba(53, 200, 250, 0.06) 0%, transparent 50%);
+  padding: var(--space-xl);
+  padding-top: 105px; /* Ajout d'espace supplémentaire en haut */
+  color: var(--text-light);
+  position: relative;
+  z-index: 1; /* Assurer que le conteneur est au-dessus d'autres éléments potentiels */
+}
+
+/* Carte d'authentification */
+.auth-card {
+  background: var(--card-bg);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 
+    0 20px 40px var(--shadow-color),
+    0 0 0 1px var(--border-color);
+  padding: var(--space-xxl);
+  width: 100%;
+  max-width: 440px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.5s ease;
+}
+
+.auth-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+  opacity: 0.8;
+}
+
+/* Section d'en-tête */
+.auth-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.logo {
+  margin-bottom: var(--space-lg);
+  display: flex;
+  justify-content: center;
+}
+
+.logo img {
+  height: 50px;
+  width: auto;
+  filter: drop-shadow(0 2px 6px rgba(53, 200, 250, 0.2));
+  transition: transform var(--transition-medium);
+}
+
+.logo img:hover {
+  transform: scale(1.05);
+}
+
+.auth-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-light);
+  margin-bottom: var(--space-sm);
+  letter-spacing: -0.02em;
+}
+
+.auth-header p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+/* Formulaire */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-light);
+  display: block;
+  margin-bottom: 1px;
+}
+
+.form-group input {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: 0.9rem 1rem;
+  font-size: 1rem;
+  color: var(--text-light);
+  transition: all var(--transition-medium);
+  width: 100%;
+  height: 54px;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--border-focus);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.form-group input:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.form-group input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.form-group input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Champ de mot de passe */
+.password-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input input {
+  padding-right: 3rem;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0.8rem;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.6rem;
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-medium);
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle:hover:not(:disabled) {
+  color: var(--primary-color);
+  background: var(--primary-lighter);
+}
+
+.password-toggle:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.password-toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Informations sur le mot de passe */
+.password-info {
+  margin-top: var(--space-sm);
+  padding-left: var(--space-sm);
+}
+
+.password-info small {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.password-info .valid {
+  color: var(--success-color);
+  font-weight: 500;
+}
+
+/* Correspondance de mot de passe */
+.password-match {
+  margin-top: var(--space-sm);
+  padding-left: var(--space-sm);
+  transition: color var(--transition-fast);
+}
+
+.password-match.valid {
+  color: var(--success-color);
+}
+
+.password-match.invalid {
+  color: var(--error-color);
+}
+
+.password-match small {
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* Bouton d'authentification */
+.auth-button {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  border: none;
+  border-radius: var(--border-radius-md);
+  padding: 0.9rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all var(--transition-medium);
+  position: relative;
+  overflow: hidden;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+}
+
+.auth-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+}
+
+.auth-button:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.auth-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 20px rgba(34, 166, 211, 0.3),
+    0 0 0 1px rgba(53, 200, 250, 0.5);
+}
+
+.auth-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(34, 166, 211, 0.2);
+}
+
+.auth-button:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.auth-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Spinner pour les états de chargement */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: var(--text-light);
+  animation: spin 0.8s linear infinite;
+  margin-right: var(--space-sm);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Message d'erreur */
+.error-message {
+  background: rgba(255, 68, 68, 0.1);
+  border: 1px solid var(--error-color);
+  border-radius: var(--border-radius-md);
+  padding: 0.9rem 1rem;
+  color: var(--error-color);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  animation: shakeError 0.4s ease-in-out;
+}
+
+.error-message::before {
+  content: '⚠️';
+  margin-right: var(--space-sm);
+  font-size: 1rem;
+}
+
+@keyframes shakeError {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Pied de page */
+.auth-footer {
+  text-align: center;
+  margin-top: var(--space-xl);
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--border-color);
+}
+
+.auth-footer p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: var(--space-md);
+}
+
+.auth-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all var(--transition-medium);
+  position: relative;
+  display: inline-block;
+}
+
+.auth-link::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background-color: var(--primary-color);
+  transform: scaleX(0);
+  transform-origin: bottom right;
+  transition: transform 0.3s ease;
+}
+
+.auth-link:hover {
+  color: var(--primary-dark);
+}
+
+.auth-link:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+.auth-link:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Design responsive */
+@media (max-width: 480px) {
+  .auth-container {
+    padding: var(--space-md);
+    padding-top: calc(var(--space-md) + 60px); /* Ajustement pour les mobiles */
+    min-height: calc(100vh - 60px); /* Tenir compte de la hauteur de la navbar */
+  }
+
+  .auth-card {
+    padding: var(--space-xl);
+    margin-top: 20px; /* Espace supplémentaire en haut sur mobile */
+  }
+
+  .auth-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .logo img {
+    height: 40px;
+  }
+  
+  .form-group input,
+  .auth-button {
+    height: 50px;
+  }
+}
+
+/* Support pour les périphériques à préférence de mouvements réduits */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .auth-card::before,
+  .auth-button::before {
+    display: none;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Support du mode clair (pour le futur) */
+@media (prefers-color-scheme: light) {
+  :root {
+    --dark-bg: #f5f7fa;
+    --darker-bg: #e9ecef;
+    --card-bg: #ffffff;
+    --text-light: #2d3748;
+    --text-secondary: #718096;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --shadow-color: rgba(0, 0, 0, 0.08);
+  }
+  
+  .auth-container {
+    background-image: 
+      radial-gradient(circle at 15% 15%, rgba(53, 200, 250, 0.04) 0%, transparent 50%),
+      radial-gradient(circle at 85% 85%, rgba(53, 200, 250, 0.03) 0%, transparent 50%);
+  }
+  
+  .auth-card {
+    box-shadow: 
+      0 10px 25px rgba(0, 0, 0, 0.05),
+      0 5px 10px rgba(0, 0, 0, 0.03);
+  }
+  
+  .form-group input {
+    background: rgba(0, 0, 0, 0.02);
+  }
+  
+  .form-group input:focus {
+    background: rgba(0, 0, 0, 0.01);
+  }
+  
+  .form-group input:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.03);
+  }
+  
+  .password-toggle:hover:not(:disabled) {
+    background: rgba(53, 200, 250, 0.1);
+  }
+}
+
+/* Classe d'utilitaire pour la visibilité conditionnelle */
+.hidden {
+  display: none !important;
+}
+
+/* Styles d'accessibilité */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Focus visible amélioré pour tous les éléments interactifs */
+:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Amélioration pour les lecteurs d'écran */
+[aria-hidden="true"] {
+  display: none !important;
+}
+
+/* Styles pour les éléments désactivés */
+*:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Animation de transition pour les éléments qui apparaissent/disparaissent */
+.fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.3s ease forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}

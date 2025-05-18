@@ -1,0 +1,37 @@
+.recent-contacts h2 {
+    margin-bottom: 20px;
+    color: var(--primary-color);
+  }
+  
+  .contacts-table {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    overflow-x: auto;
+  }
+  
+  .contacts-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .contacts-table th, 
+  .contacts-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .contacts-table th {
+    background-color: #f8f9fa;
+    color: var(--primary-color);
+  }
+  
+  .contacts-table tr:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .contacts-table .btn {
+    margin-right: 5px;
+  }
