@@ -1,6 +1,7 @@
+// client/src/components/Navbar.jsx - Correction des erreurs de React Hooks
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FaPowerOff, FaSignInAlt } from 'react-icons/fa';
+import { FaPowerOff, FaSignInAlt, FaTachometerAlt } from 'react-icons/fa';
 import '../styles/Navbar.css';
 
 const Navbar = () => {
@@ -12,10 +13,12 @@ const Navbar = () => {
   // Vérifier si l'utilisateur est connecté et a des droits d'administrateur
   const isAuthenticated = localStorage.getItem('token');
   const userRole = localStorage.getItem('userRole');
-  const isAdmin = userRole && ['admin', 'superadmin', 'manager'].includes(userRole);
+  const isAdmin = userRole && ['admin', 'superadmin'].includes(userRole);
   
   // Vérifier si on est sur une page d'authentification
-  const isAuthPage = location.pathname === '/signin' || location.pathname === '/signup' || location.pathname === '/auth-callback';
+  const isAuthPage = location.pathname === '/signin' || location.pathname === '/signup';
+  // Vérifier si on est sur une page d'administration
+  const isAdminPage = location.pathname.startsWith('/admin');
   
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -32,6 +35,11 @@ const Navbar = () => {
     setMobileMenuOpen(false);
     document.body.style.overflow = 'auto';
   }, [location.pathname]);
+  
+  // Si nous sommes sur une page admin, ne pas afficher la navbar standard
+  if (isAdminPage) {
+    return null;
+  }
   
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -80,7 +88,7 @@ const Navbar = () => {
             aria-label="MTPS - Accueil"
             onClick={handleLogoClick}
           >
-            <img src="/assets/logo.png" alt="" className="logo-img" />
+            <img src="/assets/logo.png" alt="MTPS Logo" className="logo-img" />
             {!isAuthPage && (
               <div className="logo-text">
                 <span className="logo-sub">Manufacture de Tubes Plastiques et Services</span>
@@ -131,13 +139,28 @@ const Navbar = () => {
                 {/* Boutons d'authentification pour mobile UNIQUEMENT */}
                 <div className="mobile-auth-buttons">
                   {isAuthenticated ? (
-                    // Bouton déconnexion pour mobile (visible uniquement quand connecté et en mobile)
-                    <button 
-                      className="mobile-logout-btn"
-                      onClick={handleLogout}
-                    >
-                      <FaPowerOff className="logout-icon" /> Déconnexion
-                    </button>
+                    <>
+                      {/* Bouton dashboard pour mobile (visible uniquement si admin) */}
+                      {isAdmin && (
+                        <Link 
+                          to="/admin" 
+                          className="mobile-dashboard-btn"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <FaTachometerAlt className="dashboard-icon" /> Dashboard
+                        </Link>
+                      )}
+                      {/* Bouton déconnexion pour mobile */}
+                      <button 
+                        className="mobile-logout-btn"
+                        onClick={(e) => {
+                          handleLogout(e);
+                          setMobileMenuOpen(false);
+                        }}
+                      >
+                        <FaPowerOff className="logout-icon" /> Déconnexion
+                      </button>
+                    </>
                   ) : (
                     // Boutons connexion/inscription pour mobile (visibles uniquement quand non connecté)
                     <>
@@ -179,7 +202,7 @@ const Navbar = () => {
                         to="/admin" 
                         className="btn-dashboard"
                       >
-                        Dashboard
+                        <FaTachometerAlt className="dashboard-icon" /> Dashboard
                       </Link>
                     )}
                     {/* Seul bouton de déconnexion - rouge avec icône */}

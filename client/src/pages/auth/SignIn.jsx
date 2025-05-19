@@ -1,5 +1,6 @@
+// client/src/pages/auth/SignIn.jsx - Mise à jour
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './Auth.css';
 
 const SignIn = () => {
@@ -15,6 +16,10 @@ const SignIn = () => {
   });
   
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Récupérer l'URL de redirection si elle existe
+  const from = location.state?.from || '/';
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -90,9 +95,11 @@ const SignIn = () => {
         
         // Redirection basée sur le rôle
         if (data.user.role === 'admin' || data.user.role === 'superadmin') {
+          // Rediriger vers le dashboard si c'est un admin
           navigate('/admin');
         } else {
-          navigate('/contact');
+          // Rediriger vers la page précédente ou la page d'accueil pour les utilisateurs normaux
+          navigate(from !== '/admin' ? from : '/contact');
         }
       } else {
         throw new Error(data.message || 'Erreur de connexion');
@@ -113,6 +120,9 @@ const SignIn = () => {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
+          <div className="logo">
+            <img src="/assets/logo.png" alt="MTPS Logo" />
+          </div>
           <h1>Connexion</h1>
         </div>
 

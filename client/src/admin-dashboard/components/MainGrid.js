@@ -1,3 +1,4 @@
+// client/src/admin-dashboard/components/MainGrid.js - Mise à jour pour gérer les stats
 import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -19,21 +20,21 @@ export default function MainGrid({ stats, loading }) {
   const data = [
     {
       title: 'Utilisateurs',
-      value: stats?.counts?.users || '...', 
+      value: stats?.counts?.users || '0', 
       interval: 'Total',
       trend: 'up',
       data: Array(30).fill(0).map(() => Math.floor(Math.random() * 1000)),
     },
     {
       title: 'Messages',
-      value: stats?.counts?.newMessages || '...', 
+      value: stats?.counts?.newMessages || '0', 
       interval: 'Non lus',
       trend: stats?.counts?.newMessages > 10 ? 'up' : 'neutral',
       data: Array(30).fill(0).map(() => Math.floor(Math.random() * 1000)),
     },
     {
       title: 'Produits',
-      value: stats?.counts?.products || '...', 
+      value: stats?.counts?.products || '0', 
       interval: 'Total',
       trend: 'neutral',
       data: Array(30).fill(0).map(() => Math.floor(Math.random() * 1000)),

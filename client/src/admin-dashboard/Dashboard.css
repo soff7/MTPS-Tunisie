@@ -1,0 +1,166 @@
+/* client/src/admin-dashboard/Dashboard.css */
+
+.dashboard-container {
+  min-height: 100vh;
+  background-color: #f5f7fa;
+}
+
+/* Mode sombre pour le dashboard */
+@media (prefers-color-scheme: dark) {
+  .dashboard-container {
+    background-color: #121212;
+  }
+}
+
+/* Style pour les cartes statistiques */
+.stat-card {
+  padding: 1.5rem;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* En-têtes */
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.header-subtitle {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+/* Style pour les boutons d'action */
+.action-button {
+  border-radius: 4px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-transform: none;
+  padding: 0.5rem 1rem;
+}
+
+.action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  background-color: #fff;
+  border-right: 1px solid #eee;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.sidebar-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.sidebar-menu-item {
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  color: #555;
+  transition: all 0.2s ease;
+}
+
+.sidebar-menu-item:hover {
+  background-color: #f5f7fa;
+  color: #0056b3;
+}
+
+.sidebar-menu-item.active {
+  background-color: #e6f2ff;
+  color: #0056b3;
+  border-left: 3px solid #0056b3;
+}
+
+.sidebar-icon {
+  margin-right: 0.75rem;
+  font-size: 1.25rem;
+}
+
+/* Style pour l'en-tête supérieur */
+.top-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  margin-left: 240px;
+}
+
+/* Zone principale de contenu */
+.main-content {
+  margin-left: 240px;
+  padding: 1.5rem;
+  min-height: calc(100vh - 64px);
+}
+
+/* Pied de page */
+.footer {
+  text-align: center;
+  padding: 1rem 0;
+  color: #666;
+  font-size: 0.875rem;
+  margin-top: 2rem;
+  border-top: 1px solid #eee;
+}
+
+/* Adaptations pour les mobiles */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .top-navbar, .main-content {
+    margin-left: 0;
+  }
+  
+  .menu-toggle {
+    display: block;
+  }
+}
+
+/* Corrections pour Material-UI */
+.MuiPaper-root {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+.MuiButton-contained {
+  box-shadow: none !important;
+}
+
+.MuiButton-contained:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Animation de chargement */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}

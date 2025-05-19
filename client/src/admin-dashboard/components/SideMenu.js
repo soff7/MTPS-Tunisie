@@ -1,3 +1,4 @@
+// client/src/admin-dashboard/components/SideMenu.js
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
@@ -8,10 +9,18 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import LogoutIcon from '@mui/icons-material/Logout';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import PeopleIcon from '@mui/icons-material/People';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import EmailIcon from '@mui/icons-material/Email';
+import SettingsIcon from '@mui/icons-material/Settings';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import SelectContent from './SelectContent';
-import MenuContent from './MenuContent';
 import CardAlert from './CardAlert';
-import OptionsMenu from './OptionsMenu';
 
 const drawerWidth = 240;
 
@@ -27,6 +36,15 @@ const Drawer = styled(MuiDrawer)({
 });
 
 export default function SideMenu({ user, onLogout }) {
+  // Liste des éléments de menu principal
+  const mainMenuItems = [
+    { text: 'Tableau de bord', icon: <DashboardIcon />, path: '/admin' },
+    { text: 'Utilisateurs', icon: <PeopleIcon />, path: '/admin/users' },
+    { text: 'Produits', icon: <InventoryIcon />, path: '/admin/products' },
+    { text: 'Messages', icon: <EmailIcon />, path: '/admin/messages' },
+    { text: 'Paramètres', icon: <SettingsIcon />, path: '/admin/settings' },
+  ];
+
   return (
     <Drawer
       variant="permanent"
@@ -55,7 +73,20 @@ export default function SideMenu({ user, onLogout }) {
           flexDirection: 'column',
         }}
       >
-        <MenuContent />
+        <List dense>
+          {mainMenuItems.map((item, index) => (
+            <ListItem key={index} disablePadding sx={{ display: 'block' }}>
+              <ListItemButton 
+                selected={index === 0}
+                component="a" 
+                href={item.path}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
         <CardAlert />
       </Box>
       <Stack
@@ -71,7 +102,7 @@ export default function SideMenu({ user, onLogout }) {
         <Avatar
           sizes="small"
           alt={user?.name || "Admin"}
-          src="/static/images/avatar/7.jpg"
+          src={user?.avatar || "/static/images/avatar/default.jpg"}
           sx={{ width: 36, height: 36 }}
         />
         <Box sx={{ mr: 'auto' }}>
