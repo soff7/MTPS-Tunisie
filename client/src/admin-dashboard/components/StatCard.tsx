@@ -23,11 +23,9 @@ function getDaysInMonth(month: number, year: number) {
     month: 'short',
   });
   const daysInMonth = date.getDate();
-  const days = [];
-  let i = 1;
-  while (days.length < daysInMonth) {
+  const days: string[] = []; // ✅ typage ajouté ici
+  for (let i = 1; i <= daysInMonth; i++) {
     days.push(`${monthName} ${i}`);
-    i += 1;
   }
   return days;
 }
@@ -84,15 +82,9 @@ export default function StatCard({
         <Typography component="h2" variant="subtitle2" gutterBottom>
           {title}
         </Typography>
-        <Stack
-          direction="column"
-          sx={{ justifyContent: 'space-between', flexGrow: '1', gap: 1 }}
-        >
+        <Stack direction="column" sx={{ justifyContent: 'space-between', flexGrow: 1, gap: 1 }}>
           <Stack sx={{ justifyContent: 'space-between' }}>
-            <Stack
-              direction="row"
-              sx={{ justifyContent: 'space-between', alignItems: 'center' }}
-            >
+            <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography variant="h4" component="p">
                 {value}
               </Typography>
@@ -104,14 +96,14 @@ export default function StatCard({
           </Stack>
           <Box sx={{ width: '100%', height: 50 }}>
             <SparkLineChart
-              color={chartColor}
+              colors={[chartColor]} // ✅ utilise colors (tableau), pas color
               data={data}
               area
               showHighlight
               showTooltip
               xAxis={{
                 scaleType: 'band',
-                data: daysInWeek, // Use the correct property 'data' for xAxis
+                data: daysInWeek,
               }}
               sx={{
                 [`& .${areaElementClasses.root}`]: {

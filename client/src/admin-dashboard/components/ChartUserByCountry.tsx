@@ -56,40 +56,18 @@ interface StyledTextProps {
 
 const StyledText = styled('text', {
   shouldForwardProp: (prop) => prop !== 'variant',
-})<StyledTextProps>(({ theme }) => ({
+})<StyledTextProps>(({ theme, variant }) => ({
   textAnchor: 'middle',
   dominantBaseline: 'central',
-  fill: (theme.vars || theme).palette.text.secondary,
-  variants: [
-    {
-      props: {
-        variant: 'primary',
-      },
-      style: {
-        fontSize: theme.typography.h5.fontSize,
-      },
-    },
-    {
-      props: ({ variant }) => variant !== 'primary',
-      style: {
-        fontSize: theme.typography.body2.fontSize,
-      },
-    },
-    {
-      props: {
-        variant: 'primary',
-      },
-      style: {
-        fontWeight: theme.typography.h5.fontWeight,
-      },
-    },
-    {
-      props: ({ variant }) => variant !== 'primary',
-      style: {
-        fontWeight: theme.typography.body2.fontWeight,
-      },
-    },
-  ],
+  fill: theme.palette.text.secondary,
+  fontSize:
+    variant === 'primary'
+      ? theme.typography.h5.fontSize
+      : theme.typography.body2.fontSize,
+  fontWeight:
+    variant === 'primary'
+      ? theme.typography.h5.fontWeight
+      : theme.typography.body2.fontWeight,
 }));
 
 interface PieCenterLabelProps {
@@ -103,14 +81,14 @@ function PieCenterLabel({ primaryText, secondaryText }: PieCenterLabelProps) {
   const secondaryY = primaryY + 24;
 
   return (
-    <React.Fragment>
+    <>
       <StyledText variant="primary" x={left + width / 2} y={primaryY}>
         {primaryText}
       </StyledText>
       <StyledText variant="secondary" x={left + width / 2} y={secondaryY}>
         {secondaryText}
       </StyledText>
-    </React.Fragment>
+    </>
   );
 }
 
@@ -134,24 +112,19 @@ export default function ChartUserByCountry() {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <PieChart
             colors={colors}
-            margin={{
-              left: 80,
-              right: 80,
-              top: 80,
-              bottom: 80,
-            }}
+            margin={{ left: 80, right: 80, top: 80, bottom: 80 }}
             series={[
               {
                 data,
                 innerRadius: 75,
                 outerRadius: 100,
                 paddingAngle: 0,
-                highlightScope: { fade: 'global', highlight: 'item' },
+                highlightScope: { faded: 'global', highlighted: 'item' },
               },
             ]}
             height={260}
             width={260}
-            hideLegend
+            legend={{ hidden: true }} // ✅ remplace hideLegend
           >
             <PieCenterLabel primaryText="98.5K" secondaryText="Total" />
           </PieChart>

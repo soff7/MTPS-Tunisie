@@ -10,10 +10,11 @@ import { useTheme } from '@mui/material/styles';
 export default function PageViewsBarChart() {
   const theme = useTheme();
   const colorPalette = [
-    (theme.vars || theme).palette.primary.dark,
-    (theme.vars || theme).palette.primary.main,
-    (theme.vars || theme).palette.primary.light,
+    theme.palette.primary.dark,
+    theme.palette.primary.main,
+    theme.palette.primary.light,
   ];
+
   return (
     <Card variant="outlined" sx={{ width: '100%' }}>
       <CardContent>
@@ -24,7 +25,6 @@ export default function PageViewsBarChart() {
           <Stack
             direction="row"
             sx={{
-              alignContent: { xs: 'center', sm: 'flex-start' },
               alignItems: 'center',
               gap: 1,
             }}
@@ -38,42 +38,40 @@ export default function PageViewsBarChart() {
             Page views and downloads for the last 6 months
           </Typography>
         </Stack>
+
         <BarChart
-          borderRadius={8}
-          colors={colorPalette}
+          height={250}
+          margin={{ top: 20, bottom: 0, left: 40, right: 10 }}
           xAxis={[
             {
               scaleType: 'band',
-              categoryGapRatio: 0.5,
               data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-              height: 24,
             },
           ]}
-          yAxis={[{ width: 50 }]}
+          yAxis={[{}]}
           series={[
             {
               id: 'page-views',
               label: 'Page views',
               data: [2234, 3872, 2998, 4125, 3357, 2789, 2998],
+              color: colorPalette[0],
               stack: 'A',
             },
             {
               id: 'downloads',
               label: 'Downloads',
               data: [3098, 4215, 2384, 2101, 4752, 3593, 2384],
+              color: colorPalette[1],
               stack: 'A',
             },
             {
               id: 'conversions',
               label: 'Conversions',
               data: [4051, 2275, 3129, 4693, 3904, 2038, 2275],
+              color: colorPalette[2],
               stack: 'A',
             },
           ]}
-          height={250}
-          margin={{ left: 0, right: 0, top: 20, bottom: 0 }}
-          grid={{ horizontal: true }}
-          hideLegend
         />
       </CardContent>
     </Card>

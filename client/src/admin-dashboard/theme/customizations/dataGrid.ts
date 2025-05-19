@@ -1,6 +1,5 @@
 import { paperClasses } from '@mui/material/Paper';
 import { alpha, Theme } from '@mui/material/styles';
-import type { DataGridProComponents } from '@mui/x-data-grid-pro/themeAugmentation';
 import { menuItemClasses } from '@mui/material/MenuItem';
 import { listItemIconClasses } from '@mui/material/ListItemIcon';
 import { iconButtonClasses } from '@mui/material/IconButton';
@@ -10,20 +9,21 @@ import { gridClasses } from '@mui/x-data-grid';
 import { tablePaginationClasses } from '@mui/material/TablePagination';
 import { gray } from '../../../shared-theme/themePrimitives';
 
-/* eslint-disable import/prefer-default-export */
-export const dataGridCustomizations: DataGridProComponents<Theme> & DataGridProComponents<Theme> = {
-  MuiDataGrid: {
-    styleOverrides: {
-      root: ({ theme }) => ({
+// غير تعيين النوع Components['MuiDataGrid']
+export const dataGridCustomizations = {
+  styleOverrides: {
+    root: (props: { theme: Theme }) => {
+      const theme = props.theme;
+      return {
         '--DataGrid-overlayHeight': '300px',
         overflow: 'clip',
-        borderColor: (theme.vars || theme).palette.divider,
-        backgroundColor: (theme.vars || theme).palette.background.default,
+        borderColor: theme.palette.divider,
+        backgroundColor: theme.palette.background.default,
         [`& .${gridClasses.columnHeader}`]: {
-          backgroundColor: (theme.vars || theme).palette.background.paper,
+          backgroundColor: theme.palette.background.paper,
         },
         [`& .${gridClasses.footerContainer}`]: {
-          backgroundColor: (theme.vars || theme).palette.background.paper,
+          backgroundColor: theme.palette.background.paper,
         },
         [`& .${checkboxClasses.root}`]: {
           padding: theme.spacing(0.5),
@@ -41,15 +41,22 @@ export const dataGridCustomizations: DataGridProComponents<Theme> & DataGridProC
             },
           },
         },
-      }),
-      cell: ({ theme }) => ({ borderTopColor: (theme.vars || theme).palette.divider }),
-      menu: ({ theme }) => ({
+      };
+    },
+    cell: (props: { theme: Theme }) => {
+      const theme = props.theme;
+      return {
+        borderTopColor: theme.palette.divider,
+      };
+    },
+    menu: (props: { theme: Theme }) => {
+      const theme = props.theme;
+      return {
         borderRadius: theme.shape.borderRadius,
         backgroundImage: 'none',
         [`& .${paperClasses.root}`]: {
-          border: `1px solid ${(theme.vars || theme).palette.divider}`,
+          border: `1px solid ${theme.palette.divider}`,
         },
-
         [`& .${menuItemClasses.root}`]: {
           margin: '0 4px',
         },
@@ -60,21 +67,28 @@ export const dataGridCustomizations: DataGridProComponents<Theme> & DataGridProC
           paddingLeft: 0,
           paddingRight: 0,
         },
-      }),
-
-      row: ({ theme }) => ({
-        '&:last-of-type': { borderBottom: `1px solid ${(theme.vars || theme).palette.divider}` },
+      };
+    },
+    row: (props: { theme: Theme }) => {
+      const theme = props.theme;
+      return {
+        '&:last-of-type': {
+          borderBottom: `1px solid ${theme.palette.divider}`,
+        },
         '&:hover': {
-          backgroundColor: (theme.vars || theme).palette.action.hover,
+          backgroundColor: theme.palette.action.hover,
         },
         '&.Mui-selected': {
-          background: (theme.vars || theme).palette.action.selected,
+          background: theme.palette.action.selected,
           '&:hover': {
-            backgroundColor: (theme.vars || theme).palette.action.hover,
+            backgroundColor: theme.palette.action.hover,
           },
         },
-      }),
-      iconButtonContainer: ({ theme }) => ({
+      };
+    },
+    iconButtonContainer: (props: { theme: Theme }) => {
+      const theme = props.theme;
+      return {
         [`& .${iconButtonClasses.root}`]: {
           border: 'none',
           backgroundColor: 'transparent',
@@ -84,18 +98,23 @@ export const dataGridCustomizations: DataGridProComponents<Theme> & DataGridProC
           '&:active': {
             backgroundColor: gray[200],
           },
-          ...theme.applyStyles('dark', {
-            color: gray[50],
-            '&:hover': {
-              backgroundColor: gray[800],
-            },
-            '&:active': {
-              backgroundColor: gray[900],
-            },
-          }),
+          ...(theme.palette.mode === 'dark'
+            ? {
+                color: gray[50],
+                '&:hover': {
+                  backgroundColor: gray[800],
+                },
+                '&:active': {
+                  backgroundColor: gray[900],
+                },
+              }
+            : {}),
         },
-      }),
-      menuIconButton: ({ theme }) => ({
+      };
+    },
+    menuIconButton: (props: { theme: Theme }) => {
+      const theme = props.theme;
+      return {
         border: 'none',
         backgroundColor: 'transparent',
         '&:hover': {
@@ -104,29 +123,39 @@ export const dataGridCustomizations: DataGridProComponents<Theme> & DataGridProC
         '&:active': {
           backgroundColor: gray[200],
         },
-        ...theme.applyStyles('dark', {
-          color: gray[50],
-          '&:hover': {
-            backgroundColor: gray[800],
-          },
-          '&:active': {
-            backgroundColor: gray[900],
-          },
-        }),
-      }),
-      filterForm: ({ theme }) => ({
+        ...(theme.palette.mode === 'dark'
+          ? {
+              color: gray[50],
+              '&:hover': {
+                backgroundColor: gray[800],
+              },
+              '&:active': {
+                backgroundColor: gray[900],
+              },
+            }
+          : {}),
+      };
+    },
+    filterForm: (props: { theme: Theme }) => {
+      const theme = props.theme;
+      return {
         gap: theme.spacing(1),
         alignItems: 'flex-end',
-      }),
-      columnsManagementHeader: ({ theme }) => ({
+      };
+    },
+    columnsManagementHeader: (props: { theme: Theme }) => {
+      const theme = props.theme;
+      return {
         paddingRight: theme.spacing(3),
         paddingLeft: theme.spacing(3),
-      }),
-      columnHeaderTitleContainer: {
-        flexGrow: 1,
-        justifyContent: 'space-between',
-      },
-      columnHeaderDraggableContainer: { paddingRight: 2 },
+      };
+    },
+    columnHeaderTitleContainer: {
+      flexGrow: 1,
+      justifyContent: 'space-between',
+    },
+    columnHeaderDraggableContainer: {
+      paddingRight: 2,
     },
   },
 };
