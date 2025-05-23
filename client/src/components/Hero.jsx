@@ -3,9 +3,45 @@ import { Link } from 'react-router-dom';
 import { FaArrowRight, FaPhone, FaIndustry, FaTools, FaRecycle } from 'react-icons/fa';
 import '../styles/Hero.css';
 
+// Tableau des slides avec leurs données complètes
+const slides = [
+  {
+    id: 1,
+    image: 'url(/assets/bg1.png)',
+    title: "Solutions plastiques pour l'industrie moderne",
+    description: "MTPS combine expertise technique et innovation pour fournir des solutions plastiques sur mesure répondant aux exigences les plus strictes de l'industrie.",
+    showButton: true,
+    buttonText: "Read More",
+    buttonLink: "/apropos", // Lien vers la page À propos
+    showSecondaryButton: true,
+    secondaryButtonText: "CONTACT US",
+    secondaryButtonLink: "/contact"
+  },
+  {
+    id: 2,
+    image: 'url(/assets/bg3.png)',
+    title: "MTPS Tubes",
+    description: "Où la force rencontre la flexibilité pour vos besoins en plastique.",
+    showButton: true,
+    buttonText: "Nos Produits",
+    buttonLink: "/produits", // Lien vers la page Produits
+  
+  },
+];
+
 const Hero = () => {
   const [scrollY, setScrollY] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  
+  // Effet pour le carrousel automatique (6 secondes)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 6000);
+    
+    return () => clearInterval(interval);
+  }, []);
   
   // Effet de parallaxe au défilement
   useEffect(() => {
@@ -25,13 +61,6 @@ const Hero = () => {
     };
   }, []);
   
-  // Statistiques avec animation de comptage
-  const stats = [
-    { number: '500', label: 'Clients satisfaits', icon: <FaIndustry /> },
-    { number: '50', label: 'Produits innovants', icon: <FaTools /> },
-    { number: '15', label: "Années d'expertise", icon: <FaRecycle /> }
-  ];
-  
   // Fonction pour gérer le défilement vers le bas
   const handleScrollDown = () => {
     const nextSection = document.querySelector('.section-divider')?.nextElementSibling;
@@ -40,9 +69,67 @@ const Hero = () => {
     }
   };
 
+  // Fonction pour naviguer manuellement entre les slides
+  const goToSlide = (index) => {
+    setCurrentSlide(index);
+  };
+
+  // Fonction pour le slide suivant
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  };
+
+  // Fonction pour le slide précédent
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  };
+
   return (
     <>
       <section className={`hero ${isVisible ? 'visible' : ''}`}>
+        {/* Background slides */}
+        <div className="hero-slides">
+          {slides.map((slide, index) => (
+            <div 
+              key={slide.id}
+              className={`hero-slide ${index === currentSlide ? 'active' : ''}`}
+              style={{ backgroundImage: slide.image }}
+            >
+              <div className="slide-overlay"></div>
+            </div>
+          ))}
+        </div>
+        
+        {/* Contrôles de navigation du carrousel */}
+        <div className="hero-navigation">
+          <button 
+            className="nav-btn prev-btn" 
+            onClick={prevSlide}
+            aria-label="Slide précédent"
+          >
+            ‹
+          </button>
+          <button 
+            className="nav-btn next-btn" 
+            onClick={nextSlide}
+            aria-label="Slide suivant"
+          >
+            ›
+          </button>
+        </div>
+        
+        {/* Indicateurs de slide */}
+        <div className="hero-indicators">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              className={`indicator ${index === currentSlide ? 'active' : ''}`}
+              onClick={() => goToSlide(index)}
+              aria-label={`Aller au slide ${index + 1}`}
+            />
+          ))}
+        </div>
+        
         <div className="hero-particles"></div>
         <div 
           className="hero-overlay" 
@@ -51,53 +138,56 @@ const Hero = () => {
         
         <div className="container hero-container">
           <div className="hero-content">
-            <span className="hero-badge">
-              <span className="badge-dot"></span>
-              Innovation & Qualité
-            </span>
-            
             <h1 className="hero-title">
-              <span className="hero-title-line accent">Solutions plastiques</span>
-              <span className="hero-title-line">pour l'industrie moderne</span>
+              {slides[currentSlide].title}
             </h1>
             
-            <p className="hero-text">
-              MTPS combine expertise technique et innovation pour fournir des solutions
-              plastiques sur mesure répondant aux exigences les plus strictes de l'industrie.
+            <p className="hero-description">
+              {slides[currentSlide].description}
             </p>
             
             <div className="hero-btns">
-              <Link to="/produits" className="btn btn-primary">
-                EXPLORER NOS PRODUITS
-                <FaArrowRight className="icon-arrow" />
-              </Link>
-              <Link to="/contact" className="btn btn-secondary">
-                <FaPhone className="icon-phone" />
-                CONTACT RAPIDE
-              </Link>
+              {/* Bouton principal avec lien dynamique */}
+              {slides[currentSlide].showButton && (
+                <Link 
+                  to={slides[currentSlide].buttonLink} 
+                  className="btn btn-primary"
+                  aria-label={`${slides[currentSlide].buttonText} - ${slides[currentSlide].title}`}
+                >
+                  {slides[currentSlide].buttonText}
+                  <FaArrowRight className="icon-arrow" />
+                </Link>
+              )}
+              
+              {/* Bouton secondaire avec lien dynamique */}
+              {slides[currentSlide].showSecondaryButton && (
+                <Link 
+                  to={slides[currentSlide].secondaryButtonLink} 
+                  className="btn btn-secondary"
+                  aria-label={slides[currentSlide].secondaryButtonText}
+                >
+                  <FaPhone className="icon-phone" />
+                  {slides[currentSlide].secondaryButtonText}
+                </Link>
+              )}
             </div>
           </div>
           
-          <div className="hero-shape-1"></div>
-          <div className="hero-shape-2"></div>
-          
-          <div className="hero-stats">
-            {stats.map((stat, index) => (
-              <div className="stat-item" key={index}>
-                <div className="stat-icon">{stat.icon}</div>
-                <div className="stat-content">
-                  <span className="stat-number">
-                    {stat.number}<span className="stat-plus">+</span>
-                  </span>
-                  <span className="stat-label">{stat.label}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <div className="hero-scroll-indicator" onClick={handleScrollDown}>
+          {/* Indicateur de défilement */}
+          <div 
+            className="hero-scroll-indicator" 
+            onClick={handleScrollDown}
+            role="button"
+            tabIndex={0}
+            aria-label="Défiler vers le bas"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                handleScrollDown();
+              }
+            }}
+          >
             <div className="scroll-arrow"></div>
-            <span>Découvrir</span>
+            <span>Scroll down</span>
           </div>
         </div>
       </section>

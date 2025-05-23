@@ -1,0 +1,382 @@
+/* client/src/styles/rtl-support.css - Support RTL pour l'arabe */
+
+/* Variables pour RTL */
+:root {
+  --start: left;
+  --end: right;
+}
+
+[dir="rtl"] {
+  --start: right;
+  --end: left;
+}
+
+/* Support RTL global */
+body.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Navbar RTL */
+[dir="rtl"] .navbar-container {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .logo {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .logo-img {
+  margin-right: 0;
+  margin-left: 5px;
+}
+
+[dir="rtl"] .nav-links {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .desktop-buttons {
+  margin-right: 0;
+  margin-left: 100px;
+}
+
+[dir="rtl"] .navbar:not(.auth-page) .navbar-language {
+  right: auto;
+  left: 20px;
+}
+
+/* Hero section RTL */
+[dir="rtl"] .hero-content {
+  text-align: right;
+}
+
+[dir="rtl"] .hero-btns {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .hero-stats {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .stat-item {
+  flex-direction: row-reverse;
+}
+
+/* Services RTL */
+[dir="rtl"] .services-cards {
+  direction: rtl;
+}
+
+[dir="rtl"] .service-top {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .service-stats {
+  text-align: left;
+}
+
+[dir="rtl"] .service-cta {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .service-cta .cta-arrow {
+  transform: rotate(180deg);
+}
+
+[dir="rtl"] .service-cta:hover .cta-arrow {
+  transform: rotate(180deg) translateX(-5px);
+}
+
+/* Features RTL */
+[dir="rtl"] .features-cards {
+  direction: rtl;
+}
+
+[dir="rtl"] .feature-top {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .feature-stats {
+  text-align: left;
+}
+
+/* Contact RTL */
+[dir="rtl"] .contact-content {
+  direction: rtl;
+}
+
+[dir="rtl"] .contact-form-section {
+  padding-right: 0;
+  padding-left: 30px;
+}
+
+[dir="rtl"] .contact-info-section {
+  padding-left: 0;
+  padding-right: 30px;
+}
+
+[dir="rtl"] .info-item {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .info-icon {
+  margin-right: 0;
+  margin-left: 20px;
+}
+
+/* Footer RTL */
+[dir="rtl"] .footer-grid {
+  direction: rtl;
+}
+
+[dir="rtl"] .footer-about {
+  text-align: right;
+}
+
+[dir="rtl"] .social-links {
+  justify-content: flex-end;
+}
+
+[dir="rtl"] .footer-contact li {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .footer-contact .icon {
+  margin-right: 0;
+  margin-left: 0.8rem;
+}
+
+[dir="rtl"] .footer-bottom-content {
+  flex-direction: row-reverse;
+}
+
+/* Formulaires RTL */
+[dir="rtl"] .form-group {
+  text-align: right;
+}
+
+[dir="rtl"] .form-group label {
+  text-align: right;
+}
+
+[dir="rtl"] .form-group input,
+[dir="rtl"] .form-group textarea,
+[dir="rtl"] .form-group select {
+  text-align: right;
+}
+
+[dir="rtl"] .password-input {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .password-toggle {
+  right: auto;
+  left: 0.8rem;
+}
+
+/* Boutons RTL */
+[dir="rtl"] .btn {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .btn-icon {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .btn-icon:hover svg,
+[dir="rtl"] .btn-icon:hover i {
+  transform: translateX(-4px);
+}
+
+/* Cards RTL */
+[dir="rtl"] .card-badge {
+  right: auto;
+  left: var(--spacing-md);
+}
+
+[dir="rtl"] .card-title::after {
+  left: auto;
+  right: 0;
+}
+
+[dir="rtl"] .card-footer {
+  flex-direction: row-reverse;
+}
+
+/* Product Catalog RTL */
+[dir="rtl"] .products-grid {
+  direction: rtl;
+}
+
+[dir="rtl"] .product-card {
+  text-align: right;
+}
+
+[dir="rtl"] .tech-sheet-button {
+  flex-direction: row-reverse;
+}
+
+/* Categories RTL */
+[dir="rtl"] .categories-grid {
+  direction: rtl;
+}
+
+[dir="rtl"] .category-card {
+  text-align: right;
+}
+
+/* Values RTL */
+[dir="rtl"] .values-grid {
+  direction: rtl;
+}
+
+[dir="rtl"] .value-card {
+  text-align: right;
+}
+
+[dir="rtl"] .value-icon-container {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+[dir="rtl"] .value-stat {
+  bottom: -10px;
+  right: auto;
+  left: -10px;
+}
+
+/* Testimonials RTL */
+[dir="rtl"] .testimonials-grid {
+  direction: rtl;
+}
+
+[dir="rtl"] .testimonial-card {
+  text-align: right;
+}
+
+/* Language Switcher RTL */
+[dir="rtl"] .language-dropdown {
+  right: auto;
+  left: 0;
+}
+
+[dir="rtl"] .current-lang {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .language-option {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+/* Mobile menu RTL */
+[dir="rtl"] .nav-links {
+  right: auto;
+  left: -100%;
+  transition: left 0.3s ease;
+}
+
+[dir="rtl"] .nav-links.active {
+  left: 0;
+}
+
+[dir="rtl"] .mobile-auth-buttons {
+  align-items: flex-end;
+}
+
+/* Timeline RTL pour About page */
+[dir="rtl"] .timeline::before {
+  left: auto;
+  right: 31px;
+}
+
+[dir="rtl"] .timeline-item {
+  padding-left: 30px;
+  padding-right: 70px;
+}
+
+[dir="rtl"] .timeline-marker {
+  left: auto;
+  right: -3rem;
+}
+
+/* Sections avec titres soulignés RTL */
+[dir="rtl"] .section-title::after {
+  left: 50%;
+  right: auto;
+  transform: translateX(50%);
+}
+
+[dir="rtl"] .highlighted::after {
+  left: auto;
+  right: 0;
+}
+
+/* Animations RTL */
+[dir="rtl"] .slide-in-left {
+  animation: slideInRight 0.8s ease forwards;
+}
+
+[dir="rtl"] .slide-in-right {
+  animation: slideInLeft 0.8s ease forwards;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(40px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Typographie RTL */
+[dir="rtl"] h1, 
+[dir="rtl"] h2, 
+[dir="rtl"] h3, 
+[dir="rtl"] h4, 
+[dir="rtl"] h5, 
+[dir="rtl"] h6 {
+  font-family: 'Tajawal', sans-serif;
+  text-align: right;
+}
+
+[dir="rtl"] p {
+  text-align: right;
+  line-height: 1.8; /* Ligne plus haute pour l'arabe */
+}
+
+/* Responsive RTL */
+@media (max-width: 992px) {
+  [dir="rtl"] .navbar:not(.auth-page) .navbar-language {
+    left: auto;
+    right: 60px;
+    margin-left: auto;
+    margin-right: 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  [dir="rtl"] .contact-form-section,
+  [dir="rtl"] .contact-info-section {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  
+  [dir="rtl"] .section-header {
+    flex-direction: column-reverse;
+    text-align: center;
+  }
+  
+  [dir="rtl"] .section-icon {
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 1rem;
+  }
+  
+  [dir="rtl"] .navbar:not(.auth-page) .navbar-language {
+    margin-right: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  [dir="rtl"] .navbar:not(.auth-page) .navbar-language {
+    margin-right: 40px;
+  }
+}

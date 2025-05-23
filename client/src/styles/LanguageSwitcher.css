@@ -1,0 +1,379 @@
+/* client/src/styles/LanguageSwitcher.css - Version adaptée pour votre navbar */
+
+.language-switcher {
+  position: relative;
+  display: inline-block;
+  z-index: 1002;
+}
+
+.language-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background-color: transparent;
+  border: 1px solid rgba(53, 200, 250, 0.4);
+  border-radius: 25px; /* Cohérent avec vos nav-links */
+  color: var(--light-text);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  font-size: 0.875rem;
+  min-width: 90px;
+  justify-content: space-between;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Effet demi-cercle similaire aux nav-links */
+.language-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: linear-gradient(135deg, var(--primary-blue), var(--hover-blue));
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  z-index: -1;
+  opacity: 0;
+}
+
+.language-button:hover::before {
+  width: 100%;
+  height: 200%;
+  opacity: 0.15;
+}
+
+.language-button:hover {
+  color: var(--primary-blue);
+  border-color: rgba(53, 200, 250, 0.7);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(53, 200, 250, 0.3);
+}
+
+.language-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(53, 200, 250, 0.3);
+}
+
+.globe-icon {
+  font-size: 1rem;
+  color: var(--primary-blue);
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.current-lang {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.flag {
+  font-size: 1.1rem;
+  line-height: 1;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.lang-code {
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.chevron-icon {
+  font-size: 0.75rem;
+  transition: transform 0.3s ease;
+  color: var(--secondary-gray);
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
+}
+
+.chevron-icon.open {
+  transform: rotate(180deg);
+  color: var(--primary-blue);
+}
+
+.language-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  background-color: rgba(42, 42, 42, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(53, 200, 250, 0.1);
+  backdrop-filter: blur(15px);
+  min-width: 160px;
+  overflow: hidden;
+  animation: fadeInScale 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+  z-index: 1003;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: translateY(-15px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.language-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.2rem;
+  background: none;
+  border: none;
+  color: var(--light-text);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.language-option:last-child {
+  border-bottom: none;
+}
+
+.language-option::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-blue), transparent);
+  transition: width 0.3s ease;
+  opacity: 0.1;
+}
+
+.language-option:hover::before {
+  width: 100%;
+}
+
+.language-option:hover {
+  background-color: rgba(53, 200, 250, 0.1);
+  color: var(--primary-blue);
+  transform: translateX(4px);
+}
+
+.language-option.active {
+  background-color: rgba(53, 200, 250, 0.15);
+  color: var(--primary-blue);
+  font-weight: 600;
+}
+
+.language-option.active::before {
+  width: 4px;
+  opacity: 1;
+  background: var(--primary-blue);
+}
+
+.language-option .flag {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.lang-name {
+  flex: 1;
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.checkmark {
+  color: var(--primary-blue);
+  font-weight: bold;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.2s ease;
+}
+
+.language-option.active .checkmark {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Adaptation pour navbar transparente */
+.navbar:not(.scrolled) .language-button {
+  background-color: rgba(10, 10, 10, 0.3);
+  border-color: rgba(53, 200, 250, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.navbar:not(.scrolled) .language-dropdown {
+  background-color: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(20px);
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(53, 200, 250, 0.15);
+}
+
+/* Support RTL pour l'arabe */
+[dir="rtl"] .language-dropdown {
+  right: auto;
+  left: 0;
+}
+
+[dir="rtl"] .current-lang {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .language-option {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+[dir="rtl"] .language-option:hover {
+  transform: translateX(-4px);
+}
+
+[dir="rtl"] .language-option.active::before {
+  left: auto;
+  right: 0;
+}
+
+/* Version mobile */
+@media (max-width: 992px) {
+  .language-button {
+    padding: 0.5rem 0.8rem;
+    min-width: 80px;
+    gap: 0.4rem;
+    border-radius: 20px;
+  }
+  
+  .globe-icon {
+    font-size: 0.9rem;
+  }
+  
+  .lang-code {
+    font-size: 0.75rem;
+  }
+  
+  .language-dropdown {
+    min-width: 140px;
+    right: -10px;
+  }
+  
+  .language-option {
+    padding: 0.7rem 1rem;
+  }
+  
+  .lang-name {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .language-button {
+    min-width: 70px;
+    padding: 0.4rem 0.7rem;
+  }
+  
+  .language-dropdown {
+    right: -15px;
+    min-width: 130px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Version très compacte pour très petits écrans */
+  .language-button {
+    min-width: 65px;
+    padding: 0.35rem 0.6rem;
+  }
+  
+  .lang-code {
+    display: none; /* Masquer le code langue sur très petits écrans */
+  }
+  
+  .language-dropdown {
+    right: -20px;
+    min-width: 120px;
+  }
+}
+
+/* Animation du globe au survol */
+.language-button:hover .globe-icon {
+  animation: globeSpin 0.8s ease-in-out;
+}
+
+@keyframes globeSpin {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(180deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Styles spéciaux pour le menu mobile */
+.mobile-language-switcher .language-switcher {
+  width: 100%;
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+.mobile-language-switcher .language-button {
+  width: 100%;
+  justify-content: center;
+  background-color: rgba(53, 200, 250, 0.1);
+  border-color: rgba(53, 200, 250, 0.3);
+}
+
+.mobile-language-switcher .language-dropdown {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  width: 180px;
+}
+
+/* Support RTL mobile */
+[dir="rtl"] .mobile-language-switcher .language-dropdown {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+}
+
+/* Amélioration de l'accessibilité */
+.language-button:focus-visible,
+.language-option:focus-visible {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 2px;
+}
+
+/* Animations fluides pour une meilleure UX */
+.language-switcher * {
+  transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Effet de pulsation pour le globe */
+.language-button:focus .globe-icon,
+.language-dropdown.visible + .language-button .globe-icon {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 1; 
+  }
+  50% { 
+    transform: scale(1.1); 
+    opacity: 0.8; 
+  }
+}

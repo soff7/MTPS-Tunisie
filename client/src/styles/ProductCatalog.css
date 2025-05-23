@@ -47,7 +47,7 @@
   overflow: hidden;
   color: var(--light-text);
   padding: 6rem 0 0 0; /* Remove bottom padding, add top padding to avoid overlap with navbar */
-  margin-top: 160px !important; /* Further increased margin top to ensure spacing below navbar */
+  margin-top: 0; /* Further increased margin top to ensure spacing below navbar */
 
 }
 

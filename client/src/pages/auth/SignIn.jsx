@@ -121,7 +121,6 @@ const SignIn = () => {
       <div className="auth-card">
         <div className="auth-header">
           <div className="logo">
-            <img src="/assets/logo.png" alt="MTPS Logo" />
           </div>
           <h1>Connexion</h1>
         </div>
