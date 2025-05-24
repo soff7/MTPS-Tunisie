@@ -8,19 +8,16 @@ const languages = [
   {
     code: 'fr',
     name: 'Français',
-    flag: '🇫🇷',
     nativeName: 'Français'
   },
   {
     code: 'en',
     name: 'English',
-    flag: '🇺🇸',
     nativeName: 'English'
   },
   {
     code: 'ar',
     name: 'العربية',
-    flag: '🇹🇳',
     nativeName: 'العربية'
   }
 ];

@@ -1,4 +1,4 @@
-// client/src/App.js
+// client/src/App.js - MISE À JOUR AVEC ROUTES ADMIN
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
@@ -11,8 +11,15 @@ import SignUp from "./pages/auth/SignUp";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { AuthProvider } from "./components/auth/AuthProvider";
-import './styles/main.css';
 
+// Import des composants admin
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import ContactsManagement from "./pages/admin/ContactsManagement";
+import UsersManagement from "./pages/admin/UsersManagement";
+import AdminRoute from "./components/auth/AdminRoute";
+
+import './styles/main.css';
 import { Outlet } from "react-router-dom";
 
 // Layout principal avec Navbar et Footer
@@ -46,6 +53,23 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Navigate to="/signin" replace />} />
+
+          {/* Routes Admin protégées */}
+          <Route 
+            path="/admin" 
+            element={
+              <AdminRoute>
+                <AdminLayout />
+              </AdminRoute>
+            }
+          >
+            <Route index element={<AdminDashboard />} />
+            <Route path="contacts" element={<ContactsManagement />} />
+            <Route path="users" element={<UsersManagement />} />
+            <Route path="products" element={<div>Gestion Produits (À développer)</div>} />
+            <Route path="analytics" element={<div>Analytics (À développer)</div>} />
+            <Route path="settings" element={<div>Paramètres (À développer)</div>} />
+          </Route>
 
           {/* Redirection pour les routes inconnues */}
           <Route path="*" element={<Navigate to="/" replace />} />

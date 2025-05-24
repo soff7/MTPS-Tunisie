@@ -27,7 +27,7 @@ const corsOptions = {
   origin: process.env.NODE_ENV === 'production'
     ? ['https://mtps-tunisie.com', 'https://www.mtps-tunisie.com']
     : 'http://localhost:3000',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
   optionsSuccessStatus: 200
@@ -44,12 +44,15 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes
+// Routes principales
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/auth', require('./routes/googleAuth'));
 app.use('/api/contacts', require('./routes/contact'));
 app.use('/api/products', require('./routes/products'));
 app.use('/api/stats', require('./routes/stats'));
+
+// Routes admin (nouvelles)
+app.use('/api/admin/users', require('./routes/admin/users'));
 
 // Serve statique en production
 if (process.env.NODE_ENV === 'production') {
