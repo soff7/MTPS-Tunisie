@@ -1,12 +1,16 @@
-// client/src/components/Navbar.jsx - Correction des erreurs de React Hooks
+// client/src/components/Navbar.jsx - Version avec traductions
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaPowerOff, FaSignInAlt, FaTachometerAlt } from 'react-icons/fa';
+import TranslationLanguageSwitcher from './TranslationLanguageSwitcher';
+import TranslatedText from './TranslatedText';
+import { translationService } from '../utils/translations';
 import '../styles/Navbar.css';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState(translationService.getCurrentLanguage());
   const location = useLocation();
   const navigate = useNavigate();
   
@@ -35,6 +39,19 @@ const Navbar = () => {
     setMobileMenuOpen(false);
     document.body.style.overflow = 'auto';
   }, [location.pathname]);
+  
+  // Listener pour les changements de langue
+  useEffect(() => {
+    const handleLanguageChange = (newLanguage) => {
+      setCurrentLanguage(newLanguage);
+    };
+    
+    translationService.addListener(handleLanguageChange);
+    
+    return () => {
+      translationService.removeListener(handleLanguageChange);
+    };
+  }, []);
   
   // Si nous sommes sur une page admin, ne pas afficher la navbar standard
   if (isAdminPage) {
@@ -105,36 +122,41 @@ const Navbar = () => {
                   className={`nav-link ${isActive('/') ? 'active' : ''}`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Accueil
+                  <TranslatedText tKey="nav.home" />
                 </Link>
                 <Link 
                   to="/produits" 
                   className={`nav-link ${isActive('/produits') ? 'active' : ''}`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Produits
+                  <TranslatedText tKey="nav.products" />
                 </Link>
                 <Link 
                   to="/services" 
                   className={`nav-link ${isActive('/services') ? 'active' : ''}`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Services
+                  <TranslatedText tKey="nav.services" />
                 </Link>
                 <Link 
                   to="/apropos" 
                   className={`nav-link ${isActive('/apropos') ? 'active' : ''}`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  À propos
+                  <TranslatedText tKey="nav.about" />
                 </Link>
                 <Link 
                   to="/contact" 
                   className={`nav-link ${isActive('/contact') ? 'active' : ''}`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Contact
+                  <TranslatedText tKey="nav.contact" />
                 </Link>
+                
+                {/* Language Switcher pour mobile */}
+                <div className="mobile-language-switcher">
+                  <TranslationLanguageSwitcher />
+                </div>
                 
                 {/* Boutons d'authentification pour mobile UNIQUEMENT */}
                 <div className="mobile-auth-buttons">
@@ -147,7 +169,8 @@ const Navbar = () => {
                           className="mobile-dashboard-btn"
                           onClick={() => setMobileMenuOpen(false)}
                         >
-                          <FaTachometerAlt className="dashboard-icon" /> Dashboard
+                          <FaTachometerAlt className="dashboard-icon" /> 
+                          <TranslatedText tKey="nav.dashboard" />
                         </Link>
                       )}
                       {/* Bouton déconnexion pour mobile */}
@@ -158,7 +181,8 @@ const Navbar = () => {
                           setMobileMenuOpen(false);
                         }}
                       >
-                        <FaPowerOff className="logout-icon" /> Déconnexion
+                        <FaPowerOff className="logout-icon" /> 
+                        <TranslatedText tKey="nav.logout" />
                       </button>
                     </>
                   ) : (
@@ -169,14 +193,15 @@ const Navbar = () => {
                         className="mobile-login-btn"
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        <FaSignInAlt className="login-icon" /> Connexion
+                        <FaSignInAlt className="login-icon" /> 
+                        <TranslatedText tKey="nav.signin" />
                       </Link>
                       <Link 
                         to="/signup" 
                         className="mobile-signup-btn"
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        Inscription
+                        <TranslatedText tKey="nav.signup" />
                       </Link>
                     </>
                   )}
@@ -195,6 +220,9 @@ const Navbar = () => {
               
               {/* Boutons pour desktop */}
               <div className="desktop-buttons">
+                {/* Language Switcher pour desktop */}
+                <TranslationLanguageSwitcher />
+                
                 {isAuthenticated ? (
                   <>
                     {isAdmin && (
@@ -202,7 +230,8 @@ const Navbar = () => {
                         to="/admin" 
                         className="btn-dashboard"
                       >
-                        <FaTachometerAlt className="dashboard-icon" /> Dashboard
+                        <FaTachometerAlt className="dashboard-icon" /> 
+                        <TranslatedText tKey="nav.dashboard" />
                       </Link>
                     )}
                     {/* Seul bouton de déconnexion - rouge avec icône */}
@@ -210,7 +239,8 @@ const Navbar = () => {
                       className="logout-button"
                       onClick={handleLogout}
                     >
-                      <FaPowerOff className="logout-icon" /> Déconnexion
+                      <FaPowerOff className="logout-icon" /> 
+                      <TranslatedText tKey="nav.logout" />
                     </button>
                   </>
                 ) : (
@@ -219,13 +249,13 @@ const Navbar = () => {
                       to="/signin" 
                       className="btn-signin"
                     >
-                      Connexion
+                      <TranslatedText tKey="nav.signin" />
                     </Link>
                     <Link 
                       to="/signup" 
                       className="cta-button"
                     >
-                      Inscription
+                      <TranslatedText tKey="nav.signup" />
                     </Link>
                   </>
                 )}

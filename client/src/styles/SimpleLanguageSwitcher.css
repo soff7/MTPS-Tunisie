@@ -1,6 +1,6 @@
-/* client/src/styles/LanguageSwitcher.css - Version adaptée pour votre navbar */
+/* client/src/styles/SimpleLanguageSwitcher.css */
 
-.language-switcher {
+.simple-language-switcher {
   position: relative;
   display: inline-block;
   z-index: 1002;
@@ -13,21 +13,19 @@
   padding: 0.6rem 1rem;
   background-color: transparent;
   border: 1px solid rgba(53, 200, 250, 0.4);
-  border-radius: 25px; /* Cohérent avec vos nav-links */
+  border-radius: 25px;
   color: var(--light-text);
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: all 0.3s ease;
   font-size: 0.875rem;
   min-width: 90px;
   justify-content: space-between;
   white-space: nowrap;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(5px);
   position: relative;
   overflow: hidden;
 }
 
-/* Effet demi-cercle similaire aux nav-links */
 .language-button::before {
   content: '';
   position: absolute;
@@ -35,7 +33,7 @@
   left: 50%;
   width: 0;
   height: 0;
-  background: linear-gradient(135deg, var(--primary-blue), var(--hover-blue));
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
   border-radius: 50%;
   transform: translate(-50%, -50%);
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -50,7 +48,7 @@
 }
 
 .language-button:hover {
-  color: var(--primary-blue);
+  color: var(--primary-color);
   border-color: rgba(53, 200, 250, 0.7);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(53, 200, 250, 0.3);
@@ -63,9 +61,8 @@
 
 .globe-icon {
   font-size: 1rem;
-  color: var(--primary-blue);
+  color: var(--primary-color);
   flex-shrink: 0;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
 .current-lang {
@@ -79,14 +76,12 @@
 .flag {
   font-size: 1.1rem;
   line-height: 1;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
 .lang-code {
   font-weight: 600;
   font-size: 0.8rem;
   letter-spacing: 0.5px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .chevron-icon {
@@ -94,12 +89,11 @@
   transition: transform 0.3s ease;
   color: var(--secondary-gray);
   flex-shrink: 0;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
 }
 
 .chevron-icon.open {
   transform: rotate(180deg);
-  color: var(--primary-blue);
+  color: var(--primary-color);
 }
 
 .language-dropdown {
@@ -140,7 +134,7 @@
   border: none;
   color: var(--light-text);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: all 0.3s ease;
   position: relative;
   text-align: left;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -157,7 +151,7 @@
   left: 0;
   width: 0;
   height: 100%;
-  background: linear-gradient(90deg, var(--primary-blue), transparent);
+  background: linear-gradient(90deg, var(--primary-color), transparent);
   transition: width 0.3s ease;
   opacity: 0.1;
 }
@@ -168,20 +162,20 @@
 
 .language-option:hover {
   background-color: rgba(53, 200, 250, 0.1);
-  color: var(--primary-blue);
+  color: var(--primary-color);
   transform: translateX(4px);
 }
 
 .language-option.active {
   background-color: rgba(53, 200, 250, 0.15);
-  color: var(--primary-blue);
+  color: var(--primary-color);
   font-weight: 600;
 }
 
 .language-option.active::before {
   width: 4px;
   opacity: 1;
-  background: var(--primary-blue);
+  background: var(--primary-color);
 }
 
 .language-option .flag {
@@ -193,11 +187,10 @@
   flex: 1;
   font-weight: 500;
   font-size: 0.9rem;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .checkmark {
-  color: var(--primary-blue);
+  color: var(--primary-color);
   font-weight: bold;
   font-size: 0.9rem;
   flex-shrink: 0;
@@ -294,7 +287,6 @@
 }
 
 @media (max-width: 480px) {
-  /* Version très compacte pour très petits écrans */
   .language-button {
     min-width: 65px;
     padding: 0.35rem 0.6rem;
@@ -319,61 +311,4 @@
   0% { transform: rotate(0deg); }
   50% { transform: rotate(180deg); }
   100% { transform: rotate(360deg); }
-}
-
-/* Styles spéciaux pour le menu mobile */
-.mobile-language-switcher .language-switcher {
-  width: 100%;
-  max-width: 200px;
-  margin: 0 auto;
-}
-
-.mobile-language-switcher .language-button {
-  width: 100%;
-  justify-content: center;
-  background-color: rgba(53, 200, 250, 0.1);
-  border-color: rgba(53, 200, 250, 0.3);
-}
-
-.mobile-language-switcher .language-dropdown {
-  left: 50%;
-  right: auto;
-  transform: translateX(-50%);
-  width: 180px;
-}
-
-/* Support RTL mobile */
-[dir="rtl"] .mobile-language-switcher .language-dropdown {
-  left: 50%;
-  right: auto;
-  transform: translateX(-50%);
-}
-
-/* Amélioration de l'accessibilité */
-.language-button:focus-visible,
-.language-option:focus-visible {
-  outline: 2px solid var(--primary-blue);
-  outline-offset: 2px;
-}
-
-/* Animations fluides pour une meilleure UX */
-.language-switcher * {
-  transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-/* Effet de pulsation pour le globe */
-.language-button:focus .globe-icon,
-.language-dropdown.visible + .language-button .globe-icon {
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { 
-    transform: scale(1); 
-    opacity: 1; 
-  }
-  50% { 
-    transform: scale(1.1); 
-    opacity: 0.8; 
-  }
 }

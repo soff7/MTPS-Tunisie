@@ -1,3 +1,5 @@
+/* client/src/styles/Navbar.css - Version finale complète avec Language Switcher */
+
 /* Variables de couleurs */
 :root {
   --primary-blue: #35c8fa;
@@ -69,8 +71,7 @@
   text-decoration: none;
   transition: transform 0.3s ease;
   justify-self: start;
-  top: %;
-  
+  top: 5%;
 }
 
 .logo:hover {
@@ -82,14 +83,12 @@
   width: auto;
   object-fit: contain;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-  
 }
 
 .logo .logo-text {
   display: flex;
   flex-direction: column;
   margin-left: 10px;
-
 }
 
 .logo .logo-main {
@@ -98,7 +97,6 @@
   color: var(--primary-blue);
   line-height: 1;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  
 }
 
 .logo .logo-sub {
@@ -269,6 +267,11 @@
   justify-self: end;
 }
 
+/* Espacement pour le language switcher */
+.desktop-buttons .simple-language-switcher {
+  margin-right: 0.5rem;
+}
+
 .mobile-menu-toggle {
   display: none !important;
 }
@@ -366,6 +369,35 @@
 
 .mobile-auth-buttons {
   display: none !important;
+}
+
+/* Styles pour le language switcher mobile */
+.mobile-language-switcher {
+  display: none;
+  justify-content: center;
+  padding: 1rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 1rem 0;
+}
+
+.mobile-language-switcher .simple-language-switcher {
+  width: 100%;
+  max-width: 200px;
+}
+
+.mobile-language-switcher .language-button {
+  width: 100%;
+  justify-content: center;
+  background-color: rgba(53, 200, 250, 0.1);
+  border-color: rgba(53, 200, 250, 0.3);
+}
+
+.mobile-language-switcher .language-dropdown {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  width: 180px;
 }
 
 /* Amélioration du hamburger menu pour la transparence */
@@ -573,6 +605,16 @@
     display: none !important;
   }
   
+  /* Masquer le language switcher desktop sur mobile */
+  .desktop-buttons .simple-language-switcher {
+    display: none;
+  }
+  
+  /* Afficher le language switcher mobile */
+  .mobile-language-switcher {
+    display: flex;
+  }
+  
   .mobile-auth-buttons {
     display: flex !important;
     flex-direction: row;
@@ -603,6 +645,19 @@
     background-color: rgba(0, 0, 0, 0.8);
     z-index: 999;
     display: block;
+  }
+}
+
+/* Responsive adjustments pour le language switcher */
+@media (min-width: 993px) {
+  /* Masquer le language switcher mobile sur desktop */
+  .mobile-language-switcher {
+    display: none;
+  }
+  
+  /* Afficher le language switcher desktop */
+  .desktop-buttons .simple-language-switcher {
+    display: inline-block;
   }
 }
 
@@ -671,6 +726,22 @@
     transform: translate(-50%, -50%) scale(1);
     opacity: 0;
   }
+}
+
+/* Ajustements pour RTL */
+[dir="rtl"] .desktop-buttons {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .desktop-buttons .simple-language-switcher {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+[dir="rtl"] .mobile-language-switcher .language-dropdown {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
 }
 
 /* RESET GLOBAL pour éviter tout conflit CSS */

@@ -1,6 +1,9 @@
+// client/src/components/Hero.jsx - Version avec traductions
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaArrowRight, FaPhone, FaIndustry, FaTools, FaRecycle } from 'react-icons/fa';
+import TranslatedText from './TranslatedText';
+import { translationService } from '../utils/translations';
 import '../styles/Hero.css';
 
 // Tableau des slides avec leurs données complètes
@@ -8,24 +11,23 @@ const slides = [
   {
     id: 1,
     image: 'url(/assets/bg1.png)',
-    title: "Solutions plastiques pour l'industrie moderne",
-    description: "MTPS combine expertise technique et innovation pour fournir des solutions plastiques sur mesure répondant aux exigences les plus strictes de l'industrie.",
+    titleKey: 'hero.title.main',
+    descriptionKey: 'hero.description.main',
     showButton: true,
-    buttonText: "Read More",
-    buttonLink: "/apropos", // Lien vers la page À propos
+    buttonTextKey: 'hero.btn.readmore',
+    buttonLink: '/apropos',
     showSecondaryButton: true,
-    secondaryButtonText: "CONTACT US",
-    secondaryButtonLink: "/contact"
+    secondaryButtonTextKey: 'hero.btn.contact',
+    secondaryButtonLink: '/contact'
   },
   {
     id: 2,
     image: 'url(/assets/bg3.png)',
-    title: "MTPS Tubes",
-    description: "Où la force rencontre la flexibilité pour vos besoins en plastique.",
+    titleKey: 'hero.title.secondary',
+    descriptionKey: 'hero.description.secondary',
     showButton: true,
-    buttonText: "Nos Produits",
-    buttonLink: "/produits", // Lien vers la page Produits
-  
+    buttonTextKey: 'hero.btn.products',
+    buttonLink: '/produits',
   },
 ];
 
@@ -33,6 +35,7 @@ const Hero = () => {
   const [scrollY, setScrollY] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentLanguage, setCurrentLanguage] = useState(translationService.getCurrentLanguage());
   
   // Effet pour le carrousel automatique (6 secondes)
   useEffect(() => {
@@ -61,6 +64,19 @@ const Hero = () => {
     };
   }, []);
   
+  // Listener pour les changements de langue
+  useEffect(() => {
+    const handleLanguageChange = (newLanguage) => {
+      setCurrentLanguage(newLanguage);
+    };
+    
+    translationService.addListener(handleLanguageChange);
+    
+    return () => {
+      translationService.removeListener(handleLanguageChange);
+    };
+  }, []);
+  
   // Fonction pour gérer le défilement vers le bas
   const handleScrollDown = () => {
     const nextSection = document.querySelector('.section-divider')?.nextElementSibling;
@@ -83,6 +99,8 @@ const Hero = () => {
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
+
+  const currentSlideData = slides[currentSlide];
 
   return (
     <>
@@ -139,35 +157,35 @@ const Hero = () => {
         <div className="container hero-container">
           <div className="hero-content">
             <h1 className="hero-title">
-              {slides[currentSlide].title}
+              <TranslatedText tKey={currentSlideData.titleKey} />
             </h1>
             
             <p className="hero-description">
-              {slides[currentSlide].description}
+              <TranslatedText tKey={currentSlideData.descriptionKey} />
             </p>
             
             <div className="hero-btns">
               {/* Bouton principal avec lien dynamique */}
-              {slides[currentSlide].showButton && (
+              {currentSlideData.showButton && (
                 <Link 
-                  to={slides[currentSlide].buttonLink} 
+                  to={currentSlideData.buttonLink} 
                   className="btn btn-primary"
-                  aria-label={`${slides[currentSlide].buttonText} - ${slides[currentSlide].title}`}
+                  aria-label={`${translationService.t(currentSlideData.buttonTextKey)} - ${translationService.t(currentSlideData.titleKey)}`}
                 >
-                  {slides[currentSlide].buttonText}
+                  <TranslatedText tKey={currentSlideData.buttonTextKey} />
                   <FaArrowRight className="icon-arrow" />
                 </Link>
               )}
               
               {/* Bouton secondaire avec lien dynamique */}
-              {slides[currentSlide].showSecondaryButton && (
+              {currentSlideData.showSecondaryButton && (
                 <Link 
-                  to={slides[currentSlide].secondaryButtonLink} 
+                  to={currentSlideData.secondaryButtonLink} 
                   className="btn btn-secondary"
-                  aria-label={slides[currentSlide].secondaryButtonText}
+                  aria-label={translationService.t(currentSlideData.secondaryButtonTextKey)}
                 >
                   <FaPhone className="icon-phone" />
-                  {slides[currentSlide].secondaryButtonText}
+                  <TranslatedText tKey={currentSlideData.secondaryButtonTextKey} />
                 </Link>
               )}
             </div>
@@ -187,7 +205,7 @@ const Hero = () => {
             }}
           >
             <div className="scroll-arrow"></div>
-            <span>Scroll down</span>
+            <TranslatedText tKey="hero.scroll" tag="span" />
           </div>
         </div>
       </section>
