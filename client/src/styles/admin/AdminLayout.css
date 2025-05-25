@@ -1,7 +1,9 @@
-/* client/src/styles/admin/AdminLayout.css */
+/* client/src/styles/admin/AdminLayout.css - VERSION CORRIGÉE */
 
-/* Variables pour le thème admin */
-:root {
+/* Variables admin ISOLÉES uniquement dans le contexte admin */
+.admin-layout,
+.admin-layout * {
+  /* Variables pour le thème admin - ISOLÉES */
   --admin-primary: #2563eb;
   --admin-primary-dark: #1d4ed8;
   --admin-secondary: #64748b;
@@ -10,33 +12,67 @@
   --admin-danger: #ef4444;
   --admin-info: #06b6d4;
   
-  /* Couleurs de fond */
+  /* Couleurs de fond ADMIN SEULEMENT */
   --admin-bg: #f8fafc;
   --admin-sidebar-bg: #1e293b;
   --admin-card-bg: #ffffff;
   --admin-border: #e2e8f0;
   
-  /* Texte */
+  /* Texte ADMIN SEULEMENT */
   --admin-text-primary: #1e293b;
   --admin-text-secondary: #64748b;
   --admin-text-light: #ffffff;
   
-  /* Ombres */
+  /* Ombres ADMIN SEULEMENT */
   --admin-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --admin-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --admin-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   
-  /* Dimensions */
+  /* Dimensions ADMIN SEULEMENT */
   --sidebar-width: 280px;
   --header-height: 70px;
 }
 
-/* Layout principal */
+/* Layout principal ADMIN SEULEMENT */
 .admin-layout {
   display: flex;
   min-height: 100vh;
   background-color: var(--admin-bg);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  
+  /* ISOLATION COMPLÈTE - Ne pas hériter des styles du site */
+  color: var(--admin-text-primary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Réinitialisation des styles pour éviter les conflits */
+.admin-layout h1,
+.admin-layout h2,
+.admin-layout h3,
+.admin-layout h4,
+.admin-layout h5,
+.admin-layout h6 {
+  color: var(--admin-text-primary);
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.admin-layout p {
+  color: var(--admin-text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.admin-layout a {
+  color: var(--admin-primary);
+  text-decoration: none;
+}
+
+.admin-layout a:hover {
+  color: var(--admin-primary-dark);
 }
 
 .admin-main {
@@ -45,6 +81,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background-color: var(--admin-bg);
 }
 
 .admin-content {
@@ -52,9 +89,10 @@
   padding: 2rem;
   margin-top: var(--header-height);
   background-color: var(--admin-bg);
+  color: var(--admin-text-primary);
 }
 
-/* Responsive */
+/* Responsive ADMIN SEULEMENT */
 @media (max-width: 1024px) {
   .admin-main {
     margin-left: 0;
@@ -71,40 +109,42 @@
   }
 }
 
-/* Utilitaires */
-.loading-spinner {
+/* Utilitaires ADMIN SEULEMENT */
+.admin-layout .loading-spinner {
   width: 40px;
   height: 40px;
   border: 3px solid var(--admin-border);
   border-top: 3px solid var(--admin-primary);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: adminSpin 1s linear infinite;
   margin: 0 auto;
 }
 
-@keyframes spin {
+@keyframes adminSpin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-.dashboard-loading {
+.admin-layout .dashboard-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 400px;
   gap: 1rem;
+  color: var(--admin-text-secondary);
 }
 
-.dashboard-error {
+.admin-layout .dashboard-error {
   text-align: center;
   padding: 2rem;
   background: var(--admin-card-bg);
   border-radius: 8px;
   box-shadow: var(--admin-shadow-sm);
+  color: var(--admin-text-primary);
 }
 
-.retry-btn {
+.admin-layout .retry-btn {
   background: var(--admin-primary);
   color: white;
   border: none;
@@ -115,6 +155,6 @@
   transition: background-color 0.2s;
 }
 
-.retry-btn:hover {
+.admin-layout .retry-btn:hover {
   background: var(--admin-primary-dark);
 }
