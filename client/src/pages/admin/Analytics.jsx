@@ -1,4 +1,4 @@
-// client/src/pages/admin/Analytics.jsx
+// client/src/pages/admin/Analytics.jsx - Version corrigée
 import React, { useState, useEffect } from 'react';
 import { 
   FaChartLine, 
@@ -10,8 +10,6 @@ import {
   FaEye,
   FaDownload,
   FaCalendarAlt,
-  FaTrendingUp,
-  FaTrendingDown,
   FaArrowUp,
   FaArrowDown
 } from 'react-icons/fa';
@@ -398,7 +396,7 @@ const Analytics = () => {
         {/* Insights industriels */}
         <div className="analytics-card">
           <div className="card-header">
-            <h3><FaTrendingUp /> Insights métier</h3>
+            <h3><FaChartLine /> Insights métier</h3>
           </div>
           <div className="card-content">
             <div className="industry-insights">
@@ -451,7 +449,7 @@ const Analytics = () => {
                 <div className="metric-name">Taux de conversion</div>
                 <div className="metric-value large">{formatPercentage(analyticsData.overview.conversionRate)}</div>
                 <div className="metric-change positive">
-                  <FaTrendingUp /> +{formatPercentage(analyticsData.trends.conversion.change)}
+                  <FaArrowUp /> +{formatPercentage(analyticsData.trends.conversion.change)}
                 </div>
               </div>
 
