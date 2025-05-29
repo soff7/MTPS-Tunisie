@@ -1,12 +1,11 @@
-// client/src/components/Hero.jsx - Version avec traductions
+// client/src/components/Hero.jsx
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaArrowRight, FaPhone, FaIndustry, FaTools, FaRecycle } from 'react-icons/fa';
+import { FaArrowRight, FaPhone, FaChevronDown } from 'react-icons/fa';
 import TranslatedText from './TranslatedText';
 import { translationService } from '../utils/translations';
 import '../styles/Hero.css';
 
-// Tableau des slides avec leurs données complètes
 const slides = [
   {
     id: 1,
@@ -37,26 +36,16 @@ const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentLanguage, setCurrentLanguage] = useState(translationService.getCurrentLanguage());
   
-  // Effet pour le carrousel automatique (6 secondes)
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 6000);
-    
     return () => clearInterval(interval);
   }, []);
   
-  // Effet de parallaxe au défilement
   useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-    
-    // Animation d'entrée du composant
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, 100);
-    
+    const handleScroll = () => setScrollY(window.scrollY);
+    const timer = setTimeout(() => setIsVisible(true), 100);
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -64,79 +53,53 @@ const Hero = () => {
     };
   }, []);
   
-  // Listener pour les changements de langue
   useEffect(() => {
-    const handleLanguageChange = (newLanguage) => {
-      setCurrentLanguage(newLanguage);
-    };
-    
+    const handleLanguageChange = (newLanguage) => setCurrentLanguage(newLanguage);
     translationService.addListener(handleLanguageChange);
-    
-    return () => {
-      translationService.removeListener(handleLanguageChange);
-    };
+    return () => translationService.removeListener(handleLanguageChange);
   }, []);
   
-  // Fonction pour gérer le défilement vers le bas
   const handleScrollDown = () => {
     const nextSection = document.querySelector('.section-divider')?.nextElementSibling;
     if (nextSection) {
-      nextSection.scrollIntoView({ behavior: 'smooth' });
+      nextSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
     }
   };
 
-  // Fonction pour naviguer manuellement entre les slides
-  const goToSlide = (index) => {
-    setCurrentSlide(index);
-  };
-
-  // Fonction pour le slide suivant
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
-
-  // Fonction pour le slide précédent
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
+  const goToSlide = (index) => setCurrentSlide(index);
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
 
   const currentSlideData = slides[currentSlide];
 
   return (
     <>
       <section className={`hero ${isVisible ? 'visible' : ''}`}>
-        {/* Background slides */}
         <div className="hero-slides">
           {slides.map((slide, index) => (
             <div 
               key={slide.id}
               className={`hero-slide ${index === currentSlide ? 'active' : ''}`}
               style={{ backgroundImage: slide.image }}
+              aria-hidden={index !== currentSlide}
             >
               <div className="slide-overlay"></div>
             </div>
           ))}
         </div>
         
-        {/* Contrôles de navigation du carrousel */}
         <div className="hero-navigation">
-          <button 
-            className="nav-btn prev-btn" 
-            onClick={prevSlide}
-            aria-label="Slide précédent"
-          >
+          <button className="nav-btn prev-btn" onClick={prevSlide} aria-label="Slide précédent">
             ‹
           </button>
-          <button 
-            className="nav-btn next-btn" 
-            onClick={nextSlide}
-            aria-label="Slide suivant"
-          >
+          <button className="nav-btn next-btn" onClick={nextSlide} aria-label="Slide suivant">
             ›
           </button>
         </div>
         
-        {/* Indicateurs de slide */}
         <div className="hero-indicators">
           {slides.map((_, index) => (
             <button
@@ -144,15 +107,13 @@ const Hero = () => {
               className={`indicator ${index === currentSlide ? 'active' : ''}`}
               onClick={() => goToSlide(index)}
               aria-label={`Aller au slide ${index + 1}`}
+              aria-current={index === currentSlide}
             />
           ))}
         </div>
         
         <div className="hero-particles"></div>
-        <div 
-          className="hero-overlay" 
-          style={{ transform: `translateY(${scrollY * 0.1}px)` }}
-        ></div>
+        <div className="hero-overlay" style={{ transform: `translateY(${scrollY * 0.1}px)` }}></div>
         
         <div className="container hero-container">
           <div className="hero-content">
@@ -165,7 +126,6 @@ const Hero = () => {
             </p>
             
             <div className="hero-btns">
-              {/* Bouton principal avec lien dynamique */}
               {currentSlideData.showButton && (
                 <Link 
                   to={currentSlideData.buttonLink} 
@@ -177,7 +137,6 @@ const Hero = () => {
                 </Link>
               )}
               
-              {/* Bouton secondaire avec lien dynamique */}
               {currentSlideData.showSecondaryButton && (
                 <Link 
                   to={currentSlideData.secondaryButtonLink} 
@@ -191,22 +150,16 @@ const Hero = () => {
             </div>
           </div>
           
-          {/* Indicateur de défilement */}
-          <div 
+          <button 
             className="hero-scroll-indicator" 
             onClick={handleScrollDown}
-            role="button"
-            tabIndex={0}
             aria-label="Défiler vers le bas"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                handleScrollDown();
-              }
-            }}
           >
-            <div className="scroll-arrow"></div>
-            <TranslatedText tKey="hero.scroll" tag="span" />
-          </div>
+            <span className="scroll-text">
+              <TranslatedText tKey="hero.scroll" />
+            </span>
+            <FaChevronDown className="scroll-arrow" />
+          </button>
         </div>
       </section>
       <div className="section-divider"></div>
