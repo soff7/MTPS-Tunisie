@@ -20,7 +20,7 @@ const productSchema = new mongoose.Schema({
     required: [true, 'La catégorie est requise'],
     trim: true,
     enum: {
-      values: ['Informatique', 'Bureautique', 'Mobilier', 'Fournitures'],
+      values: ['rectangulaire', 'carre', 'rond'],
       message: 'Catégorie {VALUE} non supportée'
     }
   },

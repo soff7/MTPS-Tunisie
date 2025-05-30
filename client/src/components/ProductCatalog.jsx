@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaFileAlt } from 'react-icons/fa';
+import { io } from 'socket.io-client';
 import '../styles/ProductCatalog.css';
 
 const ProductCatalog = () => {
@@ -28,7 +29,35 @@ const ProductCatalog = () => {
     };
 
     fetchProducts();
-  }, []);
+
+    const socket = io(API_BASE_URL, {
+      transports: ['websocket'],
+      reconnectionAttempts: 5,
+      timeout: 10000
+    });
+
+    socket.on('productCreated', (product) => {
+      setProducts(prevProducts => [product, ...prevProducts]);
+    });
+
+    socket.on('productUpdated', (updatedProduct) => {
+      setProducts(prevProducts =>
+        prevProducts.map(product =>
+          product._id === updatedProduct._id ? updatedProduct : product
+        )
+      );
+    });
+
+    socket.on('productDeleted', ({ id }) => {
+      setProducts(prevProducts =>
+        prevProducts.filter(product => product._id !== id)
+      );
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [API_BASE_URL]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -38,25 +67,23 @@ const ProductCatalog = () => {
     setOpenTechSheet(openTechSheet === productId ? null : productId);
   };
 
-  const renderTechSheet = (product) => {
-    return (
-      <div className="tech-sheet">
-        <h4>Spécifications techniques</h4>
-        <div className="tech-spec-item">
-          <span className="tech-spec-label">Prix:</span>
-          <span className="tech-spec-value">{product.price}€</span>
-        </div>
-        <div className="tech-spec-item">
-          <span className="tech-spec-label">Catégorie:</span>
-          <span className="tech-spec-value">{product.category}</span>
-        </div>
-        <div className="tech-spec-item">
-          <span className="tech-spec-label">Stock:</span>
-          <span className="tech-spec-value">{product.inStock ? 'Oui' : 'Non'}</span>
-        </div>
+  const renderTechSheet = (product) => (
+    <div className="tech-sheet">
+      <h4>Spécifications techniques</h4>
+      <div className="tech-spec-item">
+        <span className="tech-spec-label">Prix:</span>
+        <span className="tech-spec-value">{product.price}€</span>
       </div>
-    );
-  };
+      <div className="tech-spec-item">
+        <span className="tech-spec-label">Catégorie:</span>
+        <span className="tech-spec-value">{product.category}</span>
+      </div>
+      <div className="tech-spec-item">
+        <span className="tech-spec-label">Stock:</span>
+        <span className="tech-spec-value">{product.inStock ? 'Oui' : 'Non'}</span>
+      </div>
+    </div>
+  );
 
   const renderProducts = () => {
     let filtered = products;
@@ -77,7 +104,7 @@ const ProductCatalog = () => {
           <button onClick={() => toggleTechSheet(product._id || product.id)}>
             <FaFileAlt /> Fiche technique
           </button>
-          {openTechSheet === product._id && renderTechSheet(product)}
+          {openTechSheet === (product._id || product.id) && renderTechSheet(product)}
         </div>
       </div>
     ));
@@ -86,17 +113,22 @@ const ProductCatalog = () => {
   return (
     <section className="product-catalog" id="products">
       <div className="container">
-        <h2 className="product-title">Nos <span className="highlight">Produits</span></h2>
+        <h2 className="product-title">
+          Nos <span className="highlight">Produits</span>
+        </h2>
 
         <div className="catalog-tabs">
           <button onClick={() => handleTabChange('all')} className={activeTab === 'all' ? 'active' : ''}>
             Tous
           </button>
-          <button onClick={() => handleTabChange('pvc')} className={activeTab === 'pvc' ? 'active' : ''}>
-            PVC
+          <button onClick={() => handleTabChange('rectangulaire')} className={activeTab === 'rectangulaire' ? 'active' : ''}>
+            Rectangulaire
           </button>
-          <button onClick={() => handleTabChange('pe')} className={activeTab === 'pe' ? 'active' : ''}>
-            PE
+          <button onClick={() => handleTabChange('carre')} className={activeTab === 'carre' ? 'active' : ''}>
+            Carré
+          </button>
+          <button onClick={() => handleTabChange('rond')} className={activeTab === 'rond' ? 'active' : ''}>
+            Rond
           </button>
         </div>
 

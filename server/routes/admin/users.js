@@ -4,6 +4,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const User = require('../../models/User');
 const auth = require('../../middleware/auth');
+const { getIO } = require('../../utils/socket');
 
 // Middleware pour vérifier les droits admin
 const adminAuth = async (req, res, next) => {
@@ -138,6 +139,10 @@ router.post('/', auth, adminAuth, async (req, res) => {
     
     // Retourner l'utilisateur sans le mot de passe
     const userResponse = await User.findById(user._id).select('-password');
+    
+    // Emit socket.io event for user created
+    const io = getIO();
+    io.emit('userCreated', userResponse);
     
     res.status(201).json({
       success: true,

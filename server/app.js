@@ -28,7 +28,7 @@ const corsOptions = {
     ? ['https://mtps-tunisie.com', 'https://www.mtps-tunisie.com']
     : 'http://localhost:3000',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token'],
   credentials: true,
   optionsSuccessStatus: 200
 };

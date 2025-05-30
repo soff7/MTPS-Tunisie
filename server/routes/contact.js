@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const Contact = require('../models/Contact');
+const { getIO } = require('../utils/socket');
 
 // POST - Créer un nouveau message de contact
 router.post('/', async (req, res) => {
@@ -10,6 +11,11 @@ router.post('/', async (req, res) => {
     const contact = new Contact(req.body);
     await contact.save();
     console.log('Contact enregistré avec succès');
+
+    // Emit socket.io event for contact created
+    const io = getIO();
+    io.emit('contactCreated', contact);
+
     res.status(201).json({ 
       success: true, 
       message: 'Message envoyé avec succès!' 
@@ -85,6 +91,10 @@ router.patch('/:id', async (req, res) => {
         message: 'Message non trouvé' 
       });
     }
+
+    // Emit socket.io event for contact updated
+    const io = getIO();
+    io.emit('contactUpdated', contact);
     
     res.status(200).json({ 
       success: true, 
@@ -110,6 +120,10 @@ router.delete('/:id', async (req, res) => {
         message: 'Message non trouvé' 
       });
     }
+
+    // Emit socket.io event for contact deleted
+    const io = getIO();
+    io.emit('contactDeleted', { id: req.params.id });
     
     res.status(200).json({ 
       success: true, 

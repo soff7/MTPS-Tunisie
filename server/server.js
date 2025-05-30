@@ -1,13 +1,19 @@
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
+const http = require('http');
+const socketUtil = require('./utils/socket');
 
 // Configuration de dotenv
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
+const io = socketUtil.init(server);
+
 const PORT = process.env.PORT || 5000;
 
 // Middleware pour le parsing des requêtes JSON - AVANT CORS
@@ -81,8 +87,19 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Démarrer le serveur
-app.listen(PORT, () => {
+// Socket.io connection
+io.on('connection', (socket) => {
+  console.log('Un client est connecté:', socket.id);
+
+  socket.on('disconnect', () => {
+    console.log('Client déconnecté:', socket.id);
+  });
+});
+
+module.exports = { app, server, io };
+
+// Démarrer le serveur avec socket.io
+server.listen(PORT, () => {
   console.log(`Serveur démarré sur le port ${PORT}`);
   console.log(`Test API: http://localhost:${PORT}/api/test`);
 });

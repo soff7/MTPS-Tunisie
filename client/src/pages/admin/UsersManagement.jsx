@@ -545,41 +545,27 @@ const UsersManagement = () => {
     };
   }, []);
 
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
   const fetchUsers = async () => {
     try {
       setIsLoading(true);
-      // Simulation de données utilisateurs pour la démonstration
-      // Dans un vrai projet, vous feriez un appel API ici
-      const mockUsers = [
-        {
-          _id: '1',
-          name: 'Admin Principal',
-          email: 'admin@mtps.tn',
-          role: 'admin',
-          createdAt: new Date('2024-01-15').toISOString()
-        },
-        {
-          _id: '2',
-          name: 'Super Admin',
-          email: 'superadmin@mtps.tn',
-          role: 'superadmin',
-          createdAt: new Date('2024-01-10').toISOString()
-        },
-        {
-          _id: '3',
-          name: 'Utilisateur Test',
-          email: 'user@test.com',
-          role: 'user',
-          createdAt: new Date('2024-02-01').toISOString()
+      const token = localStorage.getItem('token');
+
+      const response = await fetch(`${API_BASE_URL}/api/users`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-      ];
+      });
 
-      // Simuler un délai de chargement
-      setTimeout(() => {
-        setUsers(mockUsers);
-        setIsLoading(false);
-      }, 1000);
+      if (!response.ok) {
+        throw new Error('Erreur lors du chargement des utilisateurs');
+      }
 
+      const data = await response.json();
+      setUsers(data);
+      setIsLoading(false);
     } catch (err) {
       console.error('Erreur fetch users:', err);
       setError('Erreur de connexion au serveur');
@@ -647,28 +633,53 @@ const UsersManagement = () => {
     try {
       if (isEditing) {
         // Update user
-        console.log('Mise à jour utilisateur:', formData);
-        // Here you would make the API call to update
-        
-        // Simulation of update
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE_URL}/api/users/${selectedUser._id}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            role: formData.role,
+            password: formData.password || undefined
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Erreur lors de la mise à jour de l\'utilisateur');
+        }
+
+        const updatedUser = await response.json();
+
         setUsers(users.map(user =>
-          user._id === selectedUser._id
-            ? { ...user, name: formData.name, email: formData.email, role: formData.role }
-            : user
+          user._id === selectedUser._id ? updatedUser : user
         ));
       } else {
         // Create new user
-        console.log('Création utilisateur:', formData);
-        // Here you would make the API call to create
-        
-        // Simulation of creation
-        const newUser = {
-          _id: Date.now().toString(),
-          name: formData.name,
-          email: formData.email,
-          role: formData.role,
-          createdAt: new Date().toISOString()
-        };
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE_URL}/api/users`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            role: formData.role,
+            password: formData.password
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Erreur lors de la création de l\'utilisateur');
+        }
+
+        const newUser = await response.json();
+
         setUsers([...users, newUser]);
       }
 
@@ -685,10 +696,19 @@ const UsersManagement = () => {
     }
 
     try {
-      console.log('Suppression utilisateur:', userId);
-      // Here you would make the API call to delete
-      
-      // Simulation of deletion
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de la suppression de l\'utilisateur');
+      }
+
       setUsers(users.filter(user => user._id !== userId));
     } catch (err) {
       console.error('Erreur suppression:', err);
