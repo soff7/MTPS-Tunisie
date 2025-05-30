@@ -25,25 +25,86 @@ MTPS-Tunisie is a full-stack web application featuring a React frontend and an E
   - dotenv for environment variables
 
 ## Folder Structure Overview
-```
-/client          # React frontend application
-  /public       # Static assets and HTML template
-  /src          # React source code (components, pages, hooks, styles, utils)
-    /components/admin  # Admin dashboard components (header, sidebar, analytics, stats, recent activity)
-    /pages/admin       # Admin dashboard pages (dashboard, analytics, contacts management, products management, settings, users management)
-  package.json  # Frontend dependencies and scripts
 
-/server          # Express backend application
-  /config       # Configuration files (database, passport, keys)
-  /controllers  # Route controllers for auth, products, contacts, stats
-  /middleware   # Express middleware (auth, error handling)
-  /models       # Mongoose models (User, Product, Contact)
-  /routes       # API route definitions
-  /utils        # Utility functions (API helpers, JWT, socket)
-  package.json  # Backend dependencies and scripts
-  server.js     # Main server entry point
 ```
-## Folder Structure Overview
+/client
+  /public
+    # Static assets like images, favicon, manifest, and the main HTML template (index.html).
+  /src
+    # Main React source code directory.
+    /components
+      # Reusable UI components for the application.
+      /admin
+        # Components specific to the admin dashboard such as header, sidebar, analytics, stats cards, and recent activity.
+      /auth
+        # Authentication related components like AdminRoute, AuthProvider, and ProtectedRoute.
+    /pages
+      # React pages representing different routes/views.
+      /admin
+        # Admin dashboard pages including dashboard, analytics, contacts management, products management, settings, and users management.
+      /auth
+        # Authentication pages like SignIn and SignUp.
+    /hooks
+      # Custom React hooks for API calls, translations, and other reusable logic.
+    /contexts
+      # React context providers, e.g., for translation management.
+    /styles
+      # CSS files for styling components and pages, including admin-specific styles.
+    /constants
+      # Constant values such as colors and themes used throughout the app.
+    /services
+      # Service modules for API interactions, e.g., contactService.js.
+    /shared-theme
+      # Shared theme configuration and utilities for consistent styling.
+    /utils
+      # Utility functions such as API helpers and translation utilities.
+    App.js
+      # Main React component that sets up routing and layout.
+    index.js
+      # Entry point for React application, rendering App component.
+    reportWebVitals.js
+      # Performance measuring utilities.
+    setupTests.js
+      # Test setup configuration.
+
+  package.json
+    # Frontend dependencies and scripts.
+
+  .gitignore
+    # Git ignore rules for client-side files.
+
+  README.md
+    # Frontend specific README (if any).
+
+/server
+  /config
+    # Configuration files for database connection, passport strategies, keys, etc.
+  /controllers
+    # Route controllers handling business logic for authentication, products, contacts, and stats.
+  /middleware
+    # Express middleware for authentication and error handling.
+  /models
+    # Mongoose models defining schemas for User, Product, and Contact.
+  /routes
+    # API route definitions, including sub-routes for admin functionalities.
+  /utils
+    # Utility modules for API helpers, JWT handling, and socket communication.
+  app.js
+    # Express app setup and middleware registration.
+  server.js
+    # Main server entry point to start the backend server.
+  package.json
+    # Backend dependencies and scripts.
+
+.gitignore
+  # Git ignore rules for the root project.
+
+package.json
+  # Root project dependencies and scripts (if any).
+
+README.md
+  # This general project README file.
+```
 
 ## Installation and Setup
 

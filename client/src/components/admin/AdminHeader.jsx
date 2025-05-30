@@ -111,3 +111,5 @@ const AdminHeader = () => {
   );
 };
 
+// ✅ Exportation par défaut à ne pas oublier
+export default AdminHeader;
