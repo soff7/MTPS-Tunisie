@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../styles/ContactForm.css'; // Assurez-vous d'avoir ce fichier CSS pour le style
+import { useNavigate } from 'react-router-dom';
+import '../styles/ContactForm.css';
 
-const ContactForm = () => {
+const ContactForm = ({ isAuthenticated }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
-    companyName: '', // Changé de "company" à "companyName" pour correspondre au modèle
+    companyName: '',
     email: '',
-    subject: '', // Valeur par défaut vide
-    otherSubject: '', // Pour le champ "Autre"
+    subject: '',
+    otherSubject: '',
     message: ''
   });
   
@@ -18,7 +20,18 @@ const ContactForm = () => {
     error: null
   });
 
+  // Charger les données sauvegardées si elles existent
+  useEffect(() => {
+    const savedFormData = localStorage.getItem('contactFormData');
+    if (savedFormData && isAuthenticated) {
+      setFormData(JSON.parse(savedFormData));
+      localStorage.removeItem('contactFormData');
+    }
+  }, [isAuthenticated]);
+
   const handleChange = (e) => {
+    if (!isAuthenticated) return;
+    
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -28,6 +41,14 @@ const ContactForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!isAuthenticated) {
+      // Sauvegarder les données du formulaire
+      localStorage.setItem('contactFormData', JSON.stringify(formData));
+      // Rediriger vers la page d'inscription
+      navigate('/signup');
+      return;
+    }
     
     // Vérification que le message a au moins 10 caractères
     if (formData.message.length < 10) {
@@ -88,6 +109,12 @@ const ContactForm = () => {
     <div className="contact-form-container">
       <h2>Contactez-nous</h2>
       
+      {!isAuthenticated && (
+        <div className="auth-warning">
+          ⚠️ Vous devez être connecté pour envoyer un message.
+        </div>
+      )}
+      
       {status.error && (
         <div className="error-message">
           ⚠️ {status.error}
@@ -110,6 +137,7 @@ const ContactForm = () => {
             value={formData.name}
             onChange={handleChange}
             required
+            disabled={!isAuthenticated}
           />
         </div>
         
@@ -118,9 +146,10 @@ const ContactForm = () => {
           <input
             type="text"
             id="companyName"
-            name="companyName" // Changé de "company" à "companyName"
+            name="companyName"
             value={formData.companyName}
             onChange={handleChange}
+            disabled={!isAuthenticated}
           />
         </div>
         
@@ -133,6 +162,7 @@ const ContactForm = () => {
             value={formData.email}
             onChange={handleChange}
             required
+            disabled={!isAuthenticated}
           />
         </div>
         
@@ -144,6 +174,7 @@ const ContactForm = () => {
             value={formData.subject}
             onChange={handleChange}
             required
+            disabled={!isAuthenticated}
           >
             <option value="">Choisir un sujet</option>
             <option value="QuestionTechnique">Question Technique</option>
@@ -162,6 +193,7 @@ const ContactForm = () => {
               value={formData.otherSubject}
               onChange={handleChange}
               required
+              disabled={!isAuthenticated}
             />
           </div>
         )}
@@ -176,6 +208,7 @@ const ContactForm = () => {
             rows="6"
             required
             minLength="10"
+            disabled={!isAuthenticated}
           ></textarea>
         </div>
         
