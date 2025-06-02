@@ -1,257 +1,433 @@
-import React, { Component } from 'react';
-import { io } from 'socket.io-client';
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { FaPlus, FaTrash, FaSpinner, FaFilePdf, FaImage } from 'react-icons/fa';
 
-class ProductsManagement extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      products: [],
-      loading: true,
-      error: null,
-      formData: {
-        name: '',
-        description: '',
-        price: '',
-        category: '',
-        stock: 0,
-        imageUrl: ''
-      },
-      isSubmitting: false
-    };
+const ProductsContainer = styled.div`
+  padding: 2rem;
+  background-color: var(--admin-bg);
+  min-height: calc(100vh - var(--header-height));
+`;
 
-    this.socket = null;
-    this.API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const ProductsTitle = styled.h1`
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: var(--admin-text-primary);
+`;
+
+const AddButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--admin-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 2rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: var(--admin-primary-dark);
   }
+`;
 
-  componentDidMount() {
-    this.fetchProducts();
+const AddProductForm = styled.form`
+  background-color: var(--admin-card-bg);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: var(--admin-shadow-sm);
+  border: 1px solid var(--admin-border);
+  margin-bottom: 2rem;
+`;
 
-    this.socket = io(this.API_BASE_URL);
+const FormTitle = styled.h2`
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  color: var(--admin-text-primary);
+`;
 
-    this.socket.on('productCreated', (product) => {
-      this.setState(prevState => ({
-        products: [product, ...prevState.products]
-      }));
-    });
+const FormInput = styled.input`
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-family: inherit;
 
-    this.socket.on('productUpdated', (updatedProduct) => {
-      this.setState(prevState => ({
-        products: prevState.products.map(product =>
-          product._id === updatedProduct._id ? updatedProduct : product
-        )
-      }));
-    });
-
-    this.socket.on('productDeleted', ({ id }) => {
-      this.setState(prevState => ({
-        products: prevState.products.filter(product => product._id !== id)
-      }));
-    });
+  &:focus {
+    outline: none;
+    border-color: var(--admin-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
   }
+`;
 
-  componentWillUnmount() {
-    if (this.socket) {
-      this.socket.disconnect();
-    }
+const FormSelect = styled.select`
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: var(--admin-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
   }
+`;
 
-  fetchProducts = async () => {
+const FormTextarea = styled.textarea`
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 100px;
+
+  &:focus {
+    outline: none;
+    border-color: var(--admin-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+`;
+
+const FileInputLabel = styled.label`
+  display: block;
+  margin-bottom: 1rem;
+  color: var(--admin-text-secondary);
+`;
+
+const FileInputInfo = styled.span`
+  display: block;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  color: var(--admin-text-secondary);
+`;
+
+const FormButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-right: 0.5rem;
+`;
+
+const SubmitButton = styled(FormButton)`
+  background-color: var(--admin-primary);
+  color: white;
+
+  &:hover {
+    background-color: var(--admin-primary-dark);
+  }
+`;
+
+const CancelButton = styled(FormButton)`
+  background-color: var(--admin-danger);
+  color: white;
+
+  &:hover {
+    background-color: #dc2626;
+  }
+`;
+
+const ProductsList = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+`;
+
+const ProductCard = styled.div`
+  background-color: var(--admin-card-bg);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: var(--admin-shadow-sm);
+  border: 1px solid var(--admin-border);
+`;
+
+const ProductName = styled.h3`
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: var(--admin-text-primary);
+`;
+
+const ProductCategory = styled.p`
+  color: var(--admin-text-secondary);
+  margin-bottom: 0.5rem;
+`;
+
+const ProductImage = styled.img`
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1rem 0;
+`;
+
+const ProductDescription = styled.p`
+  color: var(--admin-text-secondary);
+  margin-bottom: 1rem;
+`;
+
+const PdfLink = styled.a`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--admin-primary);
+  text-decoration: none;
+  margin-bottom: 1rem;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const DeleteButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--admin-danger);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #dc2626;
+  }
+`;
+
+const Loading = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: var(--admin-text-secondary);
+`;
+
+const Error = styled.div`
+  color: var(--admin-danger);
+  padding: 1rem;
+  background-color: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+`;
+
+const ProductsManagement = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    category: '',
+    description: '',
+    image: null,
+    techSheet: null
+  });
+
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
     try {
-      this.setState({ loading: true, error: null });
-
-      const response = await fetch(`${this.API_BASE_URL}/api/products`);
-      if (!response.ok) {
-        let errorMessage = `HTTP error! status: ${response.status}`;
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.message || errorMessage;
-        } catch (jsonError) {
-          console.error("Error parsing error response:", jsonError);
-        }
-        throw new Error(errorMessage);
-      }
-
-      const data = await response.json();
-      if (!Array.isArray(data)) {
-        throw new Error("Unexpected data format: The /api/products API response is not an array.");
-      }
-
-      this.setState({ products: data, loading: false });
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      this.setState({ error: error.message || 'Error loading products', loading: false });
+      console.log('Fetching products from:', `${API_BASE_URL}/api/products`);
+      const res = await fetch(`${API_BASE_URL}/api/products`);
+      if (!res.ok) throw new Error('Échec de la récupération des produits');
+      const data = await res.json();
+      console.log('Products data:', data);
+      setProducts(data);
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching products:', err);
+      setError(err.message);
+      setLoading(false);
     }
   };
 
-  handleInputChange = (e) => {
-    const { name, value } = e.target;
-    this.setState(prevState => ({
-      formData: {
-        ...prevState.formData,
-        [name]: value
-      }
-    }));
-  };
-
-  handleSubmit = async (e) => {
+  const handleAddProduct = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append('name', newProduct.name);
+    formData.append('category', newProduct.category);
+    formData.append('description', newProduct.description);
+    if (newProduct.image) formData.append('image', newProduct.image);
+    if (newProduct.techSheet) formData.append('techSheet', newProduct.techSheet);
 
     try {
-      this.setState({ isSubmitting: true, error: null });
-
-      const { name, description, price, category, stock, imageUrl } = this.state.formData;
-
-      if (!name || !description || !price || !category || stock === '' || !imageUrl) {
-        throw new Error('All fields are required');
-      }
-
-      const token = localStorage.getItem('token');
-      const headers = { 'Content-Type': 'application/json' };
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-
-      const response = await fetch(`${this.API_BASE_URL}/api/products`, {
+      const res = await fetch(`${API_BASE_URL}/api/products`, {
         method: 'POST',
-        headers,
-        body: JSON.stringify({
-          name,
-          description,
-          price: parseFloat(price),
-          category,
-          stock: parseInt(stock, 10),
-          imageUrl
-        })
+        body: formData
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error creating product');
-      }
-
-      const result = await response.json();
-
-      if (result.success) {
-        this.setState({
-          formData: { name: '', description: '', price: '', category: '', stock: 0, imageUrl: '' }
-        });
-        await this.fetchProducts();
-        alert('Product created successfully!');
-      } else {
-        throw new Error(result.message || 'Error creating product');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      this.setState({ error: error.message });
-    } finally {
-      this.setState({ isSubmitting: false });
+      const addedProduct = await res.json();
+      setProducts(prev => [...prev, addedProduct]);
+      setShowAddForm(false);
+      setNewProduct({
+        name: '',
+        category: '',
+        description: '',
+        image: null,
+        techSheet: null
+      });
+    } catch (err) {
+      setError(err.message);
     }
   };
 
-  render() {
-    const { products, loading, error, formData, isSubmitting } = this.state;
+  const handleDelete = async (productId) => {
+    try {
+      await fetch(`${API_BASE_URL}/api/products/${productId}`, {
+        method: 'DELETE'
+      });
+      setProducts(prev => prev.filter(p => p._id !== productId));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
-    const styles = `
-      .products-management { max-width: 1200px; margin: auto; padding: 20px; font-family: Arial; }
-      .loading { text-align: center; padding: 50px; font-size: 18px; color: #666; }
-      .error-message { color: #dc3545; background: #ffebee; padding: 15px; border-radius: 5px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
-      .error-message button { background: none; border: none; color: #dc3545; font-size: 18px; cursor: pointer; }
-      .add-product-form { background: #f8f9fa; padding: 25px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-      .form-group { margin-bottom: 20px; }
-      .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #495057; }
-      .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 4px; font-size: 16px; }
-      .form-group textarea { min-height: 100px; resize: vertical; }
-      button[type="submit"] { background-color: #28a745; color: white; padding: 12px 20px; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; transition: background-color 0.3s; }
-      button[type="submit"]:hover { background-color: #218838; }
-      button[type="submit"]:disabled { background-color: #6c757d; cursor: not-allowed; }
-      .products-list h2 { color: #343a40; margin-bottom: 20px; }
-      .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-      .product-card { border: 1px solid #dee2e6; padding: 20px; border-radius: 8px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-      .product-card h3 { margin-top: 0; color: #007bff; }
-      .product-card p { margin: 8px 0; color: #495057; }
-      .product-actions { display: flex; margin-top: 15px; }
-      .product-actions button { padding: 8px 15px; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; margin-right: 10px; }
-      .delete-btn { background-color: #dc3545; color: white; }
-      .delete-btn:hover { background-color: #c82333; }
-      .edit-btn { background-color: #17a2b8; color: white; }
-      .edit-btn:hover { background-color: #138496; }
-      @media (max-width: 768px) { .products-grid { grid-template-columns: 1fr; } .add-product-form { padding: 15px; } }
-    `;
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewProduct(prev => ({ ...prev, [name]: value }));
+  };
 
-    if (loading) return <div className="loading">Loading products...</div>;
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    setNewProduct(prev => ({ ...prev, [name]: files[0] }));
+  };
 
-    return (
-      <>
-        <style>{styles}</style>
-        <div className="products-management">
-          <h1>Product Management</h1>
+  const toggleAddForm = () => {
+    setShowAddForm(!showAddForm);
+  };
 
-          {error && (
-            <div className="error-message">
-              Error: {error}
-              <button onClick={() => this.setState({ error: null })}>✕</button>
-            </div>
-          )}
+  return (
+    <ProductsContainer>
+      <ProductsTitle>Gestion des Produits</ProductsTitle>
+      
+      {error && <Error>{error}</Error>}
 
-          <div className="add-product-form">
-            <h2>Add New Product</h2>
-            <form onSubmit={this.handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="name">Product Name:</label>
-                <input type="text" id="name" name="name" value={formData.name} onChange={this.handleInputChange} required />
-              </div>
-              <div className="form-group">
-                <label htmlFor="description">Description:</label>
-                <textarea id="description" name="description" value={formData.description} onChange={this.handleInputChange} required />
-              </div>
-              <div className="form-group">
-                <label htmlFor="price">Price (€):</label>
-                <input type="number" id="price" name="price" value={formData.price} onChange={this.handleInputChange} required step="0.01" min="0" />
-              </div>
-              <div className="form-group">
-                <label htmlFor="category">Category:</label>
-                <select id="category" name="category" value={formData.category} onChange={this.handleInputChange} required>
-                  <option value="">Select a category</option>
-                  <option value="rectangulaire">Rectangulaire</option>
-                  <option value="carre">Carré</option>
-                  <option value="rond">Rond</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label htmlFor="stock">Stock:</label>
-                <input type="number" id="stock" name="stock" value={formData.stock} onChange={this.handleInputChange} required min="0" />
-              </div>
-              <div className="form-group">
-                <label htmlFor="imageUrl">Image URL:</label>
-                <input type="text" id="imageUrl" name="imageUrl" value={formData.imageUrl} onChange={this.handleInputChange} required />
-              </div>
-              <button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Submitting...' : 'Add Product'}
-              </button>
-            </form>
-          </div>
+      <AddButton onClick={toggleAddForm}>
+        <FaPlus /> Ajouter un Produit
+      </AddButton>
 
-          <div className="products-list">
-            <h2>All Products</h2>
-            <div className="products-grid">
-              {products.map(product => (
-                <div key={product._id} className="product-card">
-                  <h3>{product.name}</h3>
-                  <p>{product.description}</p>
-                  <p>Price: €{product.price}</p>
-                  <p>Stock: {product.stock}</p>
-                  <div className="product-actions">
-                    <button className="edit-btn">Edit</button>
-                    <button className="delete-btn">Delete</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
-}
+      {showAddForm && (
+        <AddProductForm onSubmit={handleAddProduct}>
+          <FormTitle>Ajouter un Nouveau Produit</FormTitle>
+          
+          <FormInput
+            type="text"
+            name="name"
+            placeholder="Nom du produit"
+            value={newProduct.name}
+            onChange={handleInputChange}
+            required
+          />
+          
+          <FormSelect
+            name="category"
+            value={newProduct.category}
+            onChange={handleInputChange}
+            required
+          >
+            <option value="">Sélectionner une catégorie</option>
+            <option value="PVC-U">PVC-U</option>
+            <option value="PE80">PE80</option>
+            <option value="PEHD">PEHD</option>
+          </FormSelect>
+          
+          <FormTextarea
+            name="description"
+            placeholder="Description"
+            value={newProduct.description}
+            onChange={handleInputChange}
+          />
+          
+          <FileInputLabel>
+            Image du produit
+            <FormInput
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+            <FileInputInfo>Format recommandé: JPG, PNG (max 2MB)</FileInputInfo>
+          </FileInputLabel>
+          
+          <FileInputLabel>
+            Fiche technique (PDF)
+            <FormInput
+              type="file"
+              name="techSheet"
+              accept="application/pdf"
+              onChange={handleFileChange}
+            />
+            <FileInputInfo>Format: PDF uniquement</FileInputInfo>
+          </FileInputLabel>
+          
+          <SubmitButton type="submit">
+            <FaPlus /> Ajouter
+          </SubmitButton>
+          
+          <CancelButton type="button" onClick={toggleAddForm}>
+            Annuler
+          </CancelButton>
+        </AddProductForm>
+      )}
+
+      {loading ? (
+        <Loading>
+          <FaSpinner className="spinner" />
+          Chargement...
+        </Loading>
+      ) : (
+        <ProductsList>
+          {products.map(product => (
+            <ProductCard key={product._id}>
+              <ProductName>{product.name}</ProductName>
+              <ProductCategory>
+                <strong>Catégorie:</strong> {product.category}
+              </ProductCategory>
+              
+              {product.image && (
+                <ProductImage 
+                  src={`${API_BASE_URL}/${product.image}`} 
+                  alt={product.name} 
+                />
+              )}
+              
+              {product.techSheet && (
+                <PdfLink 
+                  href={`${API_BASE_URL}/${product.techSheet}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <FaFilePdf /> Fiche technique
+                </PdfLink>
+              )}
+              
+              <ProductDescription>{product.description}</ProductDescription>
+              
+              <DeleteButton onClick={() => handleDelete(product._id)}>
+                <FaTrash /> Supprimer
+              </DeleteButton>
+            </ProductCard>
+          ))}
+        </ProductsList>
+      )}
+    </ProductsContainer>
+  );
+};
 
 export default ProductsManagement;

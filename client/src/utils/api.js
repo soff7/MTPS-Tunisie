@@ -1,33 +1,34 @@
 import axios from 'axios';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 const api = axios.create({
-  baseURL: process.env.NODE_ENV === 'production'
-    ? 'https://MTPS-Tunisie.com/api'
-    : 'http://localhost:5000/api'
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-// Add auth service for authentication operations
-export const authService = {
-  login: (credentials) => api.post('/auth/login', credentials),
-  register: (userData) => api.post('/auth/register', userData),
-  getCurrentUser: () => api.get('/auth/me'),
-  refreshToken: () => api.get('/auth/refresh')
-};
-
-export const contactService = {
-  getContacts: () => api.get('/contacts'),
-  createContact: (contactData) => api.post('/contacts', contactData)
-};
-
-// Interceptor to add JWT token to requests
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
-    config.headers['x-auth-token'] = token;
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
-}, (error) => {
-  return Promise.reject(error);
 });
 
-export default api;
+export const userService = {
+  getAll: () => api.get('/users'),
+  create: (data) => api.post('/users', data, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  delete: (id) => api.delete(`/users/${id}`),
+};
+
+export const authService = {
+  login: (credentials) => api.post('/auth/login', credentials),
+  register: (data) => api.post('/auth/register', data, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  getCurrentUser: () => api.get('/auth/user'),
+};

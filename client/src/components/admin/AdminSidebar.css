@@ -1,32 +1,18 @@
-/* AdminSidebar.css */
-
 .sidebar {
   position: fixed;
   left: 0;
   top: 0;
-  width: var(--sidebar-width, 250px);
+  width: var(--sidebar-width, 280px);
   height: 100vh;
   background-color: var(--admin-sidebar-bg, #1e293b);
   color: var(--admin-text-light, #f8fafc);
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--admin-shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
+  box-shadow: var(--admin-shadow-lg);
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
   transition: transform 0.3s ease;
-}
-
-@media (max-width: 1024px) {
-  .sidebar {
-    transform: translateX(-100%);
-  }
-}
-
-@media (max-width: 768px) {
-  .sidebar {
-    width: 100%;
-  }
+  transform: translateX(-100%);
 }
 
 .sidebarOpen {
@@ -36,7 +22,7 @@
 .sidebarHeader {
   padding: 1.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background-color: var(--admin-sidebar-bg, #1e293b);
+  background-color: var(--admin-sidebar-bg);
 }
 
 .sidebarLogo {
@@ -54,38 +40,15 @@
 .logoText {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--admin-text-light, #f8fafc);
+  color: var(--admin-text-light);
   font-family: 'Inter', sans-serif;
-}
-
-@media (max-width: 768px) {
-  .logoText {
-    font-size: 1.1rem;
-  }
 }
 
 .sidebarNav {
   flex: 1;
   padding: 1rem 0;
   overflow-y: auto;
-  background-color: var(--admin-sidebar-bg, #1e293b);
-}
-
-.sidebarNav::-webkit-scrollbar {
-  width: 6px;
-}
-
-.sidebarNav::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.sidebarNav::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 3px;
-}
-
-.sidebarNav::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background-color: var(--admin-sidebar-bg);
 }
 
 .navMenu {
@@ -105,23 +68,15 @@
   padding: 1rem 1.5rem;
   color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
-  font-size: 0.875rem;
+  font-size: 0.95rem;
   font-weight: 500;
   transition: all 0.2s ease;
   border-left: 3px solid transparent;
-  font-family: 'Inter', sans-serif;
-  background-color: transparent;
-}
-
-@media (max-width: 768px) {
-  .navLink {
-    padding: 1rem 1.5rem;
-  }
 }
 
 .navLink:hover {
   background-color: rgba(255, 255, 255, 0.05);
-  color: var(--admin-text-light, #f8fafc);
+  color: var(--admin-text-light);
   border-left-color: rgba(255, 255, 255, 0.2);
 }
 
@@ -143,11 +98,10 @@
 
 .navLabel {
   flex: 1;
-  font-family: 'Inter', sans-serif;
 }
 
 .navBadge {
-  background-color: var(--admin-danger, #ef4444);
+  background-color: var(--admin-danger);
   color: white;
   border-radius: 10px;
   padding: 0.125rem 0.375rem;
@@ -161,37 +115,53 @@
   padding: 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   margin-top: auto;
-  background-color: var(--admin-sidebar-bg, #1e293b);
+  background-color: var(--admin-sidebar-bg);
 }
 
-.footerNavLink {
-  justify-content: flex-start;
-  color: rgba(255, 255, 255, 0.7) !important;
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
-  border-left: none;
-  margin-bottom: 0.5rem;
-}
-
-.footerNavLink:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-left: none;
-}
-
-.logoutBtn {
-  justify-content: flex-start;
-  color: rgba(255, 255, 255, 0.7) !important;
-  border: none;
-  cursor: pointer;
-  background-color: transparent;
+.footerNavLink, .logoutBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   width: 100%;
-  text-align: left;
   padding: 0.75rem 1rem;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.footerNavLink:hover, .logoutBtn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--admin-text-light);
 }
 
 .logoutBtn:hover {
   background-color: rgba(239, 68, 68, 0.1) !important;
-  color: var(--admin-danger, #ef4444) !important;
+  color: var(--admin-danger) !important;
+}
+
+@media (min-width: 1025px) {
+  .sidebar {
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 280px;
+  }
+  
+  .sidebarHeader {
+    padding: 1.25rem;
+  }
+  
+  .navLink {
+    padding: 0.875rem 1.25rem;
+  }
 }

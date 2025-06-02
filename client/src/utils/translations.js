@@ -1,3 +1,4 @@
+
 // client/src/utils/translations.js
 export const translations = {
   fr: {
@@ -9,21 +10,21 @@ export const translations = {
     'nav.contact': 'Contact',
     'nav.signin': 'Connexion',
     'nav.signup': 'Inscription',
-    'nav.dashboard': 'Dashboard',
+    'nav.dashboard': 'Tableau de bord',
     'nav.logout': 'Déconnexion',
     
     // Hero Section
-    'hero.title.main': 'Solutions plastiques pour l\'industrie moderne',
-    'hero.title.secondary': 'MTPS Tubes',
+    'hero.title.main': 'Des tuyaux plus solides, une solution plus intelligente.',
+    'hero.title.secondary': 'Approuvé par les professionnels, choisi pour sa fiabilité',
     'hero.description.main': 'MTPS combine expertise technique et innovation pour fournir des solutions plastiques sur mesure répondant aux exigences les plus strictes de l\'industrie.',
     'hero.description.secondary': 'Où la force rencontre la flexibilité pour vos besoins en plastique.',
-    'hero.btn.readmore': 'Read More',
-    'hero.btn.products': 'Nos Produits',
-    'hero.btn.contact': 'CONTACT US',
-    'hero.scroll': 'Scroll down',
+    'hero.btn.readmore': 'En savoir plus',
+    'hero.btn.products': 'Nos produits',
+    'hero.btn.contact': 'Nous contacter',
+    'hero.scroll': 'Faire défiler vers le bas',
     
     // Services
-    'services.badge': 'EXPERTISE',
+    'services.badge': 'Expertise',
     'services.title': 'Nos Services',
     'services.description': 'MTPS propose une gamme complète de services pour répondre à vos besoins en tubes plastiques industriels',
     'services.manufacturing.title': 'Fabrication industrielle',
@@ -38,7 +39,7 @@ export const translations = {
     'services.discover': 'Découvrir',
     
     // Features
-    'features.title': 'Pourquoi choisir MTPS?',
+    'features.title': 'Pourquoi choisir MTPS ?',
     'features.subtitle': 'Découvrez les caractéristiques qui distinguent nos solutions de tubes plastiques industriels',
     'features.quality.title': 'Qualité garantie',
     'features.quality.description': 'Nos produits répondent aux normes de qualité les plus strictes pour assurer une performance optimale.',
@@ -62,7 +63,7 @@ export const translations = {
     'products.categories.pe.description': 'Tubes en polyéthylène pour applications eau potable et industrielles',
     'products.categories.accessories.title': 'Accessoires',
     'products.categories.accessories.description': 'Raccords et pièces complémentaires pour vos installations de tuyauterie',
-    'products.categories.btn': 'Voir produits',
+    'products.categories.btn': 'Voir les produits',
     'products.tabs.all': 'Tous les produits',
     'products.tabs.pvc': 'Tubes PVC',
     'products.tabs.pe': 'Tubes PE',
@@ -81,10 +82,10 @@ export const translations = {
     'contact.form.title': 'Contactez-nous',
     'contact.form.name': 'Nom',
     'contact.form.company': 'Nom de l\'entreprise',
-    'contact.form.email': 'Adresse E-mail',
+    'contact.form.email': 'Adresse e-mail',
     'contact.form.subject': 'Sujet',
     'contact.form.subject.choose': 'Choisir un sujet',
-    'contact.form.subject.technical': 'Question Technique',
+    'contact.form.subject.technical': 'Question technique',
     'contact.form.subject.partnership': 'Partenariat',
     'contact.form.subject.other': 'Autre',
     'contact.form.subject.specify': 'Précisez le sujet',
@@ -92,16 +93,16 @@ export const translations = {
     'contact.form.message.min': '(10 caractères minimum)',
     'contact.form.send': 'Envoyer le message',
     'contact.form.sending': 'Envoi en cours...',
-    'contact.form.success': 'Votre message a été envoyé avec succès!',
+    'contact.form.success': 'Votre message a été envoyé avec succès !',
     'contact.info.title': 'Nos Coordonnées',
     'contact.info.address': 'Adresse',
     'contact.info.phone': 'Téléphone',
-    'contact.info.email': 'Email',
+    'contact.info.email': 'E-mail',
     'contact.info.hours': 'Heures d\'ouverture',
-    'contact.map.title': 'Notre Localisation',
+    'contact.map.title': 'Notre localisation',
     
     // About
-    'about.badge': 'NOTRE HISTOIRE',
+    'about.badge': 'Notre histoire',
     'about.title': 'À propos de MTPS',
     'about.subtitle': 'Spécialiste dans la fabrication de tubes plastiques industriels depuis plus de 15 ans',
     'about.stats.experience': 'Années d\'expérience',
@@ -130,7 +131,7 @@ export const translations = {
     'footer.legal.cookies': 'Cookies',
     
     // Call to Action
-    'cta.title': 'Prêt à discuter de votre projet?',
+    'cta.title': 'Prêt à discuter de votre projet ?',
     'cta.description': 'Contactez notre équipe d\'experts pour trouver la meilleure solution pour vos besoins en tubes plastiques.',
     'cta.btn': 'Nous contacter',
     
@@ -150,7 +151,7 @@ export const translations = {
     'common.close': 'Fermer',
     'common.open': 'Ouvrir'
   },
-  
+
   en: {
     // Navigation
     'nav.home': 'Home',
@@ -164,34 +165,34 @@ export const translations = {
     'nav.logout': 'Logout',
     
     // Hero Section
-    'hero.title.main': 'Plastic solutions for modern industry',
-    'hero.title.secondary': 'MTPS Tubes',
-    'hero.description.main': 'MTPS combines technical expertise and innovation to provide custom plastic solutions that meet the strictest industry requirements.',
-    'hero.description.secondary': 'Where strength meets flexibility for your plastic needs.',
+    'hero.title.main': 'Stronger pipes, Smarter solution.',
+    'hero.title.secondary': 'Trusted by Professionals, Chosen for Reliability',
+    'hero.description.main': 'A trusted Tunisian manufacturer since 1990, delivering stronger pipes and smarter solutions for every project.',
+    'hero.description.secondary': 'For over 34 years, engineers, contractors, and distributors have relied on our commitment to quality, transparency, and long-term collaboration.',
     'hero.btn.readmore': 'Read More',
     'hero.btn.products': 'Our Products',
-    'hero.btn.contact': 'CONTACT US',
+    'hero.btn.contact': 'Contact Us',
     'hero.scroll': 'Scroll down',
     
     // Services
-    'services.badge': 'EXPERTISE',
+    'services.badge': 'Expertise',
     'services.title': 'Our Services',
     'services.description': 'MTPS offers a complete range of services to meet your industrial plastic pipe needs',
-    'services.manufacturing.title': 'Industrial manufacturing',
+    'services.manufacturing.title': 'Industrial Manufacturing',
     'services.manufacturing.description': 'Production of high-quality plastic pipes for various industrial applications.',
     'services.manufacturing.stat': 'years of experience',
-    'services.custom.title': 'Custom solutions',
+    'services.custom.title': 'Custom Solutions',
     'services.custom.description': 'Design and manufacture of plastic pipes according to your technical specifications.',
     'services.custom.stat': 'completed projects',
-    'services.support.title': 'Technical support',
+    'services.support.title': 'Technical Support',
     'services.support.description': 'Expertise and technical advice to choose the best solutions for your needs.',
     'services.support.stat': 'assistance',
     'services.discover': 'Discover',
     
     // Features
-    'features.title': 'Why choose MTPS?',
+    'features.title': 'Why Choose MTPS?',
     'features.subtitle': 'Discover the features that distinguish our industrial plastic pipe solutions',
-    'features.quality.title': 'Guaranteed quality',
+    'features.quality.title': 'Guaranteed Quality',
     'features.quality.description': 'Our products meet the strictest quality standards to ensure optimal performance.',
     'features.quality.stat': 'satisfaction',
     'features.eco.title': 'Eco-friendly',
@@ -204,7 +205,7 @@ export const translations = {
     // Products
     'products.badge': 'Catalog',
     'products.title': 'Our Products',
-    'products.description': 'Discover our complete range of PVC and PE pipes for industrial applications and water distribution, manufactured with premium materials to guarantee durability and performance.',
+    'products.description': 'From PE to PVC, from drainage to pressure systems — explore a wide variety of pipes tailored to your project’s technical needs. Each product is crafted with precision and tested for top performance.',
     'products.search.placeholder': 'Search for a product...',
     'products.categories.title': 'Our Categories',
     'products.categories.pvc.title': 'PVC Pipes',
@@ -213,14 +214,14 @@ export const translations = {
     'products.categories.pe.description': 'Polyethylene pipes for drinking water and industrial applications',
     'products.categories.accessories.title': 'Accessories',
     'products.categories.accessories.description': 'Fittings and complementary parts for your piping installations',
-    'products.categories.btn': 'View products',
-    'products.tabs.all': 'All products',
+    'products.categories.btn': 'View Products',
+    'products.tabs.all': 'All Products',
     'products.tabs.pvc': 'PVC Pipes',
     'products.tabs.pe': 'PE Pipes',
-    'products.tech.sheet': 'Technical sheet',
-    'products.stats.different': 'Different products',
-    'products.stats.quality': 'Certified quality',
-    'products.stats.delivery': 'Delivery time',
+    'products.tech.sheet': 'Technical Sheet',
+    'products.stats.different': 'Different Products',
+    'products.stats.quality': 'Certified Quality',
+    'products.stats.delivery': 'Delivery Time',
     
     // Testimonials
     'testimonials.title': 'Our Testimonials',
@@ -234,14 +235,14 @@ export const translations = {
     'contact.form.company': 'Company Name',
     'contact.form.email': 'Email Address',
     'contact.form.subject': 'Subject',
-    'contact.form.subject.choose': 'Choose a subject',
+    'contact.form.subject.choose': 'Choose a Subject',
     'contact.form.subject.technical': 'Technical Question',
     'contact.form.subject.partnership': 'Partnership',
     'contact.form.subject.other': 'Other',
-    'contact.form.subject.specify': 'Specify the subject',
+    'contact.form.subject.specify': 'Specify the Subject',
     'contact.form.message': 'Message',
     'contact.form.message.min': '(10 characters minimum)',
-    'contact.form.send': 'Send message',
+    'contact.form.send': 'Send Message',
     'contact.form.sending': 'Sending...',
     'contact.form.success': 'Your message has been sent successfully!',
     'contact.info.title': 'Our Contact Information',
@@ -252,38 +253,38 @@ export const translations = {
     'contact.map.title': 'Our Location',
     
     // About
-    'about.badge': 'OUR STORY',
+    'about.badge': 'Our Story',
     'about.title': 'About MTPS',
-    'about.subtitle': 'Specialist in industrial plastic pipe manufacturing for over 15 years',
-    'about.stats.experience': 'Years of experience',
-    'about.stats.clients': 'Satisfied clients',
-    'about.stats.experts': 'Technical experts',
+    'about.subtitle': 'Specialist in industrial plastic pipe manufacturing for over 35 years',
+    'about.stats.experience': 'Years of Experience',
+    'about.stats.clients': 'Satisfied Clients',
+    'about.stats.experts': 'Technical Experts',
     'about.history.title': 'Our Journey',
     'about.history.description': 'Discover the evolution of our company and our constant commitment to excellence.',
     'about.values.title': 'Our Values',
     'about.values.description': 'The fundamental principles that guide each of our actions and decisions.',
-    'about.cta.title': 'Meet our team of experts',
-    'about.cta.btn': 'Discover the team',
+    'about.cta.title': 'Meet Our Team of Experts',
+    'about.cta.btn': 'Discover the Team',
     
     // Footer
     'footer.description': 'Leader in industrial plastic pipe manufacturing with over 15 years of experience.',
     'footer.navigation': 'Navigation',
     'footer.services': 'Services',
-    'footer.services.manufacturing': 'Custom manufacturing',
-    'footer.services.consulting': 'Technical consulting',
-    'footer.services.quality': 'Quality control',
-    'footer.services.delivery': 'Express delivery',
+    'footer.services.manufacturing': 'Custom Manufacturing',
+    'footer.services.consulting': 'Technical Consulting',
+    'footer.services.quality': 'Quality Control',
+    'footer.services.delivery': 'Express Delivery',
     'footer.services.support': '24/7 Support',
     'footer.contact': 'Contact',
-    'footer.rights': 'All rights reserved.',
+    'footer.rights': 'All Rights Reserved.',
     'footer.legal.privacy': 'Privacy',
     'footer.legal.terms': 'Terms',
     'footer.legal.cookies': 'Cookies',
     
     // Call to Action
-    'cta.title': 'Ready to discuss your project?',
+    'cta.title': 'Ready to Discuss Your Project?',
     'cta.description': 'Contact our team of experts to find the best solution for your plastic pipe needs.',
-    'cta.btn': 'Contact us',
+    'cta.btn': 'Contact Us',
     
     // Common
     'common.loading': 'Loading...',
@@ -301,7 +302,7 @@ export const translations = {
     'common.close': 'Close',
     'common.open': 'Open'
   },
-  
+
   ar: {
     // Navigation
     'nav.home': 'الرئيسية',
@@ -315,8 +316,8 @@ export const translations = {
     'nav.logout': 'تسجيل الخروج',
     
     // Hero Section
-    'hero.title.main': 'حلول بلاستيكية للصناعة الحديثة',
-    'hero.title.secondary': 'أنابيب MTPS',
+    'hero.title.main': 'أنابيب أقوى، حلول أذكى',
+    'hero.title.secondary': 'موثوق به من قبل المحترفين، مختار للموثوقية',
     'hero.description.main': 'تجمع MTPS بين الخبرة التقنية والابتكار لتوفير حلول بلاستيكية مخصصة تلبي أصعب متطلبات الصناعة.',
     'hero.description.secondary': 'حيث تلتقي القوة بالمرونة لاحتياجاتك البلاستيكية.',
     'hero.btn.readmore': 'اقرأ المزيد',

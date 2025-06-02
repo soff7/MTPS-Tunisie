@@ -1,5 +1,4 @@
 /* AdminHeader.css */
-
 .header {
   position: fixed;
   top: 0;
@@ -12,45 +11,37 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 2rem;
-  z-index: 999;
-  box-shadow: var(--admin-shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+  z-index: 100;
+  box-shadow: var(--admin-shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+  transition: left 0.3s ease;
+}
+
+.sidebarToggle {
+  display: none;
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  margin-right: 1rem;
+  color: var(--admin-text-secondary);
+  cursor: pointer;
 }
 
 .headerLeft {
   display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  align-items: center;
 }
 
 .pageTitle {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--admin-text-primary, #1a202c);
+  color: var(--admin-text-primary);
   margin: 0;
-}
-
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-  color: var(--admin-text-secondary, #718096);
-}
-
-.separator {
-  color: var(--admin-border, #e2e8f0);
 }
 
 .headerCenter {
   flex: 1;
-  max-width: 400px;
+  max-width: 500px;
   margin: 0 2rem;
-}
-
-@media (max-width: 768px) {
-  .headerCenter {
-    display: none;
-  }
 }
 
 .searchBox {
@@ -60,27 +51,28 @@
 
 .searchInput {
   width: 100%;
-  padding: 0.5rem 1rem 0.5rem 2.5rem;
-  border: 1px solid var(--admin-border, #e2e8f0);
+  padding: 0.75rem 1rem 0.75rem 3rem;
+  border: 1px solid var(--admin-border);
   border-radius: 8px;
-  font-size: 0.875rem;
-  background-color: var(--admin-bg, #f7fafc);
+  font-size: 0.95rem;
+  background-color: var(--admin-bg);
   transition: all 0.2s ease;
+  color: var(--admin-text-primary);
 }
 
 .searchInput:focus {
   outline: none;
-  border-color: var(--admin-primary, #2563eb);
+  border-color: var(--admin-primary);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .searchIcon {
   position: absolute;
-  left: 0.75rem;
+  left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--admin-text-secondary, #718096);
-  font-size: 0.875rem;
+  color: var(--admin-text-secondary);
+  font-size: 1rem;
 }
 
 .headerRight {
@@ -91,36 +83,31 @@
 .headerActions {
   display: flex;
   align-items: center;
-  gap: 1rem;
-}
-
-@media (max-width: 480px) {
-  .headerActions {
-    gap: 0.5rem;
-  }
+  gap: 1.5rem;
 }
 
 .notificationBtn {
   position: relative;
   background: none;
   border: none;
-  padding: 0.5rem;
+  padding: 0.75rem;
   border-radius: 8px;
-  color: var(--admin-text-secondary, #718096);
+  color: var(--admin-text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
+  font-size: 1.1rem;
 }
 
 .notificationBtn:hover {
-  background-color: var(--admin-bg, #f7fafc);
-  color: var(--admin-text-primary, #1a202c);
+  background-color: var(--admin-bg);
+  color: var(--admin-text-primary);
 }
 
 .notificationBadge {
   position: absolute;
   top: 0.25rem;
   right: 0.25rem;
-  background-color: var(--admin-danger, #ef4444);
+  background-color: var(--admin-danger);
   color: white;
   border-radius: 50%;
   width: 18px;
@@ -149,19 +136,20 @@
 }
 
 .profileBtn:hover {
-  background-color: var(--admin-bg, #f7fafc);
+  background-color: var(--admin-bg);
 }
 
 .profileAvatar {
-  width: 32px;
-  height: 32px;
-  background-color: var(--admin-primary, #2563eb);
+  width: 36px;
+  height: 36px;
+  background-color: var(--admin-primary);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 0.875rem;
+  font-weight: 600;
+  font-size: 0.95rem;
 }
 
 .profileInfo {
@@ -171,62 +159,57 @@
   gap: 0.125rem;
 }
 
-@media (max-width: 768px) {
-  .profileInfo {
-    display: none;
-  }
-}
-
 .profileName {
-  font-size: 0.875rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  color: var(--admin-text-primary, #1a202c);
+  color: var(--admin-text-primary);
 }
 
 .profileRole {
-  font-size: 0.75rem;
-  color: var(--admin-text-secondary, #718096);
+  font-size: 0.8rem;
+  color: var(--admin-text-secondary);
 }
 
 .dropdownIcon {
-  font-size: 0.75rem;
-  color: var(--admin-text-secondary, #718096);
+  font-size: 0.8rem;
+  color: var(--admin-text-secondary);
   margin-left: 0.5rem;
+  transition: transform 0.2s;
 }
 
 .profileDropdown {
   position: absolute;
   top: calc(100% + 0.5rem);
   right: 0;
-  background-color: var(--admin-card-bg, #ffffff);
-  border: 1px solid var(--admin-border, #e2e8f0);
+  background-color: var(--admin-card-bg);
+  border: 1px solid var(--admin-border);
   border-radius: 8px;
-  box-shadow: var(--admin-shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
-  min-width: 200px;
+  box-shadow: var(--admin-shadow-lg);
+  min-width: 240px;
   z-index: 1000;
-  animation: fadeInDown 0.2s ease;
+  animation: fadeIn 0.2s ease;
 }
 
 .dropdownHeader {
   padding: 1rem;
-  border-bottom: 1px solid var(--admin-border, #e2e8f0);
+  border-bottom: 1px solid var(--admin-border);
 }
 
 .userDetails strong {
   display: block;
-  color: var(--admin-text-primary, #1a202c);
-  font-size: 0.875rem;
+  color: var(--admin-text-primary);
+  font-size: 0.95rem;
   margin-bottom: 0.25rem;
 }
 
 .userDetails small {
-  color: var(--admin-text-secondary, #718096);
-  font-size: 0.75rem;
+  color: var(--admin-text-secondary);
+  font-size: 0.8rem;
 }
 
 .dropdownDivider {
   height: 1px;
-  background-color: var(--admin-border, #e2e8f0);
+  background-color: var(--admin-border);
   margin: 0;
 }
 
@@ -244,28 +227,42 @@
   padding: 0.75rem 1rem;
   border: none;
   background: none;
-  color: var(--admin-text-primary, #1a202c);
-  font-size: 0.875rem;
+  color: var(--admin-text-primary);
+  font-size: 0.9rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
   text-align: left;
 }
 
 .dropdownItem:hover {
-  background-color: var(--admin-bg, #f7fafc);
+  background-color: var(--admin-bg);
+}
+
+.dropdownItem svg {
+  width: 16px;
+  height: 16px;
 }
 
 .dropdownItem:last-child {
-  color: var(--admin-danger, #ef4444);
+  color: var(--admin-danger);
 }
 
 .dropdownItem:last-child:hover {
   background-color: rgba(239, 68, 68, 0.05);
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @media (max-width: 1024px) {
   .header {
     left: 0;
+  }
+  
+  .sidebarToggle {
+    display: block;
   }
 }
 
@@ -273,13 +270,16 @@
   .header {
     padding: 0 1rem;
   }
-  .pageTitle {
-    font-size: 1.25rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .breadcrumb {
+  
+  .headerCenter {
     display: none;
+  }
+  
+  .profileInfo {
+    display: none;
+  }
+  
+  .headerActions {
+    gap: 0.75rem;
   }
 }

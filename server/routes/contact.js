@@ -1,140 +1,56 @@
-// routes/contact.js
 const express = require('express');
 const router = express.Router();
 const Contact = require('../models/Contact');
-const { getIO } = require('../utils/socket');
 
-// POST - Créer un nouveau message de contact
-router.post('/', async (req, res) => {
-  try {
-    console.log('Données de contact reçues:', req.body);
-    const contact = new Contact(req.body);
-    await contact.save();
-    console.log('Contact enregistré avec succès');
-
-    // Emit socket.io event for contact created
-    const io = getIO();
-    io.emit('contactCreated', contact);
-
-    res.status(201).json({ 
-      success: true, 
-      message: 'Message envoyé avec succès!' 
-    });
-  } catch (error) {
-    console.error('Erreur lors de l\'enregistrement du contact:', error);
-    if (error.name === 'ValidationError') {
-      const messages = Object.values(error.errors).map(val => val.message);
-      return res.status(400).json({ 
-        success: false, 
-        message: messages.join(', ') 
-      });
-    }
-    res.status(500).json({ 
-      success: false, 
-      message: 'Une erreur est survenue lors de l\'envoi du message' 
-    });
-  }
-});
-
-// GET - Récupérer tous les messages (pour le panel admin)
+// Get all contacts
 router.get('/', async (req, res) => {
   try {
-    const contacts = await Contact.find().sort({ createdAt: -1 });
-    res.status(200).json({ 
-      success: true, 
-      data: contacts 
-    });
-  } catch (error) {
-    console.error('Erreur lors de la récupération des contacts:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Une erreur est survenue lors de la récupération des messages' 
-    });
+    const contacts = await Contact.find();
+    res.json(contacts);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 
-// GET - Récupérer un message spécifique
-router.get('/:id', async (req, res) => {
+// Add a new contact
+router.post('/', async (req, res) => {
+  try {
+    const contact = new Contact({
+      name: req.body.name,
+      email: req.body.email,
+      message: req.body.message
+    });
+    const newContact = await contact.save();
+    res.status(201).json(newContact);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// Reply to a contact
+router.put('/:id/reply', async (req, res) => {
   try {
     const contact = await Contact.findById(req.params.id);
-    if (!contact) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Message non trouvé' 
-      });
-    }
-    res.status(200).json({ 
-      success: true, 
-      data: contact 
-    });
-  } catch (error) {
-    console.error('Erreur lors de la récupération du contact:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Une erreur est survenue' 
-    });
+    if (!contact) return res.status(404).json({ message: 'Contact not found' });
+
+    contact.reply = req.body.reply;
+    contact.status = 'Replied';
+    const updatedContact = await contact.save();
+    res.json(updatedContact);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 });
 
-// PATCH - Mettre à jour le statut d'un message
-router.patch('/:id', async (req, res) => {
-  try {
-    const contact = await Contact.findByIdAndUpdate(
-      req.params.id,
-      { status: req.body.status },
-      { new: true, runValidators: true }
-    );
-    
-    if (!contact) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Message non trouvé' 
-      });
-    }
-
-    // Emit socket.io event for contact updated
-    const io = getIO();
-    io.emit('contactUpdated', contact);
-    
-    res.status(200).json({ 
-      success: true, 
-      data: contact 
-    });
-  } catch (error) {
-    console.error('Erreur lors de la mise à jour du contact:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Une erreur est survenue' 
-    });
-  }
-});
-
-// DELETE - Supprimer un message
+// Delete contact
 router.delete('/:id', async (req, res) => {
   try {
-    const contact = await Contact.findByIdAndDelete(req.params.id);
-    
-    if (!contact) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Message non trouvé' 
-      });
-    }
-
-    // Emit socket.io event for contact deleted
-    const io = getIO();
-    io.emit('contactDeleted', { id: req.params.id });
-    
-    res.status(200).json({ 
-      success: true, 
-      message: 'Message supprimé avec succès' 
-    });
-  } catch (error) {
-    console.error('Erreur lors de la suppression du contact:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Une erreur est survenue' 
-    });
+    const contact = await Contact.findById(req.params.id);
+    if (!contact) return res.status(404).json({ message: 'Contact not found' });
+    await contact.remove();
+    res.json({ message: 'Contact deleted' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 

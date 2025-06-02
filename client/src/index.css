@@ -1,40 +1,28 @@
-/* Import des polices */
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700&family=Open+Sans:wght@400;600&display=swap');
-
-/* Reset de base */
-html {
-  scroll-behavior: smooth;
+:root {
+  --admin-bg: #f9fafb;
+  --admin-card-bg: #ffffff;
+  --admin-text-primary: #1e293b;
+  --admin-text-secondary: #6b7280;
+  --admin-primary: #3b82f6;
+  --admin-primary-dark: #2563eb;
+  --admin-danger: #ef4444;
+  --admin-warning: #f59e0b;
+  --admin-success: #10b981;
+  --admin-border: #e5e7eb;
+  --admin-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.05);
+  --header-height: 64px;
 }
 
-body {
-  margin: 0;
-  font-family: var(--font-text);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: var(--dark-color);
-  line-height: 1.7;
+/* Ensure spinner animation for loading states */
+.spinner {
+  animation: spin 1s linear infinite;
 }
 
-/* Styles pour les sélections de texte */
-::selection {
-  background-color: var(--primary-color);
-  color: white;
-}
-
-/* Scrollbar personnalisée */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--light-color);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--primary-color);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--secondary-color);
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

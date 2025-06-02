@@ -1,27 +1,29 @@
 # MTPS-Tunisie
 
 ## Project Description
-MTPS-Tunisie is a full-stack web application featuring a React frontend and an Express.js backend. The backend provides RESTful API endpoints for authentication, product management, contact management, and statistics. The frontend is a modern React application using Material-UI, Tailwind CSS, and various charting libraries to provide a rich user interface. Real-time communication is enabled via Socket.io.
+MTPS-Tunisie is a full-stack web application featuring a React frontend and an Express.js backend. The backend provides RESTful API endpoints for authentication, product management, contact management, statistics, and an admin dashboard with various management modules. The frontend is a modern React application using Material-UI, Tailwind CSS, and various charting libraries to provide a rich user interface. Real-time communication is enabled via Socket.io.
 
 ## Technologies Used
 - Frontend:
-  - React
+  - React 18
   - Material-UI (MUI)
   - Tailwind CSS
   - React Router
   - Chart.js, Recharts, MUI X Charts
   - Socket.io-client
-  - OAuth with Google
+  - Axios
+  - Styled-components
 - Backend:
   - Node.js
-  - Express.js
+  - Express.js 5
   - MongoDB with Mongoose
-  - Passport.js (including Google OAuth)
-  - JWT for authentication
+  - Passport for authentication (including Google OAuth)
+  - JWT for authentication tokens
   - Socket.io for real-time communication
   - Helmet, CORS for security and cross-origin support
   - Celebrate for request validation
   - Bcrypt for password hashing
+  - Multer for file uploads
   - dotenv for environment variables
 
 ## Folder Structure Overview
@@ -44,8 +46,6 @@ MTPS-Tunisie is a full-stack web application featuring a React frontend and an E
         # Admin dashboard pages including dashboard, analytics, contacts management, products management, settings, and users management.
       /auth
         # Authentication pages like SignIn and SignUp.
-    /hooks
-      # Custom React hooks for API calls, translations, and other reusable logic.
     /contexts
       # React context providers, e.g., for translation management.
     /styles
@@ -84,7 +84,7 @@ MTPS-Tunisie is a full-stack web application featuring a React frontend and an E
   /middleware
     # Express middleware for authentication and error handling.
   /models
-    # Mongoose models defining schemas for User, Product, and Contact.
+    # Mongoose models defining schemas for User, Product, Contact, and Admin.
   /routes
     # API route definitions, including sub-routes for admin functionalities.
   /utils
@@ -160,6 +160,7 @@ README.md
 - `GET/POST/PUT/DELETE /api/products` - Product management
 - `GET/POST /api/contacts` - Contact management
 - `GET /api/stats` - Statistics and analytics
+- `GET/POST/PUT/DELETE /api/admin/users` - Admin user management
 
 ## Environment Variables
 - `MONGO_URI` - MongoDB connection string
@@ -171,3 +172,5 @@ Contributions are welcome! Please fork the repository and submit pull requests f
 
 ## License
 This project is licensed under the ISC License.
+  # This general project README file.
+ 

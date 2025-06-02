@@ -71,16 +71,19 @@ const ProductCatalog = () => {
     <div className="tech-sheet">
       <h4>Spécifications techniques</h4>
       <div className="tech-spec-item">
-        <span className="tech-spec-label">Prix:</span>
-        <span className="tech-spec-value">{product.price}€</span>
-      </div>
-      <div className="tech-spec-item">
         <span className="tech-spec-label">Catégorie:</span>
         <span className="tech-spec-value">{product.category}</span>
       </div>
+      {product.techSheet && (
+        <div className="tech-spec-item">
+          <a href={`${API_BASE_URL}/${product.techSheet}`} target="_blank" rel="noopener noreferrer">
+            Télécharger la fiche technique (PDF)
+          </a>
+        </div>
+      )}
       <div className="tech-spec-item">
-        <span className="tech-spec-label">Stock:</span>
-        <span className="tech-spec-value">{product.inStock ? 'Oui' : 'Non'}</span>
+        <span className="tech-spec-label">Description:</span>
+        <span className="tech-spec-value">{product.description}</span>
       </div>
     </div>
   );
@@ -94,7 +97,7 @@ const ProductCatalog = () => {
     return filtered.map(product => (
       <div className="product-card" key={product._id || product.id}>
         <img
-          src={`/assets/${product.image || 'default.jpg'}`}
+          src={product.image ? `${API_BASE_URL}/${product.image}` : '/assets/default.jpg'}
           alt={product.name}
           className="product-image"
         />
@@ -121,14 +124,14 @@ const ProductCatalog = () => {
           <button onClick={() => handleTabChange('all')} className={activeTab === 'all' ? 'active' : ''}>
             Tous
           </button>
-          <button onClick={() => handleTabChange('rectangulaire')} className={activeTab === 'rectangulaire' ? 'active' : ''}>
-            Rectangulaire
+          <button onClick={() => handleTabChange('pvc-u')} className={activeTab === 'pvc-u' ? 'active' : ''}>
+            PVC-U
           </button>
-          <button onClick={() => handleTabChange('carre')} className={activeTab === 'carre' ? 'active' : ''}>
-            Carré
+          <button onClick={() => handleTabChange('pe80')} className={activeTab === 'pe80' ? 'active' : ''}>
+            PE80
           </button>
-          <button onClick={() => handleTabChange('rond')} className={activeTab === 'rond' ? 'active' : ''}>
-            Rond
+          <button onClick={() => handleTabChange('pehd')} className={activeTab === 'pehd' ? 'active' : ''}>
+            PEHD
           </button>
         </div>
 

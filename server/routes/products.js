@@ -1,89 +1,62 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
-const auth = require('../middleware/auth');
-const { getIO } = require('../utils/socket');
 
-// GET /api/products - Get all products
+// Get all products
 router.get('/', async (req, res) => {
   try {
-    const products = await Product.find().sort({ createdAt: -1 });
-    res.status(200).json(products);
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    res.status(500).json({ success: false, message: 'Error fetching products' });
+    const products = await Product.find();
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 
-// GET /api/products/:id - Get product by ID
-router.get('/:id', async (req, res) => {
+// Add a new product
+router.post('/', async (req, res) => {
+  try {
+    const product = new Product({
+      name: req.body.name,
+      category: req.body.category,
+      image: req.files.image ? req.files.image[0].path : null,
+      techSheet: req.files.techSheet ? req.files.techSheet[0].path : null,
+      description: req.body.description
+    });
+    const newProduct = await product.save();
+    res.status(201).json(newProduct);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// Update product
+router.put('/:id', async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
-    if (!product) {
-      return res.status(404).json({ success: false, message: 'Product not found' });
-    }
-    res.status(200).json(product);
-  } catch (error) {
-    console.error('Error fetching product:', error);
-    res.status(500).json({ success: false, message: 'Error fetching product' });
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+
+    if (req.body.name) product.name = req.body.name;
+    if (req.body.category) product.category = req.body.category;
+    if (req.files.image) product.image = req.files.image[0].path;
+    if (req.files.techSheet) product.techSheet = req.files.techSheet[0].path;
+    if (req.body.description) product.description = req.body.description;
+
+    const updatedProduct = await product.save();
+    res.json(updatedProduct);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 });
 
-// POST /api/products - Create new product
-router.post('/', auth, async (req, res) => {
+// Delete product
+router.delete('/:id', async (req, res) => {
   try {
-    // Set createdBy from authenticated user
-    const productData = { ...req.body, createdBy: req.user.id };
-
-    const product = new Product(productData);
-    await product.save();
-
-    // Emit socket.io event for product created
-    const io = getIO();
-    io.emit('productCreated', product);
-
-    res.status(201).json({ success: true, data: product });
-  } catch (error) {
-    console.error('Error creating product:', error);
-    res.status(500).json({ success: false, message: 'Error creating product' });
-  }
-});
-
-// PUT /api/products/:id - Update product
-router.put('/:id', auth, async (req, res) => {
-  try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    if (!product) {
-      return res.status(404).json({ success: false, message: 'Product not found' });
-    }
-
-    // Emit socket.io event for product updated
-    const io = getIO();
-    io.emit('productUpdated', product);
-
-    res.status(200).json({ success: true, data: product });
-  } catch (error) {
-    console.error('Error updating product:', error);
-    res.status(500).json({ success: false, message: 'Error updating product' });
-  }
-});
-
-// DELETE /api/products/:id - Delete product
-router.delete('/:id', auth, async (req, res) => {
-  try {
-    const product = await Product.findByIdAndDelete(req.params.id);
-    if (!product) {
-      return res.status(404).json({ success: false, message: 'Product not found' });
-    }
-
-    // Emit socket.io event for product deleted
-    const io = getIO();
-    io.emit('productDeleted', { id: req.params.id });
-
-    res.status(200).json({ success: true, message: 'Product deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting product:', error);
-    res.status(500).json({ success: false, message: 'Error deleting product' });
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+    await product.remove();
+    res.json({ message: 'Product deleted' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 
