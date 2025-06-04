@@ -10,26 +10,51 @@ const auth = require('../middleware/auth');
 // @desc    Register a user
 // @access  Public
 router.post('/register', async (req, res) => {
+  console.log('Registration attempt:', req.body);
+  
   const { name, email, password } = req.body;
 
+  // Validation
+  if (!name || !email || !password) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Tous les champs sont requis' 
+    });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Le mot de passe doit contenir au moins 6 caractères' 
+    });
+  }
+
   try {
-    let user = await User.findOne({ email });
+    // Vérifier si l'utilisateur existe déjà
+    let user = await User.findOne({ email: email.toLowerCase() });
     if (user) {
-      return res.status(400).json({ success: false, message: 'Cet utilisateur existe déjà' });
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Cet utilisateur existe déjà' 
+      });
     }
 
+    // Créer un nouvel utilisateur
     user = new User({
-      name,
-      email,
+      name: name.trim(),
+      email: email.toLowerCase(),
       password,
-      role: 'user'  // Toujours définir le rôle par défaut à "user" pour les inscriptions
+      role: 'user'  // Rôle par défaut
     });
 
+    // Hasher le mot de passe
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
 
+    // Sauvegarder l'utilisateur
     await user.save();
 
+    // Créer le payload JWT
     const payload = {
       id: user.id,
       name: user.name,
@@ -37,14 +62,25 @@ router.post('/register', async (req, res) => {
       role: user.role
     };
 
+    // Générer le token
     jwt.sign(
       payload,
       keys.secretOrKey,
-      { expiresIn: '1h' },
+      { expiresIn: '24h' }, // Token valide 24h
       (err, token) => {
-        if (err) throw err;
-        res.json({
+        if (err) {
+          console.error('Erreur JWT:', err);
+          return res.status(500).json({ 
+            success: false, 
+            message: 'Erreur lors de la génération du token' 
+          });
+        }
+        
+        console.log('User registered successfully:', user.email);
+        
+        res.status(201).json({
           success: true,
+          message: 'Compte créé avec succès',
           token: token,
           user: {
             id: user.id,
@@ -56,8 +92,11 @@ router.post('/register', async (req, res) => {
       }
     );
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ success: false, message: 'Erreur serveur' });
+    console.error('Erreur registration:', err);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur lors de la création du compte' 
+    });
   }
 });
 
@@ -65,19 +104,38 @@ router.post('/register', async (req, res) => {
 // @desc    Authenticate user & get token
 // @access  Public
 router.post('/login', async (req, res) => {
+  console.log('Login attempt:', req.body.email);
+  
   const { email, password } = req.body;
 
+  // Validation
+  if (!email || !password) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Email et mot de passe requis' 
+    });
+  }
+
   try {
-    let user = await User.findOne({ email });
+    // Chercher l'utilisateur
+    let user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
-      return res.status(400).json({ success: false, message: 'Identifiants invalides' });
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Identifiants invalides' 
+      });
     }
 
+    // Vérifier le mot de passe
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ success: false, message: 'Identifiants invalides' });
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Identifiants invalides' 
+      });
     }
 
+    // Créer le payload JWT
     const payload = {
       id: user.id,
       name: user.name,
@@ -85,14 +143,25 @@ router.post('/login', async (req, res) => {
       role: user.role
     };
 
+    // Générer le token
     jwt.sign(
       payload,
       keys.secretOrKey,
-      { expiresIn: '1h' },
+      { expiresIn: '24h' },
       (err, token) => {
-        if (err) throw err;
+        if (err) {
+          console.error('Erreur JWT:', err);
+          return res.status(500).json({ 
+            success: false, 
+            message: 'Erreur lors de la génération du token' 
+          });
+        }
+        
+        console.log('User logged in successfully:', user.email);
+        
         res.json({
           success: true,
+          message: 'Connexion réussie',
           token: token,
           user: {
             id: user.id,
@@ -104,8 +173,11 @@ router.post('/login', async (req, res) => {
       }
     );
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ success: false, message: 'Erreur serveur' });
+    console.error('Erreur login:', err);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur lors de la connexion' 
+    });
   }
 });
 
@@ -116,13 +188,34 @@ router.get('/user', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
     if (!user) {
-      return res.status(404).json({ success: false, message: 'Utilisateur non trouvé' });
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Utilisateur non trouvé' 
+      });
     }
-    res.json(user);
+    
+    res.json({
+      success: true,
+      user: user
+    });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ success: false, message: 'Erreur serveur' });
+    console.error('Erreur get user:', err);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
+    });
   }
+});
+
+// @route   POST api/auth/verify-token
+// @desc    Verify if token is valid
+// @access  Private
+router.post('/verify-token', auth, (req, res) => {
+  res.json({
+    success: true,
+    message: 'Token valide',
+    user: req.user
+  });
 });
 
 module.exports = router;

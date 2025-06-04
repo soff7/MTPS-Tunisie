@@ -1,32 +1,46 @@
 const jwt = require('jsonwebtoken');
 const keys = require('../config/keys');
 
-module.exports = function(req, res, next) {
-  // Récupérer le token depuis le header
+module.exports = (req, res, next) => {
+  // Récupérer le token depuis l'en-tête Authorization
   const authHeader = req.header('Authorization');
-  
-  // Vérifier si le token existe
-  if (!authHeader) {
-    return res.status(401).json({ success: false, message: 'Pas de token, autorisation refusée' });
+  let token = null;
+
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.substring(7); // Enlever "Bearer "
   }
-  
-  // Format attendu: "Bearer [token]"
-  const parts = authHeader.split(' ');
-  if (parts.length !== 2 || parts[0] !== 'Bearer') {
-    return res.status(401).json({ success: false, message: 'Format de token invalide' });
+
+  // Vérifier si aucun token n'est fourni
+  if (!token) {
+    return res.status(401).json({ 
+      success: false, 
+      message: 'Accès refusé. Aucun token fourni.' 
+    });
   }
-  
-  const token = parts[1];
 
   try {
     // Vérifier le token
     const decoded = jwt.verify(token, keys.secretOrKey);
-    
-    // Ajouter l'utilisateur au request
     req.user = decoded;
     next();
   } catch (err) {
-    console.error('Token error:', err.message);
-    res.status(401).json({ success: false, message: 'Token non valide' });
+    console.error('Erreur de vérification du token:', err.message);
+    
+    if (err.name === 'TokenExpiredError') {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Token expiré' 
+      });
+    } else if (err.name === 'JsonWebTokenError') {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Token invalide' 
+      });
+    } else {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Erreur d\'authentification' 
+      });
+    }
   }
 };

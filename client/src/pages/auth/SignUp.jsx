@@ -87,6 +87,8 @@ const SignUp = () => {
         password 
       });
       
+      console.log('Registration response:', response);
+      
       if (response.data.success) {
         // Stocker le token et les infos utilisateur
         localStorage.setItem('token', response.data.token);
@@ -96,7 +98,7 @@ const SignUp = () => {
         localStorage.setItem('user', JSON.stringify(response.data.user));
         localStorage.setItem('userRole', response.data.user.role);
         
-        // Redirection vers la page contact (l'inscription crée toujours un rôle "user")
+        // Redirection vers la page contact
         navigate('/contact');
       } else {
         throw new Error(response.data.message || 'Erreur lors de la création du compte');
@@ -104,22 +106,39 @@ const SignUp = () => {
     } catch (error) {
       console.error('Erreur d\'inscription:', error);
       
-      setError(
-        error.response?.data?.message || 
-        error.message || 
-        'Erreur lors de la création du compte. Veuillez réessayer.'
-      );
+      // Gestion des erreurs plus précise
+      let errorMessage = 'Erreur lors de la création du compte. Veuillez réessayer.';
+      
+      if (error.response) {
+        // Erreur du serveur avec réponse
+        errorMessage = error.response.data?.message || `Erreur ${error.response.status}`;
+      } else if (error.request) {
+        // Erreur réseau
+        errorMessage = 'Impossible de contacter le serveur. Vérifiez votre connexion.';
+      } else {
+        // Autre erreur
+        errorMessage = error.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
   const passwordsMatch = formData.password && 
-                         formData.confirmPassword && 
-                         formData.password === formData.confirmPassword;
+                       formData.confirmPassword && 
+                       formData.password === formData.confirmPassword;
 
   return (
     <div className="auth-container">
+      {/* Ajout de la navbar minimaliste */}
+      <nav className="auth-navbar">
+        <Link to="/" className="logo">
+          <img src="/assets/logo.png" alt="Logo" />
+        </Link>
+      </nav>
+
       <div className="auth-card">
         <div className="auth-header">
           <h1>Créer un compte</h1>
@@ -187,9 +206,8 @@ const SignUp = () => {
             
             {formData.password && (
               <div className="password-info">
-                <small>
-                  ✓ Au moins 6 caractères
-                  {formData.password.length >= 6 && <span className="valid"> ✓</span>}
+                <small className={formData.password.length >= 6 ? 'valid' : ''}>
+                  {formData.password.length >= 6 ? '✓' : '○'} Au moins 6 caractères
                 </small>
               </div>
             )}
@@ -236,7 +254,7 @@ const SignUp = () => {
           <button
             type="submit"
             className="auth-button"
-            disabled={isLoading || !passwordsMatch}
+            disabled={isLoading || !passwordsMatch || !formData.name || !formData.email || !formData.password}
           >
             {isLoading ? (
               <>

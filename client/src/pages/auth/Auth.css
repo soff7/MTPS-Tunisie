@@ -426,6 +426,36 @@ body {
   outline-offset: 2px;
 }
 
+/* Ajoutez ceci à la fin de Auth.css */
+.auth-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(18, 18, 18, 0.8);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.auth-navbar .logo {
+  margin: 0;
+  padding: 0;
+}
+
+.auth-navbar .logo img {
+  height: 40px;
+  transition: transform var(--transition-medium);
+}
+
+.auth-navbar .logo img:hover {
+  transform: scale(1.05);
+}
+
 /* Design responsive */
 @media (max-width: 480px) {
   .auth-container {

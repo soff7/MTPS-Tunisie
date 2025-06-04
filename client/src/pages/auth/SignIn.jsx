@@ -118,10 +118,15 @@ const SignIn = () => {
 
   return (
     <div className="auth-container">
+      {/* Ajout de la navbar minimaliste */}
+      <nav className="auth-navbar">
+        <Link to="/" className="logo">
+          <img src="/assets/logo.png" alt="Logo" />
+        </Link>
+      </nav>
+
       <div className="auth-card">
         <div className="auth-header">
-          <div className="logo">
-          </div>
           <h1>Connexion</h1>
         </div>
 
