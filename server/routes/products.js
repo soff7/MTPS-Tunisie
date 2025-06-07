@@ -1,63 +1,109 @@
 const express = require('express');
 const router = express.Router();
-const Product = require('../models/Product');
+const mongoose = require('mongoose'); // Keep this single import at the top
+const { uploadMiddleware } = require('../middleware/uploadConfig');
+const {
+  getProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  testRoute
+} = require('../controllers/productsController');
 
-// Get all products
-router.get('/', async (req, res) => {
-  try {
-    const products = await Product.find();
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+// Route de test
+router.get('/test', testRoute);
 
-// Add a new product
-router.post('/', async (req, res) => {
+// Route de diagnostic détaillée
+router.get('/diagnostic', async (req, res) => {
   try {
-    const product = new Product({
-      name: req.body.name,
-      category: req.body.category,
-      image: req.files.image ? req.files.image[0].path : null,
-      techSheet: req.files.techSheet ? req.files.techSheet[0].path : null,
-      description: req.body.description
+    const Product = require('../models/Product');
+    
+    console.log('🔍 Diagnostic MongoDB détaillé...');
+    
+    // Informations de connexion
+    const connectionInfo = {
+      readyState: mongoose.connection.readyState,
+      readyStateText: {
+        0: 'Déconnecté',
+        1: 'Connecté',
+        2: 'Connexion en cours',
+        3: 'Déconnexion en cours'
+      }[mongoose.connection.readyState],
+      database: mongoose.connection.name,
+      host: mongoose.connection.host,
+      port: mongoose.connection.port
+    };
+    
+    // Collections disponibles
+    const collections = await mongoose.connection.db.listCollections().toArray();
+    
+    // Statistiques des produits
+    const productCount = await Product.countDocuments();
+    const products = await Product.find().sort({ createdAt: -1 });
+    
+    // Statistiques par catégorie
+    const categoryStats = await Product.aggregate([
+      {
+        $group: {
+          _id: '$category',
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+    
+    const diagnostic = {
+      connection: connectionInfo,
+      collections: collections.map(c => ({
+        name: c.name,
+        type: c.type
+      })),
+      statistics: {
+        totalProducts: productCount,
+        categoriesCount: categoryStats.length,
+        categoryBreakdown: categoryStats
+      },
+      products: products.map(p => ({
+        id: p._id,
+        name: p.name,
+        category: p.category,
+        hasImage: !!p.image,
+        hasTechSheet: !!p.techSheet,
+        createdAt: p.createdAt
+      }))
+    };
+    
+    console.log('✅ Diagnostic complet:', JSON.stringify(diagnostic, null, 2));
+    
+    res.json({
+      success: true,
+      message: 'Diagnostic terminé avec succès',
+      diagnostic: diagnostic
     });
-    const newProduct = await product.save();
-    res.status(201).json(newProduct);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+    
+  } catch (error) {
+    console.error('❌ Erreur lors du diagnostic:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Erreur lors du diagnostic',
+      error: error.message 
+    });
   }
 });
 
-// Update product
-router.put('/:id', async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-    if (!product) return res.status(404).json({ message: 'Product not found' });
+// Récupérer tous les produits
+router.get('/', getProducts);
 
-    if (req.body.name) product.name = req.body.name;
-    if (req.body.category) product.category = req.body.category;
-    if (req.files.image) product.image = req.files.image[0].path;
-    if (req.files.techSheet) product.techSheet = req.files.techSheet[0].path;
-    if (req.body.description) product.description = req.body.description;
+// Récupérer un produit par ID
+router.get('/:id', getProductById);
 
-    const updatedProduct = await product.save();
-    res.json(updatedProduct);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+// Créer un nouveau produit (avec upload de fichiers)
+router.post('/', uploadMiddleware, createProduct);
 
-// Delete product
-router.delete('/:id', async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-    if (!product) return res.status(404).json({ message: 'Product not found' });
-    await product.remove();
-    res.json({ message: 'Product deleted' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+// Mettre à jour un produit (avec upload de fichiers optionnel)
+router.put('/:id', uploadMiddleware, updateProduct);
+
+// Supprimer un produit
+router.delete('/:id', deleteProduct);
 
 module.exports = router;

@@ -35,6 +35,11 @@
   to { opacity: 1; }
 }
 
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(71, 234, 255, 0.3); }
+  50% { box-shadow: 0 0 15px rgba(71, 234, 255, 0.6); }
+}
+
 @keyframes shimmer {
   0% { background-position: -100% 0; }
   100% { background-position: 200% 0; }
@@ -48,7 +53,6 @@
   color: var(--light-text);
   padding: 6rem 0 0 0; /* Remove bottom padding, add top padding to avoid overlap with navbar */
   margin-top: 0; /* Further increased margin top to ensure spacing below navbar */
-
 }
 
 /* Overlay et effets d'arrière-plan */
@@ -188,11 +192,14 @@
   font-weight: 700;
   margin-bottom: 1rem;
   color: var(--light-text);
+  margin-left: 430px;
+  margin-bottom: 50px;
 }
 
 .highlight {
   color: var(--primary-color);
   position: relative;
+  
 }
 
 .highlight::after {
@@ -227,40 +234,54 @@
 }
 
 .catalog-tab {
-  background-color: transparent;
-  color: var(--secondary-color);
+  background: linear-gradient(135deg, var(--primary-color), var(--hover-color));
+  color: var(--light-text);
   border: none;
   font-size: 1rem;
-  font-weight: 500;
-  padding: 10px 30px;
+  font-weight: 700;
+  padding: 0.9rem 1.5rem;
+  border-radius: 6px;
   margin: 0 10px;
   cursor: pointer;
-  position: relative;
   transition: all 0.3s ease;
-}
-
-.catalog-tab::after {
-  content: '';
-  position: absolute;
-  bottom: -15px;
-  left: 0;
-  width: 0;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
-  transition: width 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .catalog-tab:hover {
-  color: var(--light-text);
+  background: linear-gradient(135deg, var(--hover-color), var(--primary-color));
+  transform: translateY(-3px);
+  animation: glow 1.5s infinite ease-in-out;
+}
+
+.catalog-tab::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+.catalog-tab:hover::before {
+  left: 100%;
 }
 
 .catalog-tab.active {
-  color: var(--primary-color);
-  font-weight: 600;
+  background: linear-gradient(135deg, var(--hover-color), var(--primary-color));
+  color: var(--light-text);
+  transform: translateY(-3px);
+  animation: glow 1.5s infinite ease-in-out;
 }
 
-.catalog-tab.active::after {
-  width: 100%;
+.catalog-tab.active::before {
+  left: 100%;
 }
 
 /* Grille de produits */
@@ -284,6 +305,7 @@
   flex-direction: column;
   animation: fadeInUp 0.8s ease forwards;
   opacity: 0;
+  margin-bottom: 20px;
 }
 
 .product-card:nth-child(3n+1) {
@@ -368,31 +390,48 @@
 
 /* Bouton de fiche technique */
 .tech-sheet-button {
-  background-color: transparent;
-  color: var(--primary-color);
-  border: 1px solid var(--primary-color);
-  padding: 0.75rem 1.25rem;
-  border-radius: 4px;
+  background: linear-gradient(135deg, var(--primary-color), var(--hover-color));
+  color: var(--light-text);
+  border: none;
+  padding: 0.9rem 1.5rem;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 700;
+  font-size: 0.95rem;
   margin-top: auto;
   align-self: flex-start;
+  position: relative;
+  overflow: hidden;
 }
 
 .tech-sheet-button:hover {
-  background-color: rgba(107, 201, 255, 0.1);
+  background: linear-gradient(135deg, var(--hover-color), var(--primary-color));
   transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(107, 201, 255, 0.15);
+  animation: glow 1.5s infinite ease-in-out;
+}
+
+.tech-sheet-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+.tech-sheet-button:hover::before {
+  left: 100%;
 }
 
 /* Fiche technique */
-.tech-sheet {
+.tech-sheet Clayton Kershaw {
   margin-top: 1.5rem;
   background-color: rgba(107, 201, 255, 0.05);
   border: 1px solid rgba(107, 201, 255, 0.2);
@@ -427,6 +466,62 @@
   color: var(--secondary-color);
   font-size: 0.9rem;
   line-height: 1.6;
+}
+
+/* Bouton de téléchargement de la fiche technique */
+.tech-sheet-download-button {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, var(--primary-color), var(--hover-color));
+  border: none;
+  padding: 0.9rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 700;
+  font-size: 0.95rem;
+  position: relative;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.tech-sheet-download-button:hover {
+  background: linear-gradient(135deg, var(--hover-color), var(--primary-color));
+  transform: translateY(-3px);
+  animation: glow 1.5s infinite ease-in-out;
+}
+
+.tech-sheet-download-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+.tech-sheet-download-button:hover::before {
+  left: 100%;
+}
+
+.tech-sheet-download-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--light-text);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.tech-sheet-download-link svg {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.tech-sheet-download-button:hover .tech-sheet-download-link svg {
+  transform: scale(1.2);
 }
 
 /* Séparateur de section */

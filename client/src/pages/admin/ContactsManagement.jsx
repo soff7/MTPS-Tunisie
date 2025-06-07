@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaReply, FaTrash, FaSpinner } from 'react-icons/fa';
+import { FaReply, FaTrash, FaSpinner, FaRedo } from 'react-icons/fa';
 
+// Styled Components
 const ContactsContainer = styled.div`
   padding: 2rem;
   background-color: var(--admin-bg);
   min-height: calc(100vh - var(--header-height));
-  position: relative; /* Pour gérer les overlays */
+  position: relative;
 `;
 
 const ContactsTitle = styled.h1`
@@ -119,6 +120,15 @@ const DeleteButton = styled(Button)`
   }
 `;
 
+const RetryButton = styled(Button)`
+  background-color: var(--admin-warning);
+  color: white;
+
+  &:hover {
+    background-color: #d97706;
+  }
+`;
+
 const Loading = styled.div`
   display: flex;
   align-items: center;
@@ -142,6 +152,7 @@ const NoData = styled.div`
   text-align: center;
 `;
 
+// Main Component
 const ContactsManagement = () => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -156,29 +167,50 @@ const ContactsManagement = () => {
 
   const fetchContacts = async () => {
     try {
+      setLoading(true);
+      setError(null);
+      
       console.log('Fetching contacts from:', `${API_BASE_URL}/api/contacts`);
       const res = await fetch(`${API_BASE_URL}/api/contacts`);
-      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP error! Status: ${res.status}`);
+      }
+      
       const data = await res.json();
       console.log('Contacts data:', data);
-      if (!Array.isArray(data)) throw new Error('Invalid data format: expected an array');
+      
+      if (!Array.isArray(data)) {
+        throw new Error('Invalid data format: expected an array');
+      }
+      
       setContacts(data);
-      setLoading(false);
     } catch (err) {
       console.error('Error fetching contacts:', err);
-      setError(`Erreur: ${err.message}. Vérifiez l'API ou la connexion.`);
+      setError(`Error: ${err.message}. Please check the API or connection.`);
+    } finally {
       setLoading(false);
     }
   };
 
   const handleReply = async (contactId) => {
     try {
+      if (!reply[contactId] || reply[contactId].trim() === '') {
+        throw new Error('Please enter a reply before submitting');
+      }
+      
       const res = await fetch(`${API_BASE_URL}/api/contacts/${contactId}/reply`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reply: reply[contactId] }),
       });
-      if (!res.ok) throw new Error('Échec de l’envoi de la réponse');
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to send reply');
+      }
+      
       const updatedContact = await res.json();
       setContacts(prevContacts =>
         prevContacts.map(c => (c._id === contactId ? updatedContact : c))
@@ -194,7 +226,12 @@ const ContactsManagement = () => {
       const res = await fetch(`${API_BASE_URL}/api/contacts/${contactId}`, {
         method: 'DELETE',
       });
-      if (!res.ok) throw new Error('Échec de la suppression du contact');
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to delete contact');
+      }
+      
       setContacts(prevContacts =>
         prevContacts.filter(c => c._id !== contactId)
       );
@@ -207,19 +244,30 @@ const ContactsManagement = () => {
     setReply(prev => ({ ...prev, [contactId]: value }));
   };
 
+  const handleRetry = () => {
+    fetchContacts();
+  };
+
   return (
     <ContactsContainer>
-      <ContactsTitle>Gestion des Contacts</ContactsTitle>
+      <ContactsTitle>Contacts Management</ContactsTitle>
 
-      {error && <Error>{error}</Error>}
+      {error && (
+        <Error>
+          {error}
+          <RetryButton onClick={handleRetry}>
+            <FaRedo /> Retry
+          </RetryButton>
+        </Error>
+      )}
 
       {loading ? (
         <Loading>
           <FaSpinner className="spinner" />
-          Chargement...
+          Loading...
         </Loading>
       ) : contacts.length === 0 ? (
-        <NoData>Aucun contact à afficher.</NoData>
+        <NoData>No contacts to display.</NoData>
       ) : (
         <ContactsList>
           {contacts.map(contact => (
@@ -229,35 +277,35 @@ const ContactsManagement = () => {
                   {contact.name} <ContactEmail>({contact.email})</ContactEmail>
                 </ContactName>
                 <ContactStatus status={contact.status}>
-                  {contact.status === 'Pending' ? 'En attente' : 'Répondu'}
+                  {contact.status === 'Pending' ? 'Pending' : 'Replied'}
                 </ContactStatus>
               </ContactHeader>
 
               <ContactMessage>
-                <strong>Message:</strong> {contact.message || 'Aucun message'}
+                <strong>Message:</strong> {contact.message || 'No message'}
               </ContactMessage>
 
               {contact.reply && (
                 <ContactMessage>
-                  <strong>Réponse:</strong> {contact.reply}
+                  <strong>Reply:</strong> {contact.reply}
                 </ContactMessage>
               )}
 
               {contact.status === 'Pending' && (
                 <ReplySection>
                   <ReplyTextarea
-                    placeholder="Votre réponse..."
+                    placeholder="Your reply..."
                     value={reply[contact._id] || ''}
                     onChange={(e) => handleReplyChange(contact._id, e.target.value)}
                   />
                   <ReplyButton onClick={() => handleReply(contact._id)}>
-                    <FaReply /> Envoyer Réponse
+                    <FaReply /> Send Reply
                   </ReplyButton>
                 </ReplySection>
               )}
 
               <DeleteButton onClick={() => handleDelete(contact._id)}>
-                <FaTrash /> Supprimer
+                <FaTrash /> Delete
               </DeleteButton>
             </ContactCard>
           ))}

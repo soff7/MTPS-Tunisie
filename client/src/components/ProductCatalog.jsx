@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaFileAlt } from 'react-icons/fa';
+import { FaFileAlt, FaFilePdf } from 'react-icons/fa';
 import { io } from 'socket.io-client';
 import '../styles/ProductCatalog.css';
 
@@ -76,9 +76,16 @@ const ProductCatalog = () => {
       </div>
       {product.techSheet && (
         <div className="tech-spec-item">
-          <a href={`${API_BASE_URL}/${product.techSheet}`} target="_blank" rel="noopener noreferrer">
-            Télécharger la fiche technique (PDF)
-          </a>
+          <button className="tech-sheet-download-button">
+            <a
+              href={`${API_BASE_URL}/${product.techSheet}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="tech-sheet-download-link"
+            >
+              <FaFilePdf /> Télécharger la fiche technique (PDF)
+            </a>
+          </button>
         </div>
       )}
       <div className="tech-spec-item">
@@ -104,7 +111,7 @@ const ProductCatalog = () => {
         <div className="product-info">
           <h3>{product.name}</h3>
           <p>{product.description}</p>
-          <button onClick={() => toggleTechSheet(product._id || product.id)}>
+          <button onClick={() => toggleTechSheet(product._id || product.id)} className="tech-sheet-button">
             <FaFileAlt /> Fiche technique
           </button>
           {openTechSheet === (product._id || product.id) && renderTechSheet(product)}
@@ -121,16 +128,22 @@ const ProductCatalog = () => {
         </h2>
 
         <div className="catalog-tabs">
-          <button onClick={() => handleTabChange('all')} className={activeTab === 'all' ? 'active' : ''}>
+          <button 
+            onClick={() => handleTabChange('all')} 
+            className={`catalog-tab ${activeTab === 'all' ? 'active' : ''}`}
+          >
             Tous
           </button>
-          <button onClick={() => handleTabChange('pvc-u')} className={activeTab === 'pvc-u' ? 'active' : ''}>
-            PVC-U
+          <button 
+            onClick={() => handleTabChange('pvc')} 
+            className={`catalog-tab ${activeTab === 'pvc' ? 'active' : ''}`}
+          >
+            PVC
           </button>
-          <button onClick={() => handleTabChange('pe80')} className={activeTab === 'pe80' ? 'active' : ''}>
-            PE80
-          </button>
-          <button onClick={() => handleTabChange('pehd')} className={activeTab === 'pehd' ? 'active' : ''}>
+          <button 
+            onClick={() => handleTabChange('pehd')} 
+            className={`catalog-tab ${activeTab === 'pehd' ? 'active' : ''}`}
+          >
             PEHD
           </button>
         </div>

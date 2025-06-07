@@ -342,8 +342,7 @@ const ProductsManagement = () => {
             required
           >
             <option value="">Sélectionner une catégorie</option>
-            <option value="PVC-U">PVC-U</option>
-            <option value="PE80">PE80</option>
+            <option value="PVC">PVC</option>
             <option value="PEHD">PEHD</option>
           </FormSelect>
           
