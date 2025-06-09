@@ -1,24 +1,27 @@
 import axios from 'axios';
 
-const API_URL = 'http://your-backend-api-url'; // Replace with your actual API URL
+const API_URL = 'http://localhost:5000/api';
 
 const contactService = {
-  getContacts: async () => {
-    const response = await axios.get(`${API_URL}/contacts`);
-    return response;
-  },
-  createContact: async (data) => {
-    const response = await axios.post(`${API_URL}/contacts`, data);
-    return response;
-  },
-  updateContact: async (id, data) => {
-    const response = await axios.put(`${API_URL}/contacts/${id}`, data);
-    return response;
-  },
-  deleteContact: async (id) => {
-    const response = await axios.delete(`${API_URL}/contacts/${id}`);
-    return response;
-  },
+  createContact: async (data, token) => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/contacts`, 
+        data, 
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          timeout: 10000
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error in contactService:', error);
+      throw error;
+    }
+  }
 };
 
 export default contactService;

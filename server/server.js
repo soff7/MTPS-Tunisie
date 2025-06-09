@@ -66,9 +66,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes
+// Routes - ORDRE IMPORTANT
 app.use('/api/products', require('./routes/products'));
-app.use('/api/auth', require('./routes/auth')); // Add this line to mount auth routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/contacts', require('./routes/contact')); // Route corrigée
 
 // Route de diagnostic
 app.get('/api/diagnostic', async (req, res) => {
@@ -98,7 +99,8 @@ app.get('/', (req, res) => {
     version: '1.0.0',
     endpoints: {
       products: '/api/products',
-      auth: '/api/auth', // Add this to the endpoints list
+      auth: '/api/auth',
+      contacts: '/api/contacts',
       health: '/api/health',
       diagnostic: '/api/diagnostic'
     }
@@ -107,10 +109,23 @@ app.get('/', (req, res) => {
 
 // Gestion des erreurs 404
 app.use((req, res) => {
+  console.log(`❌ Route non trouvée: ${req.method} ${req.path}`);
   res.status(404).json({ 
     message: 'Route non trouvée',
     path: req.path,
-    method: req.method
+    method: req.method,
+    availableRoutes: [
+      'GET /',
+      'GET /api/health',
+      'GET /api/diagnostic',
+      'GET /api/products',
+      'POST /api/auth/login',
+      'POST /api/auth/register',
+      'GET /api/contacts',
+      'POST /api/contacts',
+      'PUT /api/contacts/:id/reply',
+      'DELETE /api/contacts/:id'
+    ]
   });
 });
 
@@ -129,7 +144,8 @@ app.listen(PORT, () => {
   console.log(`📍 URL locale: http://localhost:${PORT}`);
   console.log(`🏥 Health check: http://localhost:${PORT}/api/health`);
   console.log(`📦 API Products: http://localhost:${PORT}/api/products`);
-  console.log(`🔐 API Auth: http://localhost:${PORT}/api/auth`); // Add this log
+  console.log(`🔐 API Auth: http://localhost:${PORT}/api/auth`);
+  console.log(`📧 API Contacts: http://localhost:${PORT}/api/contacts`);
   console.log(`🔍 Diagnostic: http://localhost:${PORT}/api/diagnostic`);
   
   // Lancer le diagnostic au démarrage

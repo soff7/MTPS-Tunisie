@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { contactService } from '../../src/utils/api';
 import '../styles/ContactForm.css';
 
 const ContactForm = () => {
@@ -21,30 +21,28 @@ const ContactForm = () => {
     error: null
   });
 
-  // Vérifier l'authentification et le rôle au montage du composant
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userRole = localStorage.getItem('userRole');
     
     setIsAuthenticated(!!token);
-    // Vérifier pour les rôles admin ET superadmin
     setIsAdmin(userRole === 'admin' || userRole === 'superadmin');
     
-    if (token && userRole !== 'admin' && userRole !== 'superadmin') {
+    if (token && !isAdmin) {
       const savedFormData = JSON.parse(localStorage.getItem('pendingContactForm') || '{}');
       if (Object.keys(savedFormData).length > 0) {
         setFormData(savedFormData);
         localStorage.removeItem('pendingContactForm');
       }
     }
-  }, []);
+  }, [isAdmin]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData(prev => ({
+      ...prev,
       [name]: value
-    });
+    }));
   };
 
   const saveFormDataAndRedirect = () => {
@@ -52,15 +50,27 @@ const ContactForm = () => {
     window.location.href = '/signup';
   };
 
+  const validateForm = () => {
+    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+      return 'Tous les champs obligatoires doivent être remplis';
+    }
+    if (formData.subject === 'autre' && !formData.otherSubject) {
+      return 'Veuillez préciser votre sujet';
+    }
+    if (formData.message.length < 10) {
+      return 'Le message doit contenir au moins 10 caractères';
+    }
+    return null;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Vérifier si l'utilisateur est un admin ou superadmin
     if (isAdmin) {
       setStatus({
         submitting: false,
         success: false,
-        error: 'Accès refusé : En tant qu\'administrateur, vous n\'êtes pas autorisé à envoyer des messages via ce formulaire de contact.'
+        error: 'Accès refusé : En tant qu\'administrateur, vous n\'êtes pas autorisé à envoyer des messages via ce formulaire.'
       });
       return;
     }
@@ -69,71 +79,40 @@ const ContactForm = () => {
       saveFormDataAndRedirect();
       return;
     }
-    
-    if (formData.message.length < 10) {
+
+    const validationError = validateForm();
+    if (validationError) {
       setStatus({
         submitting: false,
         success: false,
-        error: 'Le message doit contenir au moins 10 caractères'
+        error: validationError
       });
       return;
     }
     
-    setStatus({
-      submitting: true,
-      success: false,
-      error: null
-    });
+    setStatus({ submitting: true, success: false, error: null });
     
     try {
-      console.log('Données à envoyer:', formData);
+      const finalData = {
+        ...formData,
+        subject: formData.subject === 'autre' ? formData.otherSubject : formData.subject
+      };
       
-      // Configuration axios avec timeout
-      const response = await axios.post(
-        'http://localhost:5000/api/contacts', 
-        formData,
-        {
-          timeout: 10000, // 10 secondes timeout
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        }
-      );
+      await contactService.createContact(finalData);
       
-      console.log('Réponse du serveur:', response.data);
-      
-      if (response.data.success) {
-        setStatus({
-          submitting: false,
-          success: true,
-          error: null
-        });
-        
-        // Réinitialiser le formulaire après succès
-        setFormData({
-          name: '',
-          companyName: '',
-          email: '',
-          subject: '',
-          otherSubject: '',
-          message: ''
-        });
-      }
+      setStatus({ submitting: false, success: true, error: null });
+      setFormData({
+        name: '',
+        companyName: '',
+        email: '',
+        subject: '',
+        otherSubject: '',
+        message: ''
+      });
     } catch (err) {
-      console.error('Erreur lors de l\'envoi:', err);
-      
-      let errorMessage = 'Une erreur est survenue. Veuillez réessayer.';
-      
-      if (err.code === 'ECONNABORTED') {
-        errorMessage = 'Timeout - Le serveur met trop de temps à répondre. Vérifiez votre connexion.';
-      } else if (err.code === 'ERR_NETWORK') {
-        errorMessage = 'Erreur réseau - Impossible de joindre le serveur. Vérifiez que le serveur backend est démarré.';
-      } else if (err.response?.status === 500) {
-        errorMessage = 'Erreur serveur interne. Contactez l\'administrateur.';
-      } else if (err.response?.data?.message) {
-        errorMessage = err.response.data.message;
-      }
+      const errorMessage = err.response?.data?.message || 
+                         err.message || 
+                         'Une erreur est survenue. Veuillez réessayer.';
       
       setStatus({
         submitting: false,
@@ -154,26 +133,18 @@ const ContactForm = () => {
       )}
       
       {isAdmin && (
-        <div className="admin-alert" style={{
-          backgroundColor: '#f8d7da',
-          color: '#721c24',
-          padding: '12px',
-          borderRadius: '5px',
-          border: '1px solid #f5c6cb',
-          marginBottom: '20px',
-          fontWeight: 'bold'
-        }}>
-          ⚠️ Accès refusé : En tant qu'administrateur, vous n'êtes pas autorisé à utiliser ce formulaire de contact.
+        <div className="admin-alert">
+          ⚠️ Accès refusé : En tant qu'administrateur, vous n'êtes pas autorisé à utiliser ce formulaire.
         </div>
       )}
       
-      {isAuthenticated && !isAdmin && status.error && (
+      {status.error && (
         <div className="error-message">
           {status.error}
         </div>
       )}
       
-      {isAuthenticated && !isAdmin && status.success && (
+      {status.success && (
         <div className="success-message">
           Votre message a été envoyé avec succès!
         </div>
