@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import ProductsHero from '../components/ProductsHero';
-import ProductCategories from '../components/ProductCategories';
 import ProductCatalog from '../components/ProductCatalog';
 
 const Products = () => {
@@ -15,7 +14,6 @@ const Products = () => {
   return (
     <main>
       <ProductsHero onSearch={handleSearch} />
-      <ProductCategories />
       <ProductCatalog searchQuery={searchQuery} />
     </main>
   );

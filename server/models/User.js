@@ -1,33 +1,65 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+
+const getDefaultPrivilegesByRole = (role) => {
+  switch (role) {
+    case 'SuperAdmin':
+      return [
+        'dashboard_access',
+        'users_management',
+        'users_create',
+        'users_edit',
+        'users_delete',
+        'contacts_management',
+        'system_settings',
+        'reports_access',
+        'full_admin_access'
+      ];
+    case 'Admin':
+      return [
+        'dashboard_access',
+        'contacts_management',
+        'reports_access',
+        'basic_admin_access'
+      ];
+    case 'Manager':
+      return [
+        'dashboard_access',
+        'contacts_view',
+        'reports_view'
+      ];
+    default:
+      return ['dashboard_access'];
+  }
+};
 
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Le nom est requis'],
-    trim: true,
-    minlength: [2, 'Le nom doit contenir au moins 2 caractères'],
-    maxlength: [50, 'Le nom ne peut pas dépasser 50 caractères']
+    required: true,
+    trim: true
   },
   email: {
     type: String,
-    required: [true, 'L\'email est requis'],
+    required: true,
     unique: true,
-    lowercase: true,
     trim: true,
-    match: [
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-      'Format d\'email invalide'
-    ]
+    lowercase: true
   },
   password: {
     type: String,
-    required: [true, 'Le mot de passe est requis'],
-    minlength: [6, 'Le mot de passe doit contenir au moins 6 caractères']
+    required: true
   },
   role: {
     type: String,
-    enum: ['user', 'admin', 'moderator'],
-    default: 'user'
+    enum: ['SuperAdmin', 'Admin', 'Manager', 'User'],
+    default: 'User'
+  },
+  privileges: {
+    type: [String],
+    default: function() {
+      return getDefaultPrivilegesByRole(this.role);
+    }
   },
   isActive: {
     type: Boolean,
@@ -36,49 +68,58 @@ const UserSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
-  },
-  lastLogin: {
-    type: Date
   }
 });
 
-// Index pour optimiser les recherches
-UserSchema.index({ email: 1 });
-UserSchema.index({ role: 1 });
+// Hash du mot de passe avant sauvegarde
+UserSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) return next();
+  
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
-// Middleware pour mettre à jour updatedAt
+// Mise à jour des privilèges quand le rôle change
 UserSchema.pre('save', function(next) {
-  if (this.isModified() && !this.isNew) {
-    this.updatedAt = Date.now();
+  if (this.isModified('role')) {
+    this.privileges = getDefaultPrivilegesByRole(this.role);
   }
   next();
 });
 
-// Méthode pour masquer le mot de passe lors de la sérialisation JSON
-UserSchema.methods.toJSON = function() {
-  const userObject = this.toObject();
-  delete userObject.password;
-  return userObject;
+// Méthode pour vérifier le mot de passe
+UserSchema.methods.comparePassword = async function(candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
 };
 
-// Méthode statique pour trouver les utilisateurs actifs
-UserSchema.statics.findActive = function() {
-  return this.find({ isActive: true });
+// Méthodes de vérification de rôle
+UserSchema.methods.isSuperAdmin = function() {
+  return this.role === 'SuperAdmin';
 };
 
-// Méthode pour vérifier si l'utilisateur est admin
 UserSchema.methods.isAdmin = function() {
-  return this.role === 'admin';
+  return this.role === 'Admin' || this.isSuperAdmin();
 };
 
-// Méthode pour mettre à jour la dernière connexion
-UserSchema.methods.updateLastLogin = function() {
-  this.lastLogin = new Date();
-  return this.save();
+// Méthode pour vérifier l'accès au dashboard
+UserSchema.methods.hasDashboardAccess = function() {
+  return this.isActive && (
+    this.privileges.includes('dashboard_access') || 
+    this.isAdmin()
+  );
+};
+
+// Méthode pour vérifier les permissions
+UserSchema.methods.hasPrivilege = function(privilege) {
+  return this.isActive && (
+    this.privileges.includes(privilege) ||
+    this.isSuperAdmin()
+  );
 };
 
 const User = mongoose.model('User', UserSchema);

@@ -1,6 +1,5 @@
 import React from 'react';
-import { FaHistory, FaUsers, FaLightbulb, FaArrowRight } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { FaHistory, FaUsers, FaLightbulb } from 'react-icons/fa';
 import '../styles/About.css'; // Assurez-vous d'avoir ce fichier CSS pour le style
 
 const About = () => {
@@ -13,7 +12,7 @@ const About = () => {
     {
       icon: <FaHistory className="value-icon" />,
       title: 'Expérience',
-      description: '15 ans d\'expertise dans la fabrication de tubes plastiques industriels.'
+      description: '35+ ans d\'expertise dans la fabrication de tubes plastiques industriels.'
     },
     {
       icon: <FaUsers className="value-icon" />,
@@ -23,44 +22,46 @@ const About = () => {
   ];
 
   const timeline = [
-    { year: '2005', event: 'Fondation de MTPS avec une spécialisation en solutions plastiques industrielles' },
-    { year: '2010', event: 'Expansion des capacités de production et certification ISO 9001' },
-    { year: '2015', event: 'Lancement de notre gamme de produits éco-responsables' },
+    { year: '1990', event: 'Fondation de MTPS avec une spécialisation en solutions plastiques industrielles' },
+    { year: '2000', event: 'Expansion des capacités de production et certification ISO 9001' },
+    { year: '2010', event: 'Lancement de notre gamme de produits éco-responsables' },
     { year: '2020', event: 'Ouverture de notre nouveau centre de R&D' },
     { year: 'Aujourd\'hui', event: 'Leader reconnu avec une présence internationale' }
   ];
 
   return (
-    <section className="about-section">
-      {/* Hero Section */}
-      <div className="about-hero">
-        <div className="container">
-          <div className="about-intro">
-            <span className="expertise-badge">NOTRE HISTOIRE</span>
-            <h1 className="about-title">À propos de <span className="highlighted">MTPS</span></h1>
-            <p className="about-subtitle">
-              Spécialiste dans la fabrication de tubes plastiques industriels depuis plus de 15 ans
-            </p>
-            <div className="about-stats">
-              <div className="stat-item">
-                <span className="stat-number">15+</span>
-                <span className="stat-label">Années d'expérience</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-number">200+</span>
-                <span className="stat-label">Clients satisfaits</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-number">50+</span>
-                <span className="stat-label">Experts techniques</span>
-              </div>
+    <div className="about-container">
+      {/* Hero Section avec background image */}
+      <section className="hero-section">
+        <div className="hero-overlay"></div>
+        <div className="hero-content">
+          <div className="hero-badge">Fabricant Tunisien</div>
+          <h1 className="hero-title">MTPS TUNISIE</h1>
+          <p className="hero-subtitle">
+            Leader tunisien dans la fabrication de tubes PVC et PEHD pour les secteurs 
+            du BTP, de l'assainissement et des réseaux techniques depuis 1990.
+          </p>
+          
+          {/* Statistiques */}
+          <div className="stats-container">
+            <div className="stat-card">
+              <div className="stat-number">35+</div>
+              <div className="stat-label">ANNÉES D'EXPÉRIENCE</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-number">400</div>
+              <div className="stat-label">DIAMÈTRE MAX (MM)</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-number">50+</div>
+              <div className="stat-label">CLIENTS SATISFAITS</div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* History Section */}
-      <div className="about-history">
+      <section className="history-section">
         <div className="container">
           <div className="section-header">
             <div className="section-icon">
@@ -83,10 +84,10 @@ const About = () => {
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Values Section */}
-      <div className="about-values">
+      <section className="values-section">
         <div className="container">
           <div className="section-header">
             <div className="section-icon">
@@ -107,18 +108,8 @@ const About = () => {
             ))}
           </div>
         </div>
-      </div>
-
-      {/* Team CTA */}
-      <div className="team-cta">
-        <div className="container">
-          <h2 className="cta-title">Rencontrez notre <span className="highlighted">équipe</span> d'experts</h2>
-          <Link to="/team" className="cta-button">
-            Découvrir l'équipe <FaArrowRight className="arrow-icon" />
-          </Link>
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 };
 

@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { FaFileAlt, FaFilePdf } from 'react-icons/fa';
-import { io } from 'socket.io-client';
 import '../styles/ProductCatalog.css';
 
 const ProductCatalog = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [products, setProducts] = useState([]);
-  const [openTechSheet, setOpenTechSheet] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [flippedCards, setFlippedCards] = useState(new Set());
 
   const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -29,46 +28,59 @@ const ProductCatalog = () => {
     };
 
     fetchProducts();
-
-    const socket = io(API_BASE_URL, {
-      transports: ['websocket'],
-      reconnectionAttempts: 5,
-      timeout: 10000
-    });
-
-    socket.on('productCreated', (product) => {
-      setProducts(prevProducts => [product, ...prevProducts]);
-    });
-
-    socket.on('productUpdated', (updatedProduct) => {
-      setProducts(prevProducts =>
-        prevProducts.map(product =>
-          product._id === updatedProduct._id ? updatedProduct : product
-        )
-      );
-    });
-
-    socket.on('productDeleted', ({ id }) => {
-      setProducts(prevProducts =>
-        prevProducts.filter(product => product._id !== id)
-      );
-    });
-
-    return () => {
-      socket.disconnect();
-    };
   }, [API_BASE_URL]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
+    // إعادة تعيين البطاقات المقلوبة عند تغيير التبويب
+    setFlippedCards(new Set());
   };
 
-  const toggleTechSheet = (productId) => {
-    setOpenTechSheet(openTechSheet === productId ? null : productId);
+  // التحكم في قلب البطاقة للأجهزة التي لا تدعم hover
+  const handleCardClick = (productId) => {
+    setFlippedCards(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(productId)) {
+        newSet.delete(productId);
+      } else {
+        newSet.add(productId);
+      }
+      return newSet;
+    });
+  };
+
+  // ✅ تحسين تحميل الملف مع معالجة أفضل للأخطاء
+  const handleTechSheetDownload = (product, event) => {
+    // منع انتشار الحدث لتجنب قلب البطاقة
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    
+    if (product.techSheet) {
+      try {
+        const fileUrl = `${API_BASE_URL}/${product.techSheet}`;
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        link.download = `${product.name || 'fiche-technique'}.pdf`;
+        link.target = '_blank'; // فتح في نافذة جديدة كبديل
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // إشعار بنجاح العملية
+        console.log(`Téléchargement initié pour: ${product.name}`);
+      } catch (error) {
+        console.error('Erreur lors du téléchargement:', error);
+        alert('Erreur lors du téléchargement du fichier');
+      }
+    } else {
+      alert('Fiche technique non disponible pour ce produit');
+    }
   };
 
   const renderTechSheet = (product) => (
-    <div className="tech-sheet">
+    <div className="tech-sheet-content">
       <h4>Spécifications techniques</h4>
       <div className="tech-spec-item">
         <span className="tech-spec-label">Catégorie:</span>
@@ -76,15 +88,18 @@ const ProductCatalog = () => {
       </div>
       {product.techSheet && (
         <div className="tech-spec-item">
-          <button className="tech-sheet-download-button">
-            <a
-              href={`${API_BASE_URL}/${product.techSheet}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="tech-sheet-download-link"
-            >
-              <FaFilePdf /> Télécharger la fiche technique (PDF)
-            </a>
+          <button 
+            className="tech-sheet-download-button"
+            onClick={(e) => handleTechSheetDownload(product, e)}
+            onMouseDown={(e) => e.stopPropagation()}
+            type="button"
+            aria-label={`Télécharger la fiche technique PDF pour ${product.name}`}
+            title="Cliquez pour télécharger la fiche technique"
+          >
+            <div className="tech-sheet-download-link">
+              <FaFilePdf className="pdf-icon" />
+              <span>Télécharger PDF</span>
+            </div>
           </button>
         </div>
       )}
@@ -101,32 +116,76 @@ const ProductCatalog = () => {
       filtered = products.filter(p => p.category.toLowerCase() === activeTab);
     }
 
-    return filtered.map(product => (
-      <div className="product-card" key={product._id || product.id}>
-        <img
-          src={product.image ? `${API_BASE_URL}/${product.image}` : '/assets/default.jpg'}
-          alt={product.name}
-          className="product-image"
-        />
-        <div className="product-info">
-          <h3>{product.name}</h3>
-          <p>{product.description}</p>
-          <button onClick={() => toggleTechSheet(product._id || product.id)} className="tech-sheet-button">
-            <FaFileAlt /> Fiche technique
-          </button>
-          {openTechSheet === (product._id || product.id) && renderTechSheet(product)}
+    return filtered.map(product => {
+      const productId = product._id || product.id;
+      const isFlipped = flippedCards.has(productId);
+      
+      return (
+        <div 
+          className={`flip-card ${isFlipped ? 'flipped' : ''}`} 
+          key={productId}
+          onClick={() => handleCardClick(productId)}
+          role="button"
+          tabIndex={0}
+          aria-label={`Voir les détails de ${product.name}`}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleCardClick(productId);
+            }
+          }}
+        >
+          <div className="card-content">
+            {/* Back Side - Tech Sheet */}
+            <div className="card-back">
+              <div className="back-content">
+                <FaFileAlt size={50} color="#6bc9ff" />
+                <strong>Fiche Technique</strong>
+                {renderTechSheet(product)}
+              </div>
+            </div>
+            
+            {/* Front Side - Product Info */}
+            <div className="card-front">
+              <div className="card-background">
+                <div className="floating-circle"></div>
+                <div className="floating-circle circle-right"></div>
+                <div className="floating-circle circle-bottom"></div>
+              </div>
+              
+              <div className="front-content">
+                <small className="product-badge">{product.category}</small>
+                
+                <div className="product-image-container">
+                  <img
+                    src={product.image ? `${API_BASE_URL}/${product.image}` : '/assets/default.jpg'}
+                    alt={product.name}
+                    className="product-image"
+                    onError={(e) => {
+                      e.target.src = '/assets/default.jpg';
+                    }}
+                  />
+                </div>
+                
+                <div className="product-description">
+                  <div className="product-title">
+                    <h3>{product.name}</h3>
+                  </div>
+                  <p className="product-footer">
+                    Disponible &nbsp; 
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    ));
+      );
+    });
   };
 
   return (
     <section className="product-catalog" id="products">
       <div className="container">
-        <h2 className="product-title">
-          Nos <span className="highlight">Produits</span>
-        </h2>
-
         <div className="catalog-tabs">
           <button 
             onClick={() => handleTabChange('all')} 
@@ -149,9 +208,14 @@ const ProductCatalog = () => {
         </div>
 
         {loading ? (
-          <p>Chargement des produits...</p>
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <p>Chargement des produits...</p>
+          </div>
         ) : error ? (
-          <p className="error">{error}</p>
+          <div className="error-container">
+            <p className="error">{error}</p>
+          </div>
         ) : (
           <div className="products-grid">{renderProducts()}</div>
         )}

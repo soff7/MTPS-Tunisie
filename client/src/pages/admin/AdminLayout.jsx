@@ -89,16 +89,16 @@ const SidebarButton = styled.div`
   display: flex;
   align-items: center;
   padding: 0.7rem 1.2rem;
-  color: ${props => (props.isLogout ? '#f87171' : '#93c5fd')};
+  color: ${props => props.isLogout ? '#f87171' : '#93c5fd'};
   font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
   border-left: 4px solid transparent;
   &:hover {
-    color: ${props => (props.isLogout ? '#ef4444' : '#60a5fa')};
+    color: ${props => props.isLogout ? '#ef4444' : '#60a5fa'};
     background: rgba(255, 255, 255, 0.08);
-    border-left: 4px solid ${props => (props.isLogout ? '#ef4444' : '#60a5fa')};
+    border-left: 4px solid ${props => props.isLogout ? '#ef4444' : '#60a5fa'};
   }
   svg {
     margin-right: 0.8rem;
@@ -167,9 +167,6 @@ const AdminLayout = () => {
           <SidebarItem to="/admin/users" className={isActive('/admin/users') ? 'active' : ''}>
             <FaUsers /> Utilisateurs
           </SidebarItem>
-          <SidebarItem to="/admin/analytics" className={isActive('/admin/analytics') ? 'active' : ''}>
-            <FaChartLine /> Statistiques
-          </SidebarItem>
           <SidebarItem to="/admin/settings" className={isActive('/admin/settings') ? 'active' : ''}>
             <FaCog /> Paramètres
           </SidebarItem>
@@ -177,7 +174,7 @@ const AdminLayout = () => {
             <FaHome /> Retour au site
           </SidebarButton>
         </div>
-        <SidebarButton onClick={handleLogout} isLogout>
+        <SidebarButton onClick={handleLogout} isLogout={true}>
           <FaSignOutAlt /> Déconnexion
         </SidebarButton>
       </Sidebar>

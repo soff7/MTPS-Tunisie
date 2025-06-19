@@ -74,7 +74,6 @@
   color: var(--light-text);
   position: relative;
   overflow: hidden;
-  bottom: 35px;
 }
 
 /* Effet de gradient subtil en arrière-plan */

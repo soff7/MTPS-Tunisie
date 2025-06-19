@@ -897,18 +897,6 @@ const Settings = () => {
                       </select>
                     </div>
 
-                    <div className="form-group">
-                      <label>Fuseau horaire</label>
-                      <select
-                        value={settings.system.timezone}
-                        onChange={(e) => handleInputChange('system', 'timezone', e.target.value)}
-                        className="form-select"
-                      >
-                        <option value="Africa/Tunis">GMT+1 (Tunis)</option>
-                        <option value="Europe/Paris">GMT+2 (Paris)</option>
-                        <option value="America/New_York">GMT-4 (New York)</option>
-                      </select>
-                    </div>
                   </div>
 
                   <div className="form-row">
@@ -925,18 +913,7 @@ const Settings = () => {
                       </select>
                     </div>
 
-                    <div className="form-group">
-                      <label>Devise</label>
-                      <select
-                        value={settings.system.currency}
-                        onChange={(e) => handleInputChange('system', 'currency', e.target.value)}
-                        className="form-select"
-                      >
-                        <option value="TND">TND (Dinar tunisien)</option>
-                        <option value="USD">USD (Dollar américain)</option>
-                        <option value="EUR">EUR (Euro)</option>
-                      </select>
-                    </div>
+              
                   </div>
 
                   <div className="form-actions">

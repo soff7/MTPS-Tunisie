@@ -45,7 +45,6 @@ const MetricsGrid = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 0.8rem;
   margin-bottom: 1.2rem;
-  /* animation: ${fadeIn} 0.5s ease-out; */ /* Commented out to avoid rendering issues */
 `;
 
 const MetricCard = styled.div`
@@ -88,7 +87,6 @@ const ActionGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 0.8rem;
-  /* animation: ${fadeIn} 0.5s ease-out 0.2s backwards; */ /* Commented out */
 `;
 
 const ActionCard = styled.div`
@@ -146,9 +144,9 @@ const ActionButton = styled(Link)`
 
 const AdminDashboard = () => {
   const metrics = {
-    messages: { value: 24, trend: 5 },
-    visits: { value: 156, trend: 12 },
-    satisfaction: { value: 89, trend: -2 },
+    messages: { value: 2, trend: 0 },
+    visits: { value: 0, trend: 0 },
+    satisfaction: { value: 0, trend: 0 },
   };
 
   return (
@@ -161,17 +159,17 @@ const AdminDashboard = () => {
         <MetricCard>
           <MetricValue>{metrics.messages.value}</MetricValue>
           <MetricLabel>Nouveaux messages</MetricLabel>
-          <MetricTrend positive={metrics.messages.trend >= 0}>+{metrics.messages.trend}%</MetricTrend>
+          <MetricTrend positive={metrics.messages.trend >= 0}>{metrics.messages.trend >= 0 ? '+' : ''}{metrics.messages.trend}%</MetricTrend>
         </MetricCard>
         <MetricCard>
           <MetricValue>{metrics.visits.value}</MetricValue>
           <MetricLabel>Visites ce mois</MetricLabel>
-          <MetricTrend positive={metrics.visits.trend >= 0}>+{metrics.visits.trend}%</MetricTrend>
+          <MetricTrend positive={metrics.visits.trend >= 0}>{metrics.visits.trend >= 0 ? '+' : ''}{metrics.visits.trend}%</MetricTrend>
         </MetricCard>
         <MetricCard>
           <MetricValue>{metrics.satisfaction.value}%</MetricValue>
           <MetricLabel>Satisfaction clients</MetricLabel>
-          <MetricTrend positive={metrics.satisfaction.trend >= 0}>{metrics.satisfaction.trend}%</MetricTrend>
+          <MetricTrend positive={metrics.satisfaction.trend >= 0}>{metrics.satisfaction.trend >= 0 ? '+' : ''}{metrics.satisfaction.trend}%</MetricTrend>
         </MetricCard>
       </MetricsGrid>
       <ActionGrid>

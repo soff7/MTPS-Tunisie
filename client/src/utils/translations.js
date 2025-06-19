@@ -14,7 +14,7 @@ export const translations = {
     'nav.logout': 'Déconnexion',
     
     // Hero Section
-    'hero.title.main': 'Des tuyaux plus solides, une solution plus intelligente.',
+    'hero.title.main': 'Des tubes plus solides, une solution plus intelligente.',
     'hero.title.secondary': 'Approuvé par les professionnels, choisi pour sa fiabilité',
     'hero.description.main': 'MTPS combine expertise technique et innovation pour fournir des solutions plastiques sur mesure répondant aux exigences les plus strictes de l\'industrie.',
     'hero.description.secondary': 'Où la force rencontre la flexibilité pour vos besoins en plastique.',

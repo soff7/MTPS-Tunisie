@@ -1,4 +1,4 @@
-// client/src/pages/auth/SignIn.jsx - Mise à jour
+// client/src/pages/auth/SignIn.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './Auth.css';
@@ -55,9 +55,6 @@ const SignIn = () => {
     setFormState({ isLoading: true, error: '' });
 
     try {
-      console.log('Tentative de connexion avec:', formData.email);
-      
-      // Utiliser fetch directement pour déboguer
       const response = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
         headers: {
@@ -66,50 +63,30 @@ const SignIn = () => {
         body: JSON.stringify(formData),
       });
       
-      console.log('Statut de la réponse:', response.status);
-      
-      // Même si le statut n'est pas 200, essayons de lire le corps
-      const textResponse = await response.text();
-      console.log('Réponse texte brute:', textResponse);
-      
-      let data;
-      try {
-        data = JSON.parse(textResponse);
-        console.log('Réponse JSON analysée:', data);
-      } catch (e) {
-        console.error('Échec du parsing JSON:', e);
-        throw new Error('Réponse du serveur invalide');
-      }
+      const data = await response.json();
       
       if (!response.ok) {
+        // Si le statut n'est pas 200-299, on considère que c'est une erreur
         throw new Error(data.message || `Erreur ${response.status}`);
       }
       
-      if (data.success) {
-        // Stocker le token et les infos utilisateur
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        localStorage.setItem('userRole', data.user.role);
-        
-        console.log('Authentification réussie, redirection...');
-        
-        // Redirection basée sur le rôle
-        if (data.user.role === 'admin' || data.user.role === 'superadmin') {
-          // Rediriger vers le dashboard si c'est un admin
-          navigate('/admin');
-        } else {
-          // Rediriger vers la page précédente ou la page d'accueil pour les utilisateurs normaux
-          navigate(from !== '/admin' ? from : '/contact');
-        }
-      } else {
-        throw new Error(data.message || 'Erreur de connexion');
-      }
-    } catch (error) {
-      console.error('Erreur complète:', error);
+      // Stockage des données utilisateur
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      localStorage.setItem('userRole', data.user.role);
       
+      // Redirection selon le rôle
+      if (data.user.role === 'admin' || data.user.role === 'superadmin') {
+        navigate('/admin');
+      } else {
+        navigate(from !== '/admin' ? from : '/contact');
+      }
+      
+    } catch (error) {
+      console.error('Erreur de connexion:', error);
       setFormState(prev => ({ 
         ...prev, 
-        error: error.message || 'Erreur de connexion au serveur' 
+        error: error.message || 'Erreur lors de la connexion. Veuillez réessayer.' 
       }));
     } finally {
       setFormState(prev => ({ ...prev, isLoading: false }));
@@ -118,7 +95,6 @@ const SignIn = () => {
 
   return (
     <div className="auth-container">
-      {/* Ajout de la navbar minimaliste */}
       <nav className="auth-navbar">
         <Link to="/" className="logo">
           <img src="/assets/logo.png" alt="Logo" />

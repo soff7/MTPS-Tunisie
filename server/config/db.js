@@ -3,17 +3,12 @@ const mongoose = require('mongoose');
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(
-      process.env.MONGO_URI || 'mongodb+srv://MTPS-Tunisie:Sofldh99@mtps.i6xs7.mongodb.net/MTPS-Tunisie?retryWrites=true&w=majority', 
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      }
+      process.env.MONGO_URI || 'mongodb+srv://MTPS-Tunisie:Sofldh99@mtps.i6xs7.mongodb.net/MTPS-Tunisie?retryWrites=true&w=majority'
     );
 
     console.log(`✅ MongoDB connecté: ${conn.connection.host}`);
     console.log(`📊 Base de données: ${conn.connection.name}`);
     
-    // Événements de connexion
     mongoose.connection.on('connected', () => {
       console.log('🔗 Mongoose connecté à MongoDB');
     });

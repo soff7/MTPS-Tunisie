@@ -49,6 +49,8 @@
   position: relative;
   font-weight: 600;
   animation: fadeInUp 0.6s ease forwards;
+  left: 1%;
+  bottom: 35px;
 }
 
 .section-title::after {
