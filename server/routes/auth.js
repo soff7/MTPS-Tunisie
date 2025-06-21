@@ -1,4 +1,3 @@
-
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
@@ -158,6 +157,84 @@ router.post('/verify-token', auth, (req, res) => {
     message: 'Token valide',
     user: req.user
   });
+});
+
+// @route   POST api/auth/register
+// @desc    Register new user
+// @access  Public
+router.post('/register', async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // Validate input
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Nom, email et mot de passe sont requis'
+      });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email: email.toLowerCase().trim() });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: 'Un utilisateur avec cet email existe déjà'
+      });
+    }
+
+    // Create new user
+    const newUser = new User({
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
+      password: password, // will be hashed by User model pre-save hook
+      role: 'User',
+      isActive: true
+    });
+
+    await newUser.save();
+
+    // Create JWT payload
+    const payload = {
+      id: newUser.id,
+      name: newUser.name,
+      email: newUser.email,
+      role: newUser.role
+    };
+
+    // Generate token
+    jwt.sign(
+      payload,
+      keys.secretOrKey,
+      { expiresIn: '24h' },
+      (err, token) => {
+        if (err) {
+          return res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la génération du token'
+          });
+        }
+
+        res.json({
+          success: true,
+          message: 'Inscription réussie',
+          token: token,
+          user: {
+            id: newUser.id,
+            name: newUser.name,
+            email: newUser.email,
+            role: newUser.role
+          }
+        });
+      }
+    );
+  } catch (error) {
+    console.error('Erreur lors de l\'inscription:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur lors de l\'inscription'
+    });
+  }
 });
 
 module.exports = router;
