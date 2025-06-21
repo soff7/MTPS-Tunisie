@@ -17,7 +17,7 @@ const Navbar = () => {
   // Vérifier si l'utilisateur est connecté et a des droits d'administrateur
   const isAuthenticated = localStorage.getItem('token');
   const userRole = localStorage.getItem('userRole');
-  const isAdmin = userRole && ['admin', 'superadmin'].includes(userRole);
+  const isAdmin = userRole && ['Admin', 'SuperAdmin'].some(role => role.toLowerCase() === userRole.toLowerCase());
   
   // Vérifier si on est sur une page d'authentification
   const isAuthPage = location.pathname === '/signin' || location.pathname === '/signup';
@@ -225,15 +225,15 @@ const Navbar = () => {
                 
                 {isAuthenticated ? (
                   <>
-                    {isAdmin && (
-                      <Link 
-                        to="/admin" 
-                        className="btn-dashboard"
-                      >
-                        <FaTachometerAlt className="dashboard-icon" /> 
-                        <TranslatedText tKey="nav.dashboard" />
-                      </Link>
-                    )}
+                      {isAdmin && (
+                        <button 
+                          className="btn-dashboard"
+                          onClick={() => navigate('/admin')}
+                        >
+                          <FaTachometerAlt className="dashboard-icon" /> 
+                          <TranslatedText tKey="nav.dashboard" />
+                        </button>
+                      )}
                     {/* Seul bouton de déconnexion - rouge avec icône */}
                     <button 
                       className="logout-button"

@@ -22,37 +22,38 @@ const getDefaultPrivilegesByRole = (role) => {
         'reports_access',
         'basic_admin_access'
       ];
-    case 'Manager':
-      return [
-        'dashboard_access',
-        'contacts_view',
-        'reports_view'
-      ];
     default:
-      return ['dashboard_access'];
+      return [];
   }
 };
 
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
-    trim: true
+    required: [true, 'Le nom est requis'],
+    trim: true,
+    minlength: [2, 'Le nom doit contenir au moins 2 caractères'],
+    maxlength: [50, 'Le nom ne peut pas dépasser 50 caractères']
   },
   email: {
     type: String,
-    required: true,
+    required: [true, 'L\'email est requis'],
     unique: true,
     trim: true,
-    lowercase: true
+    lowercase: true,
+    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Format d\'email invalide']
   },
   password: {
     type: String,
-    required: true
+    required: [true, 'Le mot de passe est requis'],
+    minlength: [6, 'Le mot de passe doit contenir au moins 6 caractères']
   },
   role: {
     type: String,
-    enum: ['SuperAdmin', 'Admin', 'Manager', 'User'],
+    enum: {
+      values: ['SuperAdmin', 'Admin', 'User'],
+      message: 'Rôle invalide'
+    },
     default: 'User'
   },
   privileges: {
@@ -65,10 +66,29 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  lastLogin: {
+    type: Date,
+    default: null
+  },
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
   }
+});
+
+// Index pour optimiser les requêtes
+UserSchema.index({ email: 1 });
+UserSchema.index({ role: 1 });
+UserSchema.index({ isActive: 1 });
+
+// Middleware pour mettre à jour updatedAt
+UserSchema.pre('save', function(next) {
+  this.updatedAt = Date.now();
+  next();
 });
 
 // Hash du mot de passe avant sauvegarde
@@ -76,7 +96,7 @@ UserSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   
   try {
-    const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);
     next();
   } catch (error) {
@@ -92,9 +112,19 @@ UserSchema.pre('save', function(next) {
   next();
 });
 
+// Middleware pour findOneAndUpdate
+UserSchema.pre('findOneAndUpdate', function(next) {
+  this.set({ updatedAt: Date.now() });
+  next();
+});
+
 // Méthode pour vérifier le mot de passe
 UserSchema.methods.comparePassword = async function(candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
+  try {
+    return await bcrypt.compare(candidatePassword, this.password);
+  } catch (error) {
+    throw new Error('Erreur lors de la vérification du mot de passe');
+  }
 };
 
 // Méthodes de vérification de rôle
@@ -120,6 +150,43 @@ UserSchema.methods.hasPrivilege = function(privilege) {
     this.privileges.includes(privilege) ||
     this.isSuperAdmin()
   );
+};
+
+// Méthode pour obtenir les informations publiques de l'utilisateur
+UserSchema.methods.getPublicProfile = function() {
+  return {
+    id: this._id,
+    name: this.name,
+    email: this.email,
+    role: this.role,
+    privileges: this.privileges,
+    isActive: this.isActive,
+    lastLogin: this.lastLogin,
+    createdAt: this.createdAt
+  };
+};
+
+// Méthode statique pour trouver les utilisateurs actifs
+UserSchema.statics.findActive = function() {
+  return this.find({ isActive: true });
+};
+
+// Méthode statique pour trouver par rôle
+UserSchema.statics.findByRole = function(role) {
+  return this.find({ role: role, isActive: true });
+};
+
+// Méthode pour mettre à jour la dernière connexion
+UserSchema.methods.updateLastLogin = function() {
+  this.lastLogin = new Date();
+  return this.save();
+};
+
+// Transformation JSON pour exclure le mot de passe
+UserSchema.methods.toJSON = function() {
+  const userObject = this.toObject();
+  delete userObject.password;
+  return userObject;
 };
 
 const User = mongoose.model('User', UserSchema);

@@ -27,12 +27,13 @@ export const AuthProvider = ({ children }) => {
       if (token && userStr) {
         // Vérifier si le token est valide en faisant une requête à l'API
         const response = await authService.getCurrentUser();
-        if (response.data) {
-          setUser(response.data);
+        if (response.data && response.data.user) {
+          setUser(response.data.user);
         } else {
-          // Token invalide, supprimer les données d'authentification
           logout();
         }
+      } else {
+        logout();
       }
     } catch (error) {
       console.error('Error checking auth status:', error);

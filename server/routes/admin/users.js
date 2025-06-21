@@ -1,4 +1,4 @@
-const express = require('express');
+ const express = require('express');
 const router = express.Router();
 
 const jwt = require('jsonwebtoken');
@@ -212,6 +212,119 @@ router.get('/feature/:featureName', requireDashboardAccess, async (req, res) => 
     res.status(500).json({ 
       message: 'Erreur serveur' 
     });
+  }
+});
+
+const User = require('../../models/User');
+const bcrypt = require('bcryptjs');
+
+// GET /auth/users - List all users
+router.get('/users', requireDashboardAccess, async (req, res) => {
+  try {
+    const users = await User.find().select('-password');
+    res.json(users);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ message: 'Erreur serveur lors de la récupération des utilisateurs' });
+  }
+});
+
+// POST /auth/users - Create a new user
+router.post('/users', requireDashboardAccess, async (req, res) => {
+  try {
+    const { name, email, password, role } = req.body;
+
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({ message: 'Tous les champs sont requis' });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: 'Un utilisateur avec cet email existe déjà' });
+    }
+
+    // Create user instance without hashing password here, model will hash it
+    const newUser = new User({
+      name,
+      email,
+      password,
+      role,
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    await newUser.save();
+
+    res.status(201).json({ message: 'Utilisateur créé avec succès' });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).json({ message: 'Erreur serveur lors de la création de l\'utilisateur' });
+  }
+});
+
+// PUT /auth/users/:id - Update a user by ID
+router.put('/users/:id', requireDashboardAccess, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, password, role, isActive } = req.body;
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    // Check if email is being updated and if it already exists for another user
+    if (email && email !== user.email) {
+      const emailExists = await User.findOne({ email });
+      if (emailExists) {
+        return res.status(409).json({ message: 'Un utilisateur avec cet email existe déjà' });
+      }
+      user.email = email;
+    }
+
+    user.name = name || user.name;
+    user.role = role || user.role;
+    if (typeof isActive === 'boolean') {
+      user.isActive = isActive;
+    }
+    if (password) {
+      // Assign password directly, model will hash it on save
+      user.password = password;
+    }
+    user.updatedAt = new Date();
+
+    await user.save();
+
+    res.json({ message: 'Utilisateur mis à jour avec succès' });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ message: 'Erreur serveur lors de la mise à jour de l\'utilisateur' });
+  }
+});
+
+// DELETE /auth/users/:id - Delete a user by ID
+router.delete('/users/:id', requireDashboardAccess, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    console.log(`Attempting to delete user with id: ${id}`);
+    // Use deleteOne instead of remove to fix error
+    await user.deleteOne();
+    console.log(`User with id: ${id} deleted successfully`);
+
+    res.json({ message: 'Utilisateur supprimé avec succès' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    if (error.stack) {
+      console.error(error.stack);
+    }
+    res.status(500).json({ message: 'Erreur serveur lors de la suppression de l\'utilisateur' });
   }
 });
 

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { FaPlus, FaTrash, FaSpinner, FaEdit, FaSync, FaSearch, FaTimes } from 'react-icons/fa';
+import api from '../../utils/api';
 
-// Styles avec styled-components pour correspondre au design précédent
+// Styles avec styled-components
 const Container = styled.div`
   padding: 2rem;
   background-color: var(--admin-bg);
@@ -56,15 +57,6 @@ const SecondaryButton = styled(Button)`
 
   &:hover:not(:disabled) {
     background-color: var(--admin-secondary-dark);
-  }
-`;
-
-const SuccessButton = styled(Button)`
-  background-color: var(--admin-success);
-  color: white;
-
-  &:hover:not(:disabled) {
-    background-color: var(--admin-success-dark);
   }
 `;
 
@@ -131,6 +123,137 @@ const FilterSelect = styled.select`
   }
 `;
 
+const UsersTable = styled.div`
+  background-color: var(--admin-card-bg);
+  border-radius: 12px;
+  box-shadow: var(--admin-shadow-sm);
+  border: 1px solid var(--admin-border);
+  overflow: hidden;
+`;
+
+const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+`;
+
+const TableHeader = styled.thead`
+  background-color: var(--admin-table-header-bg);
+`;
+
+const TableRow = styled.tr`
+  border-bottom: 1px solid var(--admin-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background-color: var(--admin-table-hover);
+  }
+`;
+
+const TableHeaderCell = styled.th`
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--admin-text-primary);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+`;
+
+const TableCell = styled.td`
+  padding: 1rem;
+  color: var(--admin-text-secondary);
+  vertical-align: middle;
+`;
+
+const UserName = styled.div`
+  font-weight: 500;
+  color: var(--admin-text-primary);
+  margin-bottom: 0.25rem;
+`;
+
+const UserEmail = styled.div`
+  font-size: 0.875rem;
+  color: var(--admin-text-secondary);
+`;
+
+const RoleBadge = styled.span`
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  
+  ${props => {
+    switch (props.role) {
+      case 'SuperAdmin':
+        return `
+          background-color: #fee2e2;
+          color: #dc2626;
+        `;
+      case 'Admin':
+        return `
+          background-color: #dbeafe;
+          color: #2563eb;
+        `;
+      case 'Manager':
+        return `
+          background-color: #f3e8ff;
+          color: #7c3aed;
+        `;
+      default:
+        return `
+          background-color: #f3f4f6;
+          color: #6b7280;
+        `;
+    }
+  }}
+`;
+
+const StatusBadge = styled.span`
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  
+  ${props => props.active ? `
+    background-color: #dcfce7;
+    color: #16a34a;
+  ` : `
+    background-color: #fee2e2;
+    color: #dc2626;
+  `}
+`;
+
+const ActionButtons = styled.div`
+  display: flex;
+  gap: 0.5rem;
+`;
+
+const LoadingSpinner = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  font-size: 1.125rem;
+  color: var(--admin-text-secondary);
+`;
+
+const EmptyState = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+  color: var(--admin-text-secondary);
+`;
+
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -163,8 +286,42 @@ const ModalHeader = styled.div`
   align-items: center;
 `;
 
+const ModalTitle = styled.h2`
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--admin-text-primary);
+  margin: 0;
+`;
+
 const ModalBody = styled.div`
   padding: 1.5rem;
+`;
+
+const ModalFooter = styled.div`
+  padding: 1.5rem;
+  border-top: 1px solid var(--admin-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+`;
+
+const CloseButton = styled.button`
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--admin-text-secondary);
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: var(--admin-hover-bg);
+  }
 `;
 
 const UserForm = styled.form`
@@ -214,672 +371,504 @@ const Select = styled.select`
   }
 `;
 
-const FormActions = styled.div`
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  justify-content: flex-end;
-`;
-
-const UsersGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  padding: 1.5rem;
-`;
-
-const UserCard = styled.div`
-  background-color: var(--admin-card-bg);
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: var(--admin-shadow-sm);
-  border: 1px solid var(--admin-border);
-`;
-
-const UserName = styled.h3`
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
-  color: var(--admin-text-primary);
-`;
-
-const UserEmail = styled.p`
-  color: var(--admin-text-secondary);
-  margin-bottom: 0.5rem;
-`;
-
-const UserRole = styled.span`
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  background-color: ${props => {
-    const role = props.role?.toLowerCase();
-    return role === 'superadmin' ? 'rgba(194, 24, 91, 0.1)' : 'rgba(25, 118, 210, 0.1)';
-  }};
-  color: ${props => {
-    const role = props.role?.toLowerCase();
-    return role === 'superadmin' ? '#c2185b' : '#1976d2';
-  }};
-`;
-
-const UserDate = styled.p`
-  color: var(--admin-text-secondary);
-  font-size: 0.75rem;
+const ErrorMessage = styled.div`
+  color: var(--admin-danger);
+  font-size: 0.875rem;
   margin-top: 0.5rem;
 `;
 
-const UserActions = styled.div`
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
-`;
-
-const Loading = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  color: var(--admin-text-secondary);
-
-  .spinner {
-    animation: spin 1s linear infinite;
-    margin-right: 0.5rem;
-  }
-
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-`;
-
-const ErrorMessage = styled.div`
-  color: var(--admin-danger);
-  padding: 1rem;
-  background-color: rgba(239, 68, 68, 0.1);
-  border-radius: 8px;
+const AlertMessage = styled.div`
   margin-bottom: 1rem;
-  border-left: 4px solid var(--admin-danger);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const SuccessMessage = styled.div`
-  color: #059669;
   padding: 1rem;
-  background-color: rgba(5, 150, 105, 0.1);
   border-radius: 8px;
-  margin-bottom: 1rem;
-  border-left: 4px solid #059669;
+  font-weight: 500;
+  
+  ${props => props.type === 'success' ? `
+    background-color: #dcfce7;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+  ` : `
+    background-color: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+  `}
 `;
 
-const EmptyState = styled.div`
-  text-align: center;
-  padding: 3rem;
-  color: var(--admin-text-secondary);
-
-  h3 {
-    margin-bottom: 0.5rem;
-    color: var(--admin-text-primary);
-  }
-`;
-
-class UsersManagementCRUD extends Component {
+class UserManagement extends Component {
   constructor(props) {
     super(props);
     this.state = {
       users: [],
       loading: true,
-      error: null,
-      success: null,
-      showAddForm: false,
-      showEditForm: false,
-      editingUser: null,
-      newUser: { name: '', email: '', password: '', role: 'Admin' },
-      editUser: { name: '', email: '', role: 'Admin' },
       searchTerm: '',
-      selectedRole: 'all',
-      showDeleteModal: false,
-      userToDelete: null
+      roleFilter: 'all',
+      statusFilter: 'all',
+      showModal: false,
+      modalMode: 'create',
+      currentUser: null,
+      formData: {
+        name: '',
+        email: '',
+        password: '',
+        role: 'User'
+      },
+      formErrors: {},
+      submitting: false,
+      message: '',
+      messageType: '',
+      isOffline: false
     };
-    this.API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
   }
 
   componentDidMount() {
-    this.fetchUsers();
+    this.loadUsers();
   }
 
-  // Clear messages after 5 seconds
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.error !== prevState.error || this.state.success !== prevState.success) {
-      if (this.state.error || this.state.success) {
-        setTimeout(() => {
-          this.setState({ error: null, success: null });
-        }, 5000);
-      }
-    }
-  }
-
-fetchUsers = async () => {
-  try {
-    this.setState({ loading: true });
-    const res = await fetch(`${this.API_BASE_URL}/api/users`, {
-      headers: { 
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json'
-      }
-    });
-    
-    if (!res.ok) throw new Error(`Erreur ${res.status}: ${res.statusText}`);
-    
-    const data = await res.json();
-    
-    // Normaliser les rôles lors de la récupération
-    const normalizedUsers = Array.isArray(data) ? data.map(user => ({
-      ...user,
-      role: user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1).toLowerCase() : 'Admin'
-    })) : [];
-    
-    this.setState({ 
-      users: normalizedUsers, 
-      loading: false,
-      error: null
-    });
-  } catch (err) {
-    console.error('Erreur lors du chargement:', err);
-    this.setState({ 
-      error: err.message, 
-      loading: false,
-      users: []
-    });
-  }
-}
-
-  handleAddUser = async (event) => {
-    event.preventDefault();
-    const { newUser } = this.state;
-    
-    if (!newUser.name || !newUser.email || !newUser.password) {
-      this.setState({ error: 'Tous les champs sont requis' });
-      return;
-    }
-
-    if (newUser.password.length < 6) {
-      this.setState({ error: 'Le mot de passe doit contenir au moins 6 caractères' });
-      return;
-    }
-
-    this.setState({ loading: true, error: null });
-    
+  loadUsers = async () => {
     try {
-      const res = await fetch(`${this.API_BASE_URL}/api/users`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(newUser)
-      });
+      this.setState({ loading: true, message: '', isOffline: false });
       
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.message || `Erreur HTTP: ${res.status}`);
-      }
-      
-      const addedUser = await res.json();
-      this.setState(prevState => ({
-        users: [...prevState.users, addedUser],
-        newUser: { name: '', email: '', password: '', role: 'Admin' },
-        showAddForm: false,
-        success: 'Utilisateur ajouté avec succès',
-        loading: false
-      }));
-    } catch (err) {
-      console.error('Erreur lors de l\'ajout:', err);
+      const response = await api.get('/auth/users');
       this.setState({ 
-        error: err.message, 
+        users: response.data,
         loading: false 
       });
-    }
-  }
-
-  handleEditUser = async (event) => {
-    event.preventDefault();
-    const { editUser, editingUser } = this.state;
-    
-    if (!editUser.name || !editUser.email) {
-      this.setState({ error: 'Le nom et l\'email sont requis' });
-      return;
-    }
-
-    this.setState({ loading: true, error: null });
-    
-    try {
-      const res = await fetch(`${this.API_BASE_URL}/api/users/${editingUser._id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          name: editUser.name,
-          email: editUser.email,
-          role: editUser.role
-        })
-      });
+    } catch (error) {
+      console.error('Error loading users:', error);
       
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.message || `Erreur HTTP: ${res.status}`);
-      }
-      
-      const updatedUser = await res.json();
-      this.setState(prevState => ({
-        users: prevState.users.map(user => 
-          user._id === editingUser._id ? updatedUser : user
-        ),
-        showEditForm: false,
-        editingUser: null,
-        editUser: { name: '', email: '', role: 'Admin' },
-        success: 'Utilisateur modifié avec succès',
-        loading: false
-      }));
-    } catch (err) {
-      console.error('Erreur lors de la modification:', err);
-      this.setState({ 
-        error: err.message, 
-        loading: false 
-      });
-    }
-  }
-
-  confirmDelete = (user) => {
-    this.setState({
-      showDeleteModal: true,
-      userToDelete: user
-    });
-  }
-
-  deleteUser = async () => {
-    const { userToDelete } = this.state;
-    if (!userToDelete) return;
-
-    this.setState({ loading: true, error: null });
-    
-    try {
-      const res = await fetch(`${this.API_BASE_URL}/api/users/${userToDelete._id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+      let errorMessage = 'Failed to load users';
+      if (error.response) {
+        if (error.response.status === 404) {
+          errorMessage = 'Endpoint not found. Please check backend configuration.';
+        } else if (error.response.status === 401) {
+          errorMessage = 'Unauthorized. Please login again.';
+          localStorage.removeItem('token');
+          window.location.href = '/signin';
+        } else if (error.response.data?.message) {
+          errorMessage = error.response.data.message;
         }
-      });
-      
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.message || `Erreur HTTP: ${res.status}`);
+      } else if (error.request) {
+        errorMessage = 'No response from server. Check your network connection.';
+        this.setState({ isOffline: true });
       }
       
-      this.setState(prevState => ({
-        users: prevState.users.filter(user => user._id !== userToDelete._id),
-        showDeleteModal: false,
-        userToDelete: null,
-        success: 'Utilisateur supprimé avec succès',
-        loading: false
-      }));
-    } catch (err) {
-      console.error('Erreur lors de la suppression:', err);
       this.setState({ 
-        error: err.message, 
-        loading: false 
+        loading: false,
+        message: errorMessage,
+        messageType: 'error'
       });
     }
-  }
+  };
 
-  toggleAddForm = () => {
-    this.setState(prevState => ({ 
-      showAddForm: !prevState.showAddForm,
-      newUser: { name: '', email: '', password: '', role: 'Admin' },
-      error: null
-    }));
-  }
+  handleSearchChange = (e) => {
+    this.setState({ searchTerm: e.target.value });
+  };
 
-  startEdit = (user) => {
-    this.setState({
-      showEditForm: true,
-      editingUser: user,
-      editUser: {
-        name: user.name,
-        email: user.email,
-        role: user.role
-      },
-      error: null
-    });
-  }
+  handleRoleFilterChange = (e) => {
+    this.setState({ roleFilter: e.target.value });
+  };
 
-  cancelEdit = () => {
-    this.setState({
-      showEditForm: false,
-      editingUser: null,
-      editUser: { name: '', email: '', role: 'Admin' },
-      error: null
-    });
-  }
-
-  handleInputChange = (formType, field, value) => {
-    const stateKey = formType === 'add' ? 'newUser' : 'editUser';
-    this.setState(prevState => ({
-      [stateKey]: { ...prevState[stateKey], [field]: value }
-    }));
-  }
+  handleStatusFilterChange = (e) => {
+    this.setState({ statusFilter: e.target.value });
+  };
 
   getFilteredUsers = () => {
-  const { users, searchTerm, selectedRole } = this.state;
-  
-  return users.filter(user => {
-    const matchesSearch = user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email?.toLowerCase().includes(searchTerm.toLowerCase());
+    const { users, searchTerm, roleFilter, statusFilter } = this.state;
     
-    // Normaliser la comparaison des rôles
-    const userRole = user.role?.toLowerCase();
-    const filterRole = selectedRole === 'all' ? 'all' : selectedRole.toLowerCase();
+    return users.filter(user => {
+      const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           user.email.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesRole = roleFilter === 'all' || user.role === roleFilter;
+      const matchesStatus = statusFilter === 'all' || 
+                           (statusFilter === 'active' && user.isActive) ||
+                           (statusFilter === 'inactive' && !user.isActive);
+      
+      return matchesSearch && matchesRole && matchesStatus;
+    });
+  };
+
+  openCreateModal = () => {
+    this.setState({
+      showModal: true,
+      modalMode: 'create',
+      currentUser: null,
+      formData: {
+        name: '',
+        email: '',
+        password: '',
+        role: 'User'
+      },
+      formErrors: {}
+    });
+  };
+
+  openEditModal = (user) => {
+    this.setState({
+      showModal: true,
+      modalMode: 'edit',
+      currentUser: user,
+      formData: {
+        name: user.name,
+        email: user.email,
+        password: '',
+        role: user.role
+      },
+      formErrors: {}
+    });
+  };
+
+  closeModal = () => {
+    this.setState({
+      showModal: false,
+      modalMode: 'create',
+      currentUser: null,
+      formData: {
+        name: '',
+        email: '',
+        password: '',
+        role: 'User'
+      },
+      formErrors: {},
+      message: '',
+      messageType: ''
+    });
+  };
+
+  handleFormChange = (e) => {
+    this.setState({
+      formData: {
+        ...this.state.formData,
+        [e.target.name]: e.target.value
+      }
+    });
+  };
+
+  validateForm = () => {
+    const { formData, modalMode } = this.state;
+    const errors = {};
+
+    if (!formData.name.trim()) {
+      errors.name = 'Name is required';
+    }
+
+    if (!formData.email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = 'Invalid email format';
+    }
+
+    if (modalMode === 'create' && !formData.password) {
+      errors.password = 'Password is required';
+    } else if (formData.password && formData.password.length < 6) {
+      errors.password = 'Password must be at least 6 characters';
+    }
+
+    this.setState({ formErrors: errors });
+    return Object.keys(errors).length === 0;
+  };
+
+  handleSubmit = async (e) => {
+    e.preventDefault();
     
-    const matchesRole = selectedRole === 'all' || userRole === filterRole;
-    
-    return matchesSearch && matchesRole;
-  });
-}
+    if (!this.validateForm()) {
+      return;
+    }
+
+    this.setState({ submitting: true });
+
+    try {
+      const { formData, modalMode, currentUser } = this.state;
+      
+      if (modalMode === 'create') {
+        await api.post('/auth/users', formData);
+        this.setState({
+          message: 'User created successfully',
+          messageType: 'success'
+        });
+      } else {
+        await api.put(`/auth/users/${currentUser._id}`, formData);
+        this.setState({
+          message: 'User updated successfully',
+          messageType: 'success'
+        });
+      }
+      
+      this.closeModal();
+      this.loadUsers();
+    } catch (error) {
+      console.error('Error:', error);
+      this.setState({
+        message: error.response?.data?.message || 'Error saving user',
+        messageType: 'error'
+      });
+    } finally {
+      this.setState({ submitting: false });
+    }
+  };
+
+  handleDelete = async (user) => {
+    if (!window.confirm(`Are you sure you want to delete user ${user.name}?`)) {
+      return;
+    }
+
+    try {
+      await api.delete(`/auth/users/${user._id}`);
+      this.setState({
+        message: 'User deleted successfully',
+        messageType: 'success'
+      });
+      this.loadUsers();
+    } catch (error) {
+      console.error('Error:', error);
+      this.setState({
+        message: error.response?.data?.message || 'Error deleting user',
+        messageType: 'error'
+      });
+    }
+  };
+
+  formatDate = (dateString) => {
+    if (!dateString) return 'Never';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   render() {
     const { 
-      loading, error, success, showAddForm, showEditForm, editingUser, 
-      newUser, editUser, searchTerm, selectedRole, showDeleteModal, userToDelete 
+      loading, 
+      searchTerm, 
+      roleFilter, 
+      statusFilter, 
+      showModal, 
+      modalMode, 
+      formData, 
+      formErrors, 
+      submitting,
+      message,
+      messageType,
+      isOffline
     } = this.state;
-    
-    const userRole = 'SuperAdmin'; // Simulé, normalement depuis localStorage
+
     const filteredUsers = this.getFilteredUsers();
 
     return (
       <Container>
         <Header>
-          <Title>Gestion des Utilisateurs</Title>
+          <Title>User Management</Title>
           <HeaderActions>
-            {userRole === 'SuperAdmin' && (
-              <PrimaryButton onClick={this.toggleAddForm}>
-                <FaPlus /> {showAddForm ? 'Annuler' : 'Ajouter un utilisateur'}
-              </PrimaryButton>
-            )}
-            <SecondaryButton onClick={this.fetchUsers}>
-              <FaSync /> Actualiser
+            <SecondaryButton onClick={this.loadUsers} disabled={loading}>
+              <FaSync />
+              Refresh
             </SecondaryButton>
+            <PrimaryButton onClick={this.openCreateModal}>
+              <FaPlus />
+              Add User
+            </PrimaryButton>
           </HeaderActions>
         </Header>
 
-        {error && (
-          <ErrorMessage>
-            <span>{error}</span>
-            <button 
-              onClick={() => this.setState({ error: null })}
-              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-            >
-              <FaTimes />
-            </button>
-          </ErrorMessage>
+        {message && (
+          <AlertMessage type={messageType}>
+            {message}
+          </AlertMessage>
         )}
 
-        {success && <SuccessMessage>{success}</SuccessMessage>}
+        {isOffline && (
+          <AlertMessage type="error">
+            You are currently offline. Some features may not be available.
+          </AlertMessage>
+        )}
 
         <FiltersSection>
           <SearchBox>
-            <div style={{ position: 'relative' }}>
-              <SearchInput
-                type="text"
-                placeholder="Rechercher par nom ou email..."
-                value={searchTerm}
-                onChange={(e) => this.setState({ searchTerm: e.target.value })}
-              />
-              <FaSearch style={{
-                position: 'absolute',
-                right: '1rem',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: 'var(--admin-text-secondary)'
-              }} />
-            </div>
+            <SearchInput
+              type="text"
+              placeholder="Search by name or email..."
+              value={searchTerm}
+              onChange={this.handleSearchChange}
+            />
           </SearchBox>
-          <div>
-            <FilterSelect
-              value={selectedRole}
-              onChange={(e) => this.setState({ selectedRole: e.target.value })}
-            >
-              <option value="all">Tous les rôles</option>
-              <option value="Admin">Admin</option>
-              <option value="SuperAdmin">Super Admin</option>
-            </FilterSelect>
-          </div>
+          
+          <FilterSelect value={roleFilter} onChange={this.handleRoleFilterChange}>
+            <option value="all">All Roles</option>
+            <option value="SuperAdmin">SuperAdmin</option>
+            <option value="Admin">Admin</option>
+            <option value="Manager">Manager</option>
+            <option value="User">User</option>
+          </FilterSelect>
+          
+          <FilterSelect value={statusFilter} onChange={this.handleStatusFilterChange}>
+            <option value="all">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </FilterSelect>
         </FiltersSection>
 
-        {/* Formulaire d'ajout */}
-        {showAddForm && (
-          <ModalOverlay>
-            <ModalContent>
-              <ModalHeader>
-                <h3>Ajouter un nouvel utilisateur</h3>
-                <button 
-                  onClick={this.toggleAddForm}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                >
-                  <FaTimes />
-                </button>
-              </ModalHeader>
-              <ModalBody>
-                <UserForm onSubmit={this.handleAddUser}>
-                  <FormGroup>
-                    <Label>Nom complet *</Label>
-                    <Input
-                      type="text"
-                      value={newUser.name}
-                      onChange={(e) => this.handleInputChange('add', 'name', e.target.value)}
-                      required
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label>Email *</Label>
-                    <Input
-                      type="email"
-                      value={newUser.email}
-                      onChange={(e) => this.handleInputChange('add', 'email', e.target.value)}
-                      required
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label>Mot de passe *</Label>
-                    <Input
-                      type="password"
-                      value={newUser.password}
-                      onChange={(e) => this.handleInputChange('add', 'password', e.target.value)}
-                      required
-                      minLength="6"
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label>Rôle</Label>
-                    <Select
-                      value={newUser.role}
-                      onChange={(e) => this.handleInputChange('add', 'role', e.target.value)}
-                    >
-                      <option value="Admin">Admin</option>
-                      {userRole === 'SuperAdmin' && <option value="SuperAdmin">Super Admin</option>}
-                    </Select>
-                  </FormGroup>
-                  <FormActions>
-                    <SecondaryButton 
-                      type="button"
-                      onClick={this.toggleAddForm}
-                    >
-                      Annuler
-                    </SecondaryButton>
-                    <SuccessButton 
-                      type="submit"
-                      disabled={loading}
-                    >
-                      {loading ? <FaSpinner className="spinner" /> : 'Ajouter'}
-                    </SuccessButton>
-                  </FormActions>
-                </UserForm>
-              </ModalBody>
-            </ModalContent>
-          </ModalOverlay>
-        )}
-
-        {/* Formulaire d'édition */}
-        {showEditForm && editingUser && (
-          <ModalOverlay>
-            <ModalContent>
-              <ModalHeader>
-                <h3>Modifier l'utilisateur</h3>
-                <button 
-                  onClick={this.cancelEdit}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                >
-                  <FaTimes />
-                </button>
-              </ModalHeader>
-              <ModalBody>
-                <UserForm onSubmit={this.handleEditUser}>
-                  <FormGroup>
-                    <Label>Nom complet *</Label>
-                    <Input
-                      type="text"
-                      value={editUser.name}
-                      onChange={(e) => this.handleInputChange('edit', 'name', e.target.value)}
-                      required
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label>Email *</Label>
-                    <Input
-                      type="email"
-                      value={editUser.email}
-                      onChange={(e) => this.handleInputChange('edit', 'email', e.target.value)}
-                      required
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label>Rôle</Label>
-                    <Select
-                      value={editUser.role}
-                      onChange={(e) => this.handleInputChange('edit', 'role', e.target.value)}
-                      disabled={editingUser.role === 'SuperAdmin' && userRole !== 'SuperAdmin'}
-                    >
-                      <option value="Admin">Admin</option>
-                      {userRole === 'SuperAdmin' && <option value="SuperAdmin">Super Admin</option>}
-                    </Select>
-                  </FormGroup>
-                  <FormActions>
-                    <SecondaryButton 
-                      type="button"
-                      onClick={this.cancelEdit}
-                    >
-                      Annuler
-                    </SecondaryButton>
-                    <SuccessButton 
-                      type="submit"
-                      disabled={loading}
-                    >
-                      {loading ? <FaSpinner className="spinner" /> : 'Modifier'}
-                    </SuccessButton>
-                  </FormActions>
-                </UserForm>
-              </ModalBody>
-            </ModalContent>
-          </ModalOverlay>
-        )}
-
-        {/* Modal de confirmation de suppression */}
-        {showDeleteModal && userToDelete && (
-          <ModalOverlay>
-            <ModalContent $maxWidth="400px">
-              <ModalHeader>
-                <h3>Confirmer la suppression</h3>
-              </ModalHeader>
-              <ModalBody>
-                <p>Êtes-vous sûr de vouloir supprimer l'utilisateur <strong>{userToDelete.name}</strong> ?</p>
-                <p style={{ color: 'var(--admin-danger)', fontStyle: 'italic', marginTop: '0.5rem' }}>
-                  Cette action est irréversible.
-                </p>
-              </ModalBody>
-              <FormActions style={{ padding: '1.5rem', paddingTop: 0 }}>
-                <SecondaryButton 
-                  onClick={() => this.setState({ showDeleteModal: false, userToDelete: null })}
-                >
-                  Annuler
-                </SecondaryButton>
-                <DangerButton 
-                  onClick={this.deleteUser}
-                  disabled={loading}
-                >
-                  {loading ? <FaSpinner className="spinner" /> : 'Supprimer'}
-                </DangerButton>
-              </FormActions>
-            </ModalContent>
-          </ModalOverlay>
-        )}
-
-        {/* Liste des utilisateurs */}
-        {loading && !showAddForm && !showEditForm ? (
-          <Loading>
-            <FaSpinner className="spinner" />
-            Chargement des utilisateurs...
-          </Loading>
-        ) : (
-          <>
-            {filteredUsers.length === 0 ? (
-              <EmptyState>
-                <h3>Aucun utilisateur trouvé</h3>
-                <p>Commencez par ajouter votre premier utilisateur.</p>
-              </EmptyState>
-            ) : (
-              <UsersGrid>
+        <UsersTable>
+          {loading ? (
+            <LoadingSpinner>
+              <FaSpinner className="fa-spin" style={{ marginRight: '0.5rem' }} />
+              Loading users...
+            </LoadingSpinner>
+          ) : filteredUsers.length === 0 ? (
+            <EmptyState>
+              <FaSearch size={48} style={{ marginBottom: '1rem', opacity: 0.5 }} />
+              <h3>No users found</h3>
+              <p>No users match the search criteria.</p>
+            </EmptyState>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHeaderCell>User</TableHeaderCell>
+                  <TableHeaderCell>Role</TableHeaderCell>
+                  <TableHeaderCell>Status</TableHeaderCell>
+                  <TableHeaderCell>Last Login</TableHeaderCell>
+                  <TableHeaderCell>Created At</TableHeaderCell>
+                  <TableHeaderCell>Actions</TableHeaderCell>
+                </TableRow>
+              </TableHeader>
+              <tbody>
                 {filteredUsers.map(user => (
-                  <UserCard key={user._id || user.id || Math.random()}>
-                    <div>
+                  <TableRow key={user._id}>
+                    <TableCell>
                       <UserName>{user.name}</UserName>
                       <UserEmail>{user.email}</UserEmail>
-                      <UserRole role={user.role}>{user.role}</UserRole>
-                      {user.createdAt && (
-                        <UserDate>
-                          Créé le: {new Date(user.createdAt).toLocaleDateString('fr-FR')}
-                        </UserDate>
-                      )}
-                    </div>
-                    
-                    {userRole === 'SuperAdmin' && user.role !== 'SuperAdmin' && (
-                      <UserActions>
+                    </TableCell>
+                    <TableCell>
+                      <RoleBadge role={user.role}>{user.role}</RoleBadge>
+                    </TableCell>
+                    <TableCell>
+                      <StatusBadge active={user.isActive}>
+                        {user.isActive ? 'Active' : 'Inactive'}
+                      </StatusBadge>
+                    </TableCell>
+                    <TableCell>
+                      {this.formatDate(user.lastLogin)}
+                    </TableCell>
+                    <TableCell>
+                      {this.formatDate(user.createdAt)}
+                    </TableCell>
+                    <TableCell>
+                      <ActionButtons>
                         <SmallButton 
-                          onClick={() => this.startEdit(user)}
+                          onClick={() => this.openEditModal(user)}
                           style={{ backgroundColor: '#f59e0b', color: 'white' }}
                         >
-                          <FaEdit /> Modifier
+                          <FaEdit />
                         </SmallButton>
                         <SmallButton 
-                          onClick={() => this.confirmDelete(user)}
-                          style={{ backgroundColor: 'var(--admin-danger)', color: 'white' }}
+                          onClick={() => this.handleDelete(user)}
+                          style={{ backgroundColor: '#dc2626', color: 'white' }}
                         >
-                          <FaTrash /> Supprimer
+                          <FaTrash />
                         </SmallButton>
-                      </UserActions>
-                    )}
-                  </UserCard>
+                      </ActionButtons>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </UsersGrid>
-            )}
-          </>
+              </tbody>
+            </Table>
+          )}
+        </UsersTable>
+
+        {showModal && (
+          <ModalOverlay onClick={this.closeModal}>
+            <ModalContent onClick={(e) => e.stopPropagation()}>
+              <ModalHeader>
+                <ModalTitle>
+                  {modalMode === 'create' ? 'Create User' : 'Edit User'}
+                </ModalTitle>
+                <CloseButton onClick={this.closeModal}>
+                  <FaTimes />
+                </CloseButton>
+              </ModalHeader>
+              
+              <ModalBody>
+                <UserForm onSubmit={this.handleSubmit}>
+                  <FormGroup>
+                    <Label>Full Name</Label>
+                    <Input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={this.handleFormChange}
+                      placeholder="Enter full name"
+                    />
+                    {formErrors.name && <ErrorMessage>{formErrors.name}</ErrorMessage>}
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label>Email</Label>
+                    <Input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={this.handleFormChange}
+                      placeholder="Enter email"
+                    />
+                    {formErrors.email && <ErrorMessage>{formErrors.email}</ErrorMessage>}
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label>
+                      {modalMode === 'create' ? 'Password' : 'New Password (optional)'}
+                    </Label>
+                    <Input
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={this.handleFormChange}
+                      placeholder={modalMode === 'create' ? 'Enter password' : 'Leave blank to keep current'}
+                    />
+                    {formErrors.password && <ErrorMessage>{formErrors.password}</ErrorMessage>}
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label>Role</Label>
+                    <Select
+                      name="role"
+                      value={formData.role}
+                      onChange={this.handleFormChange}
+                    >
+                      <option value="User">User</option>
+                      <option value="Manager">Manager</option>
+                      <option value="Admin">Admin</option>
+                      <option value="SuperAdmin">SuperAdmin</option>
+                    </Select>
+                  </FormGroup>
+                </UserForm>
+              </ModalBody>
+
+              <ModalFooter>
+                <Button type="button" onClick={this.closeModal}>
+                  Cancel
+                </Button>
+                <PrimaryButton 
+                  onClick={this.handleSubmit}
+                  disabled={submitting}
+                >
+                  {submitting ? (
+                    <>
+                      <FaSpinner className="fa-spin" />
+                      {modalMode === 'create' ? 'Creating...' : 'Updating...'}
+                    </>
+                  ) : (
+                    modalMode === 'create' ? 'Create' : 'Update'
+                  )}
+                </PrimaryButton>
+              </ModalFooter>
+            </ModalContent>
+          </ModalOverlay>
         )}
       </Container>
     );
   }
 }
 
-export default UsersManagementCRUD;
+export default UserManagement;

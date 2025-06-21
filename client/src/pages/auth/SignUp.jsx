@@ -37,13 +37,13 @@ const SignUp = () => {
       return false;
     }
 
-    if (!email) {
+    if (!email.trim()) {
       setError('L\'email est requis');
       return false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(email.trim())) {
       setError('Format d\'email invalide');
       return false;
     }
@@ -81,43 +81,61 @@ const SignUp = () => {
 
     try {
       const { name, email, password } = formData;
-      const response = await authService.register({ 
+      
+      const userData = { 
         name: name.trim(), 
-        email, 
+        email: email.trim().toLowerCase(), 
         password 
-      });
+      };
       
-      console.log('Registration response:', response);
+      const response = await authService.register(userData);
       
-      if (response.data.success) {
-        // Stocker le token et les infos utilisateur
-        localStorage.setItem('token', response.data.token);
-        if (response.data.refreshToken) {
-          localStorage.setItem('refreshToken', response.data.refreshToken);
-        }
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-        localStorage.setItem('userRole', response.data.user.role);
-        
-        // Redirection vers la page contact
-        navigate('/contact');
-      } else {
-        throw new Error(response.data.message || 'Erreur lors de la création du compte');
+      if (!response.data) {
+        throw new Error('Réponse serveur invalide');
       }
+
+      if (response.data.success === false) {
+        throw new Error(response.data.message || 'Échec de l\'inscription');
+      }
+
+      // Stockage des données d'authentification
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      
+      if (response.data.refreshToken) {
+        localStorage.setItem('refreshToken', response.data.refreshToken);
+      }
+      
+      if (response.data.user.role) {
+        localStorage.setItem('userRole', response.data.user.role);
+      }
+
+      navigate('/contact', { replace: true });
+      
     } catch (error) {
       console.error('Erreur d\'inscription:', error);
       
-      // Gestion des erreurs plus précise
-      let errorMessage = 'Erreur lors de la création du compte. Veuillez réessayer.';
+      let errorMessage = 'Erreur lors de la création du compte';
       
       if (error.response) {
-        // Erreur du serveur avec réponse
-        errorMessage = error.response.data?.message || `Erreur ${error.response.status}`;
+        // Erreur provenant du serveur
+        const serverMessage = error.response.data?.message;
+        
+        if (error.response.status === 400) {
+          errorMessage = serverMessage || 'Données invalides';
+        } else if (error.response.status === 409) {
+          errorMessage = 'Cet email est déjà utilisé';
+        } else if (error.response.status === 500) {
+          errorMessage = 'Erreur serveur. Veuillez réessayer plus tard';
+        } else {
+          errorMessage = serverMessage || `Erreur ${error.response.status}`;
+        }
       } else if (error.request) {
-        // Erreur réseau
-        errorMessage = 'Impossible de contacter le serveur. Vérifiez votre connexion.';
+        // Pas de réponse du serveur
+        errorMessage = 'Le serveur ne répond pas. Vérifiez votre connexion';
       } else {
-        // Autre erreur
-        errorMessage = error.message;
+        // Erreur de configuration
+        errorMessage = error.message || errorMessage;
       }
       
       setError(errorMessage);
@@ -130,9 +148,13 @@ const SignUp = () => {
                        formData.confirmPassword && 
                        formData.password === formData.confirmPassword;
 
+  const isFormValid = passwordsMatch && 
+                     formData.name.trim().length >= 2 && 
+                     formData.email.trim() && 
+                     formData.password.length >= 6;
+
   return (
     <div className="auth-container">
-      {/* Ajout de la navbar minimaliste */}
       <nav className="auth-navbar">
         <Link to="/" className="logo">
           <img src="/assets/logo.png" alt="Logo" />
@@ -144,7 +166,7 @@ const SignUp = () => {
           <h1>Créer un compte</h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
+        <form onSubmit={handleSubmit} className="auth-form" noValidate>
           {error && (
             <div className="error-message" role="alert">
               <span>{error}</span>
@@ -162,6 +184,8 @@ const SignUp = () => {
               placeholder="Votre nom complet"
               disabled={isLoading}
               required
+              minLength={2}
+              maxLength={100}
             />
           </div>
 
@@ -176,6 +200,7 @@ const SignUp = () => {
               placeholder="votre@email.com"
               disabled={isLoading}
               required
+              maxLength={255}
             />
           </div>
 
@@ -191,6 +216,8 @@ const SignUp = () => {
                 placeholder="••••••••"
                 disabled={isLoading}
                 required
+                minLength={6}
+                maxLength={128}
                 autoComplete="new-password"
               />
               <button
@@ -254,7 +281,8 @@ const SignUp = () => {
           <button
             type="submit"
             className="auth-button"
-            disabled={isLoading || !passwordsMatch || !formData.name || !formData.email || !formData.password}
+            disabled={isLoading || !isFormValid}
+            aria-describedby={error ? "error-message" : undefined}
           >
             {isLoading ? (
               <>

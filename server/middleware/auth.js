@@ -4,6 +4,7 @@ const keys = require('../config/keys');
 module.exports = function(req, res, next) {
   // Get token from header
   const token = req.header('x-auth-token') || req.header('Authorization')?.replace('Bearer ', '');
+  console.log('Auth middleware token:', token);
 
   // Check if no token
   if (!token) {
@@ -16,6 +17,7 @@ module.exports = function(req, res, next) {
   try {
     // Verify token
     const decoded = jwt.verify(token, keys.secretOrKey);
+    console.log('Auth middleware decoded user:', decoded);
     req.user = decoded;
     next();
   } catch (err) {

@@ -9,34 +9,58 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Connexion à la base de données
-connectDB();
+connectDB().then(() => {
+  // Diagnostic après connexion réussie
+  setTimeout(diagnosticMongoDB, 1000);
+}).catch(err => {
+  console.error('❌ Échec de la connexion à MongoDB:', err.message);
+  process.exit(1);
+});
 
-// Fonction de diagnostic MongoDB
+// Fonction de diagnostic MongoDB améliorée
 async function diagnosticMongoDB() {
   try {
-    const Product = require('./models/Product');
+    console.log('\n🔍 Début du diagnostic MongoDB...');
     
-    console.log('🔍 Diagnostic MongoDB...');
-    console.log('État de la connexion:', mongoose.connection.readyState);
-    console.log('Base de données connectée:', mongoose.connection.name);
-    console.log('Host:', mongoose.connection.host);
+    // Vérification de la connexion
+    if (mongoose.connection.readyState !== 1) {
+      throw new Error('Connexion MongoDB non établie');
+    }
     
+    console.log('✅ État de la connexion:', getConnectionState(mongoose.connection.readyState));
+    console.log('📊 Base de données:', mongoose.connection.name);
+    console.log('🌐 Host:', mongoose.connection.host);
+    
+    // Liste des collections
     const collections = await mongoose.connection.db.listCollections().toArray();
-    console.log('Collections disponibles:', collections.map(c => c.name));
+    console.log('🗂 Collections disponibles:', collections.map(c => c.name));
     
+    // Vérification des modèles
+    const Product = require('./models/Product');
     const productCount = await Product.countDocuments();
-    console.log('Nombre de produits dans la DB:', productCount);
+    console.log(`📦 Nombre de produits: ${productCount}`);
     
-    const products = await Product.find();
-    console.log('Produits trouvés:', products);
-    
+    console.log('✅ Diagnostic MongoDB terminé avec succès\n');
   } catch (error) {
-    console.error('❌ Erreur lors du diagnostic:', error);
+    console.error('❌ Erreur lors du diagnostic:', error.message);
+    if (error.stack) console.error(error.stack);
   }
 }
 
-// Middleware CORS
-app.use(cors({
+// Helper pour les états de connexion
+function getConnectionState(state) {
+  const states = {
+    0: 'Déconnecté',
+    1: 'Connecté',
+    2: 'Connexion en cours',
+    3: 'Déconnexion en cours',
+    4: 'Connexion invalide'
+  };
+  return states[state] || `État inconnu (${state})`;
+}
+
+// Configuration CORS améliorée
+const corsOptions = {
   origin: [
     'http://localhost:3000',
     'http://localhost:3001',
@@ -44,35 +68,41 @@ app.use(cors({
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token']
-}));
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token'],
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 
 // Middleware pour parser JSON et URL-encoded data
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Servir les fichiers statiques (uploads)
+// Servir les fichiers statiques
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Middleware de logging
+// Middleware de logging amélioré
 app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
-  if (req.body && Object.keys(req.body).length > 0) {
-    console.log('Body:', req.body);
-  }
-  if (req.files && Object.keys(req.files).length > 0) {
-    console.log('Files:', Object.keys(req.files));
-  }
+  const start = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.path} - ${res.statusCode} (${duration}ms)`);
+  });
   next();
 });
 
-// Routes - ORDRE IMPORTANT
+// Routes principales
 app.use('/api/products', require('./routes/products'));
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/contacts', require('./routes/contact')); // Route corrigée
+app.use('/api/contacts', require('./routes/contact'));
+app.use('/auth', require('./routes/admin/users'));
 
-// Route de diagnostic
+// Route de diagnostic sécurisée (seulement en développement)
 app.get('/api/diagnostic', async (req, res) => {
+  if (process.env.NODE_ENV !== 'development') {
+    return res.status(403).json({ message: 'Accès refusé' });
+  }
+  
   try {
     await diagnosticMongoDB();
     res.json({ message: 'Diagnostic terminé, vérifiez les logs du serveur' });
@@ -81,86 +111,88 @@ app.get('/api/diagnostic', async (req, res) => {
   }
 });
 
-// Route de santé
+// Route de santé améliorée
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
-    message: 'Serveur MTPS API fonctionne correctement',
+  const healthCheck = {
+    status: 'OK',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    database: mongoose.connection.readyState === 1 ? 'Connecté' : 'Déconnecté'
-  });
+    database: getConnectionState(mongoose.connection.readyState),
+    memoryUsage: process.memoryUsage(),
+    environment: process.env.NODE_ENV || 'development'
+  };
+  res.json(healthCheck);
 });
 
-// Route racine
+// Route racine avec documentation
 app.get('/', (req, res) => {
-  res.json({ 
+  res.json({
     message: 'API MTPS Tunisie',
     version: '1.0.0',
+    documentation: 'https://github.com/your-repo/docs',
     endpoints: {
-      products: '/api/products',
-      auth: '/api/auth',
-      contacts: '/api/contacts',
-      health: '/api/health',
-      diagnostic: '/api/diagnostic'
+      products: { methods: ['GET', 'POST', 'PUT', 'DELETE'], path: '/api/products' },
+      auth: { methods: ['POST'], path: '/api/auth' },
+      contacts: { methods: ['GET', 'POST', 'PUT', 'DELETE'], path: '/api/contacts' },
+      health: { methods: ['GET'], path: '/api/health' },
+      diagnostic: { methods: ['GET'], path: '/api/diagnostic', note: 'Disponible seulement en développement' }
     }
   });
 });
 
-// Gestion des erreurs 404
+// Gestion des erreurs 404 améliorée
 app.use((req, res) => {
   console.log(`❌ Route non trouvée: ${req.method} ${req.path}`);
-  res.status(404).json({ 
-    message: 'Route non trouvée',
+  res.status(404).json({
+    error: 'Route non trouvée',
     path: req.path,
     method: req.method,
-    availableRoutes: [
-      'GET /',
-      'GET /api/health',
-      'GET /api/diagnostic',
-      'GET /api/products',
-      'POST /api/auth/login',
-      'POST /api/auth/register',
-      'GET /api/contacts',
-      'POST /api/contacts',
-      'PUT /api/contacts/:id/reply',
-      'DELETE /api/contacts/:id'
+    suggestions: [
+      { method: 'GET', path: '/api/products' },
+      { method: 'POST', path: '/api/auth/login' },
+      { method: 'GET', path: '/api/health' }
     ]
   });
 });
 
-// Gestion globale des erreurs
+// Gestion globale des erreurs améliorée
 app.use((err, req, res, next) => {
-  console.error('Erreur serveur:', err);
-  res.status(500).json({ 
-    message: 'Erreur interne du serveur',
-    error: process.env.NODE_ENV === 'development' ? err.message : 'Une erreur est survenue'
+  console.error('🔥 Erreur serveur:', {
+    message: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    path: req.path,
+    method: req.method
+  });
+
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({
+    error: err.message || 'Une erreur est survenue',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
   });
 });
 
-// Démarrage du serveur
-app.listen(PORT, () => {
-  console.log(`🚀 Serveur démarré sur le port ${PORT}`);
-  console.log(`📍 URL locale: http://localhost:${PORT}`);
-  console.log(`🏥 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`📦 API Products: http://localhost:${PORT}/api/products`);
-  console.log(`🔐 API Auth: http://localhost:${PORT}/api/auth`);
-  console.log(`📧 API Contacts: http://localhost:${PORT}/api/contacts`);
-  console.log(`🔍 Diagnostic: http://localhost:${PORT}/api/diagnostic`);
-  
-  // Lancer le diagnostic au démarrage
-  setTimeout(diagnosticMongoDB, 2000);
+// Démarrage du serveur seulement si la connexion DB est réussie
+mongoose.connection.once('open', () => {
+  app.listen(PORT, () => {
+    console.log(`\n🚀 Serveur démarré sur le port ${PORT}`);
+    console.log(`📍 URL locale: http://localhost:${PORT}`);
+    console.log(`🏥 Health check: http://localhost:${PORT}/api/health`);
+    console.log(`📦 API Products: http://localhost:${PORT}/api/products`);
+    console.log(`🔐 API Auth: http://localhost:${PORT}/api/auth`);
+    console.log(`📧 API Contacts: http://localhost:${PORT}/api/contacts`);
+    console.log(`🌿 Environnement: ${process.env.NODE_ENV || 'development'}\n`);
+  });
 });
 
 // Gestion gracieuse de l'arrêt
-process.on('SIGTERM', () => {
-  console.log('👋 Arrêt gracieux du serveur...');
-  process.exit(0);
-});
-
-process.on('SIGINT', () => {
-  console.log('👋 Arrêt gracieux du serveur...');
-  process.exit(0);
+['SIGINT', 'SIGTERM'].forEach(signal => {
+  process.on(signal, () => {
+    console.log(`\n👋 Reçu ${signal}, arrêt gracieux du serveur...`);
+    mongoose.connection.close(false, () => {
+      console.log('✅ Connexion MongoDB fermée');
+      process.exit(0);
+    });
+  });
 });
 
 module.exports = app;

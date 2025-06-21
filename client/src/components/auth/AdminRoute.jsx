@@ -1,6 +1,7 @@
 // client/src/components/auth/AdminRoute.jsx
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from './AuthProvider';
 
 /**
  * Composant de route protégée pour les administrateurs
@@ -9,21 +10,26 @@ import { Navigate, useLocation } from 'react-router-dom';
  */
 const AdminRoute = ({ children }) => {
   const location = useLocation();
-  const isAuthenticated = localStorage.getItem('token');
-  const userRole = localStorage.getItem('userRole');
-  const isAdmin = userRole === 'admin' || userRole === 'superadmin';
-  
-  // Si l'utilisateur n'est pas connecté, rediriger vers la page de connexion
+  const { user, isLoading, isAuthenticated } = useAuth();
+  console.log('AdminRoute: isAuthenticated=', isAuthenticated, 'user=', user);
+
+  if (isLoading) {
+    // Optionally, render a loading spinner or null while auth status is loading
+    return null;
+  }
+
   if (!isAuthenticated) {
     return <Navigate to="/signin" state={{ from: location.pathname }} replace />;
   }
-  
-  // Si l'utilisateur n'est pas administrateur, rediriger vers la page d'accueil
+
+  // Case-insensitive role check and correct user object access
+  const userRole = user?.role?.toLowerCase();
+  const isAdmin = userRole === 'admin' || userRole === 'superadmin';
+
   if (!isAdmin) {
     return <Navigate to="/" replace />;
   }
-  
-  // Sinon, afficher le contenu de la route
+
   return children;
 };
 

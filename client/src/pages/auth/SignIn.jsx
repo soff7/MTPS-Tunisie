@@ -74,11 +74,16 @@ const SignIn = () => {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       localStorage.setItem('userRole', data.user.role);
+      console.log('SignIn stored userRole:', data.user.role);
+      
+      // Normaliser le rôle pour la comparaison (insensible à la casse)
+      const userRole = data.user.role.toLowerCase();
       
       // Redirection selon le rôle
-      if (data.user.role === 'admin' || data.user.role === 'superadmin') {
+      if (userRole === 'admin' || userRole === 'superadmin') {
         navigate('/admin');
       } else {
+        // Pour les utilisateurs normaux (User, Manager, etc.)
         navigate(from !== '/admin' ? from : '/contact');
       }
       
